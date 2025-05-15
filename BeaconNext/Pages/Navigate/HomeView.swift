@@ -1,13 +1,8 @@
-//
-//  InitiateNavigateView.swift
-//  BeaconNext
-//
-//  Created by Dreta ​ on 5/15/25.
-//
-
 import SwiftUI
 
 struct HomeView: View {
+    @EnvironmentObject var locationManager: BeaconLocationDelegateSimple
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
             VStack(alignment: .leading, spacing: 24) {
@@ -16,12 +11,12 @@ struct HomeView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "location.fill")
                                 .accessibilityHidden(true)
-                            Text("Lorem Ipsum") // Current Location
+                            Text(locationManager.lastAddress?.poiName ?? "Loading...") // Current Location
                                 .font(.headline)
                         }
                         .frame(maxWidth: .infinity)
                         .accessibilityElement(children: .combine)
-                        .accessibilityLabel("Current Location: Lorem Ipsum")
+                        .accessibilityLabel("Current Location: \(locationManager.lastAddress?.poiName ?? "Loading...")")
                         NavigationLink(destination: SettingsView()) {
                             HStack(spacing: 8) {
                                 Image(systemName: "magnifyingglass")

@@ -1,17 +1,13 @@
-//
-//  BeaconNextApp.swift
-//  BeaconNext
-//
-//  Created by Dreta ​ on 5/15/25.
-//
-
 import SwiftUI
 
 @main
 struct BeaconNextApp: App {
+    @StateObject private var locationManager = BeaconLocationDelegateSimple()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(locationManager)
         }
     }
 }

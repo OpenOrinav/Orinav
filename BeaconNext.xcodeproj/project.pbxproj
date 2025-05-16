@@ -185,13 +185,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-BeaconNext/Pods-BeaconNext-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-BeaconNext/Pods-BeaconNext-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -344,6 +340,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = BR5VU8H3X5;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BeaconNext/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Beacon uses your location to provide navigation features.";
@@ -391,6 +388,8 @@
 					"\"SystemConfiguration\"",
 					"-l\"z\"",
 					"-l\"c++\"",
+					"-Xlinker",
+					"-no_warn_duplicate_libraries",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.beaconassist.BeaconNext;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -410,6 +409,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = BR5VU8H3X5;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BeaconNext/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Beacon uses your location to provide navigation features.";
@@ -457,6 +457,8 @@
 					"\"SystemConfiguration\"",
 					"-l\"z\"",
 					"-l\"c++\"",
+					"-Xlinker",
+					"-no_warn_duplicate_libraries",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.beaconassist.BeaconNext;
 				PRODUCT_NAME = "$(TARGET_NAME)";

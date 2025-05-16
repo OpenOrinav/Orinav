@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var locationManager: BeaconLocationDelegateSimple
+    @State private var isShowingSearch = false
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
@@ -17,7 +18,9 @@ struct HomeView: View {
                         .frame(maxWidth: .infinity)
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("Current Location: \(locationManager.lastAddress?.poiName ?? "Loading...")")
-                        NavigationLink(destination: SettingsView()) {
+                        Button(action: {
+                            isShowingSearch = true
+                        }) {
                             HStack(spacing: 8) {
                                 Image(systemName: "magnifyingglass")
                                     .foregroundColor(.secondary)
@@ -26,12 +29,11 @@ struct HomeView: View {
                                 Spacer()
                             }
                             .padding(8)
-                            .background(
-                                RoundedRectangle(cornerRadius: 24)
-                                    .fill(.secondary.opacity(0.2))
-                            )
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        .background(
+                            RoundedRectangle(cornerRadius: 24)
+                                .fill(.secondary.opacity(0.2))
+                        )
                         .accessibilityLabel("Search")
                         .accessibilityAddTraits(.isSearchField)
                         .accessibilityHint("Tap to open search")
@@ -87,6 +89,9 @@ struct HomeView: View {
                     }
                 }
             }
+        }
+        .sheet(isPresented: $isShowingSearch) {
+            SearchView()
         }
         .padding()
         .navigationTitle("Beacon")

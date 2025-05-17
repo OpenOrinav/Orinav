@@ -3,6 +3,7 @@ target 'BeaconNext' do
   pod 'AMapLocation-NO-IDFA'
   pod 'AMapSearch-NO-IDFA'
   pod 'AMap3DMap-NO-IDFA', '~> 10.0.600'
+  pod 'AMapNavi-NO-IDFA'
 end
 
 post_install do

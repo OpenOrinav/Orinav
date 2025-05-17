@@ -91,7 +91,9 @@ struct HomeView: View {
             }
         }
         .sheet(isPresented: $isShowingSearch) {
-            SearchView()
+            SearchView(isPresented: $isShowingSearch) { poi in
+                print(poi.name)
+            }
         }
         .padding()
         .navigationTitle("Beacon")

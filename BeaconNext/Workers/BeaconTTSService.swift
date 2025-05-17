@@ -1,7 +1,7 @@
 import AVFoundation
 
-final class TTSService {
-    static let shared = TTSService()
+final class BeaconTTSService {
+    static let shared = BeaconTTSService()
     private let synthesizer = AVSpeechSynthesizer()
     
     private init() {}

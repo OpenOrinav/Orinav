@@ -20,29 +20,7 @@ class BeaconSearchDelegateSimple: NSObject, ObservableObject, AMapSearchDelegate
         lastSearchResults = pois
     }
     
-    @Published var lastRouteSearchResults: [AMapPath] = []
-    func searchWalkingRoute(from: AMapPOI?, to: AMapPOI?, currentLocation: AMapGeoPoint?) {
-        let request = AMapWalkingRouteSearchRequest()
-        request.origin = from?.location ?? currentLocation
-        request.destination = to?.location ?? currentLocation
-        request.alternativeRoute = 2
-        if request.origin == nil || request.destination == nil {
-            return
-        }
-        searchManager.aMapWalkingRouteSearch(request)
-    }
-    
-    func onRouteSearchDone(_ request: AMapRouteSearchBaseRequest!, response: AMapRouteSearchResponse!) {
-        guard let route = response.route else { return }
-        lastRouteSearchResults = route.paths.sorted { $0.distance < $1.distance }
-    }
-    
-    
     func resetSearch() {
         lastSearchResults.removeAll()
-    }
-    
-    func resetRouteSearch() {
-        lastRouteSearchResults.removeAll()
     }
 }

@@ -1,7 +1,7 @@
 import SwiftUI
 import AMapSearchKit
 
-struct HomeView: View {
+struct BeaconHomeView: View {
     @EnvironmentObject var locationManager: BeaconLocationDelegateSimple
     
     @State private var isShowingSearch = false
@@ -98,14 +98,14 @@ struct HomeView: View {
             }
         }
         .sheet(isPresented: $isShowingSearch) {
-            SearchView(isPresented: $isShowingSearch) { poi in
+            BeaconSearchView(isPresented: $isShowingSearch) { poi in
                 self.from = nil
                 self.destination = poi
                 self.isShowingRoutes = true
             }
         }
         .sheet(isPresented: $isShowingRoutes) {
-            RouteSelectionView(from: $from, destination: $destination, isPresented: $isShowingRoutes)
+            BeaconRouteSelectionView(from: $from, destination: $destination, isPresented: $isShowingRoutes)
         }
         .padding()
         .navigationTitle("Beacon")
@@ -114,5 +114,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    BeaconHomeView()
 }

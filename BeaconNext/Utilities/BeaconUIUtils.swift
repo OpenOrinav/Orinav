@@ -1,7 +1,7 @@
 import SwiftUI
 import CoreLocation
 
-final class UIUtils {
+final class BeaconUIUtils {
     static func iconName(for typeCode: String?) -> String {
         guard let code = typeCode else { return "mappin.circle.fill" }
         let prefix4 = String(code.prefix(4))
@@ -77,3 +77,4 @@ final class UIUtils {
         }
     }
 }
+

@@ -2,7 +2,7 @@ import SwiftUI
 import AMapSearchKit
 import CoreLocation
 
-struct SearchView: View {
+struct BeaconSearchView: View {
     @State private var searchText: String = ""
     @FocusState private var isSearchFieldFocused: Bool
     @Binding var isPresented: Bool
@@ -70,9 +70,9 @@ struct SearchView: View {
             if !searchManager.lastSearchResults.isEmpty {
                 List(searchManager.lastSearchResults, id: \.uid) { poi in
                     HStack(alignment: .top, spacing: 16) {
-                        Image(systemName: UIUtils.iconName(for: poi.typecode))
+                        Image(systemName: BeaconUIUtils.iconName(for: poi.typecode))
                             .font(.system(size: 36))
-                            .foregroundColor(UIUtils.iconColor(for: poi.typecode))
+                            .foregroundColor(BeaconUIUtils.iconColor(for: poi.typecode))
                             .frame(width: 36, height: 36)
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 4) {
@@ -83,7 +83,7 @@ struct SearchView: View {
                             if let address = poi.address {
                                 if let geoPoint = poi.location,
                                    let dist = calculateDistance(to: geoPoint) {
-                                    Text("\(UIUtils.formattedDistance(dist)) · \(address)")
+                                    Text("\(BeaconUIUtils.formattedDistance(dist)) · \(address)")
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                         .lineLimit(1)

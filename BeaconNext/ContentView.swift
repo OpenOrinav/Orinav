@@ -4,7 +4,7 @@ struct ContentView: View {
     var body: some View {
         TabView {
             NavigationView {
-                HomeView()
+                BeaconHomeView()
             }
             .tabItem {
                 Image(systemName: "map")
@@ -12,7 +12,7 @@ struct ContentView: View {
             }
 
             NavigationView {
-                ExploreView()
+                BeaconExploreView()
             }
             .tabItem {
                 Image(systemName: "magnifyingglass")
@@ -20,7 +20,7 @@ struct ContentView: View {
             }
 
             NavigationView {
-                SettingsView()
+                BeaconSettingsView()
             }
             .tabItem {
                 Image(systemName: "gear")

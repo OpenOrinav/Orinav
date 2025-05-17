@@ -1,30 +1,32 @@
 import SwiftUI
 import AMapFoundationKit
+import AMapNaviKit
 import AMapSearchKit
 
-struct RouteCardView: View {
-    let path: AMapPath
+struct BeaconRouteCardView: View {
+    let route: AMapNaviRoute
+
+    @State private var isPresentingNavigation = false
 
     private var timeText: String {
-        let totalSeconds = Int(path.duration)
+        let totalSeconds = Int(route.routeTime)
         let hours = totalSeconds / 3600
         let minutes = (totalSeconds % 3600) / 60
         return "\(hours > 0 ? "\(hours) hr " : "")\(minutes) min"
     }
 
     private var distanceText: String {
-        if path.distance < 100 {
-            let rounded = (path.distance / 10) * 10
+        if route.routeLength < 100 {
+            let rounded = (route.routeLength / 10) * 10
             return "\(rounded) m"
         } else {
-            let km = Double(path.distance) / 1000.0
+            let km = Double(route.routeLength) / 1000.0
             return String(format: "%.1f km", km)
         }
     }
 
     private var subtitleText: String {
-        let turns = path.steps.count - 2 // Exclude start and end steps
-        return "\(distanceText) · \(turns) turns"
+        "\(distanceText) · \(route.routeSegmentCount) turns"
     }
 
     var body: some View {
@@ -40,7 +42,7 @@ struct RouteCardView: View {
             }
             Spacer()
             Button("GO") {
-                // TODO: start navigation for this route
+                isPresentingNavigation = true
             }
             .font(.body)
             .bold()
@@ -57,10 +59,13 @@ struct RouteCardView: View {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color(.systemBackground))
         )
+        .fullScreenCover(isPresented: $isPresentingNavigation) {
+            // TODO
+        }
     }
 }
 
-struct IconConnector: View {
+struct BeaconIconConnector: View {
     let topImage: Image
     let topColor: Color
     let bottomImage: Image
@@ -90,7 +95,7 @@ struct IconConnector: View {
     }
 }
 
-struct RouteSelectionView: View {
+struct BeaconRouteSelectionView: View {
     @Binding var from: AMapPOI?
     @Binding var destination: AMapPOI?
     @Binding var isPresented: Bool
@@ -98,8 +103,7 @@ struct RouteSelectionView: View {
     @State private var isShowingSearchForFrom = false
     @State private var isShowingSearchForDestination = false
     
-    @EnvironmentObject private var locationManager: BeaconLocationDelegateSimple
-    @EnvironmentObject private var searchManager: BeaconSearchDelegateSimple
+    @EnvironmentObject private var routePlanManager: BeaconRoutePlanDelegateSimple
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -110,11 +114,11 @@ struct RouteSelectionView: View {
             // From/destination selection
             VStack(spacing: 0) {
                 HStack(spacing: 12) {
-                    IconConnector(
-                        topImage: Image(systemName: from == nil ? "location.circle.fill" : UIUtils.iconName(for: from!.typecode)),
-                        topColor: from == nil ? .blue : UIUtils.iconColor(for: from!.typecode),
-                        bottomImage: Image(systemName: destination == nil ? "location.circle.fill" : UIUtils.iconName(for: destination!.typecode)),
-                        bottomColor: destination == nil ? .blue : UIUtils.iconColor(for: destination!.typecode)
+                    BeaconIconConnector(
+                        topImage: Image(systemName: from == nil ? "location.circle.fill" : BeaconUIUtils.iconName(for: from!.typecode)),
+                        topColor: from == nil ? .blue : BeaconUIUtils.iconColor(for: from!.typecode),
+                        bottomImage: Image(systemName: destination == nil ? "location.circle.fill" : BeaconUIUtils.iconName(for: destination!.typecode)),
+                        bottomColor: destination == nil ? .blue : BeaconUIUtils.iconColor(for: destination!.typecode)
                     )
                     VStack(spacing: 12) {
                         // From text
@@ -163,6 +167,7 @@ struct RouteSelectionView: View {
                             .frame(width: 24, height: 24)
                             .foregroundColor(.gray)
                     }
+                    .disabled(from == nil)
                     .accessibilityLabel("Swap start and destination")
                     .accessibilityHint("Double tap to swap your starting point and destination")
                     
@@ -174,34 +179,33 @@ struct RouteSelectionView: View {
             .cornerRadius(10)
             
             // Routes list
-            if searchManager.lastRouteSearchResults.isEmpty {
+            if routePlanManager.lastRoutes.isEmpty {
                 Text("No routes found")
                     .font(.headline)
                     .foregroundColor(.secondary)
             } else {
                 LazyVStack(spacing: 16) {
-                    ForEach(searchManager.lastRouteSearchResults, id: \.distance) { path in
-                        RouteCardView(path: path)
+                    ForEach(routePlanManager.lastRoutes, id: \.routeUID) { path in
+                        BeaconRouteCardView(route: path)
                     }
                 }
             }
         }
         .onAppear {
-            searchManager.resetRouteSearch()
             handleSearch()
         }
         .sheet(isPresented: $isShowingSearchForFrom) {
-            SearchView(
+            BeaconSearchView(
                 isPresented: $isShowingSearchForFrom,
-                showCurrentLocation: destination != nil // Prevent selection of from My Location to My Location
+                showCurrentLocation: true
             ) { poi in
                 from = poi
             }
         }
         .sheet(isPresented: $isShowingSearchForDestination) {
-            SearchView(
+            BeaconSearchView(
                 isPresented: $isShowingSearchForDestination,
-                showCurrentLocation: from != nil // Prevent selection of from My Location to My Location
+                // Never allow destination to be My Location
             ) { poi in
                 destination = poi
             }
@@ -224,11 +228,7 @@ struct RouteSelectionView: View {
     }
     
     private func handleSearch() {
-        searchManager
-            .searchWalkingRoute(
-                from: from,
-                to: destination,
-                currentLocation: locationManager.lastLocation == nil ? nil : AMapGeoPoint.location(withLatitude: locationManager.lastLocation!.coordinate.latitude, longitude: locationManager.lastLocation!.coordinate.longitude)
-            )
+        routePlanManager.reinit()
+        routePlanManager.planRoutes(from: from, to: destination!)
     }
 }

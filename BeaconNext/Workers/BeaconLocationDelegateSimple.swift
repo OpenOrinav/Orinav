@@ -33,7 +33,7 @@ class BeaconLocationDelegateSimple: NSObject, ObservableObject, AMapLocationMana
         
         // Speak welcome message
         DispatchQueue.main.async {
-            TTSService.shared.speak([
+            BeaconTTSService.shared.speak([
                 (text: "Welcome to Beacon.", language: "en-US")
             ])
         }
@@ -70,7 +70,7 @@ class BeaconLocationDelegateSimple: NSObject, ObservableObject, AMapLocationMana
     func speakAddress() {
         if lastAddress?.poiName != lastSpokenAddress {
             guard let lastAddress = lastAddress else { return }
-            TTSService.shared.speak([
+            BeaconTTSService.shared.speak([
                 (text: "You are currently at", language: "en-US"),
                 (text: lastAddress.poiName ?? "unknown location", language: "zh-CN")
             ])
@@ -83,7 +83,7 @@ class BeaconLocationDelegateSimple: NSObject, ObservableObject, AMapLocationMana
         if direction == lastSpokenDirection {
             return
         }
-        TTSService.shared.speak([
+        BeaconTTSService.shared.speak([
             (text: direction, language: "en-US")
         ])
         lastSpokenDirection = direction

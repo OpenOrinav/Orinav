@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ExploreView: View {
+struct BeaconExploreView: View {
     var body: some View {
         VStack {
             
@@ -11,5 +11,5 @@ struct ExploreView: View {
 }
 
 #Preview {
-    ExploreView()
+    BeaconExploreView()
 }

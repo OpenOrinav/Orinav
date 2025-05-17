@@ -1,8 +1,14 @@
 import SwiftUI
+import AMapSearchKit
 
 struct HomeView: View {
     @EnvironmentObject var locationManager: BeaconLocationDelegateSimple
+    
     @State private var isShowingSearch = false
+    
+    @State private var isShowingRoutes = false
+    @State private var from: AMapPOI? // If nil, use current location; otherwise, use the selected POI
+    @State private var destination: AMapPOI?
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
@@ -18,6 +24,7 @@ struct HomeView: View {
                         .frame(maxWidth: .infinity)
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("Current Location: \(locationManager.lastAddress?.poiName ?? "Loading...")")
+
                         Button(action: {
                             isShowingSearch = true
                         }) {
@@ -92,8 +99,13 @@ struct HomeView: View {
         }
         .sheet(isPresented: $isShowingSearch) {
             SearchView(isPresented: $isShowingSearch) { poi in
-                print(poi.name)
+                self.from = nil
+                self.destination = poi
+                self.isShowingRoutes = true
             }
+        }
+        .sheet(isPresented: $isShowingRoutes) {
+            RouteSelectionView(from: $from, destination: $destination, isPresented: $isShowingRoutes)
         }
         .padding()
         .navigationTitle("Beacon")

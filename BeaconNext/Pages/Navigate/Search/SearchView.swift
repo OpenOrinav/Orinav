@@ -5,7 +5,8 @@ import CoreLocation
 struct SearchView: View {
     @State private var searchText: String = ""
     @FocusState private var isSearchFieldFocused: Bool
-    @Environment(\.dismiss) private var dismiss
+    @Binding var isPresented: Bool
+    var onSelect: (AMapPOI) -> Void
     
     @EnvironmentObject private var locationManager: BeaconLocationDelegateSimple
     @EnvironmentObject private var searchManager: BeaconSearchDelegateSimple
@@ -152,7 +153,8 @@ struct SearchView: View {
                     .padding(.vertical, 4)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        // TODO
+                        onSelect(poi)
+                        isPresented = false
                     }
                 }
                 .listStyle(.plain)
@@ -161,13 +163,13 @@ struct SearchView: View {
             }
         }
         .accessibilityAction(.escape) {
-            dismiss()
+            isPresented = false
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .padding()
         .overlay(
             Button {
-                dismiss()
+                isPresented = false
             } label: {
                 EmptyView()
             }
@@ -187,8 +189,4 @@ struct SearchView: View {
         }
         self.searchManager.search(request)
     }
-}
-
-#Preview {
-    SearchView()
 }

@@ -22,6 +22,5 @@ class BeaconSearchDelegateSimple: NSObject, ObservableObject, AMapSearchDelegate
     func onPOISearchDone(_ request: AMapPOISearchBaseRequest!, response: AMapPOISearchResponse!) {
         guard let pois = response.pois else { return }
         self.lastSearchResults = pois
-        print(pois)
     }
 }

@@ -228,7 +228,6 @@ struct BeaconRouteSelectionView: View {
     }
     
     private func handleSearch() {
-        routePlanManager.reinit()
         routePlanManager.planRoutes(from: from, to: destination!)
     }
 }

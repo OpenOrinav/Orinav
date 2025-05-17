@@ -2,7 +2,7 @@ platform :ios, '18.0'
 target 'BeaconNext' do
   pod 'AMapLocation-NO-IDFA'
   pod 'AMapSearch-NO-IDFA'
-  pod 'AMapNavi-NO-IDFA'
+  pod 'AMapNavi-NO-IDFA', '~> 10.0.600'
 end
 
 post_install do

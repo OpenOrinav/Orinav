@@ -2,18 +2,12 @@ import AMapNaviKit
 import AMapSearchKit
 
 class BeaconRoutePlanDelegateSimple: NSObject, ObservableObject, AMapNaviWalkManagerDelegate {
-    var walkManager: AMapNaviWalkManager
+    let walkManager: AMapNaviWalkManager
     @Published var lastRoutes: [AMapNaviRoute] = []
     
     override init() {
         self.walkManager = AMapNaviWalkManager.sharedInstance()
         super.init()
-        self.walkManager.delegate = self
-    }
-    
-    func reinit() {
-        AMapNaviWalkManager.destroyInstance()
-        self.walkManager = AMapNaviWalkManager.sharedInstance()
         self.walkManager.delegate = self
     }
     
@@ -25,10 +19,13 @@ class BeaconRoutePlanDelegateSimple: NSObject, ObservableObject, AMapNaviWalkMan
         }
         let endPOIInfo = AMapNaviPOIInfo()
         endPOIInfo.mid = to.uid
+        print("Tried to calculate route")
         walkManager.calculateWalkRoute(withStart: from == nil ? nil : startPOIInfo, end: endPOIInfo, strategy: .multipleDefault)
     }
     
-    func walkManager(onCalculateRouteSuccess manager: AMapNaviWalkManager) {
-        lastRoutes = manager.naviRoutes().map { $0.value }
+    func walkManager(onCalculateRouteSuccess: AMapNaviWalkManager) {
+        // FIXME Somehow this callback isn't fired and I cannot for the life of me figure out what's wrong
+        print("Success")
+        lastRoutes = onCalculateRouteSuccess.naviRoutes().map { $0.value }
     }
 }

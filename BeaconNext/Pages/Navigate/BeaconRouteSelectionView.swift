@@ -102,8 +102,7 @@ struct BeaconRouteSelectionView: View {
     
     @State private var isShowingSearchForFrom = false
     @State private var isShowingSearchForDestination = false
-    
-    @EnvironmentObject private var routePlanManager: BeaconRoutePlanDelegateSimple
+
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -179,17 +178,17 @@ struct BeaconRouteSelectionView: View {
             .cornerRadius(10)
             
             // Routes list
-            if routePlanManager.lastRoutes.isEmpty {
-                Text("No routes found")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
-            } else {
-                LazyVStack(spacing: 16) {
-                    ForEach(routePlanManager.lastRoutes, id: \.routeUID) { path in
-                        BeaconRouteCardView(route: path)
-                    }
-                }
-            }
+//            if routePlanManager.lastRoutes.isEmpty {
+//                Text("No routes found")
+//                    .font(.headline)
+//                    .foregroundColor(.secondary)
+//            } else {
+//                LazyVStack(spacing: 16) {
+//                    ForEach(routePlanManager.lastRoutes, id: \.routeUID) { path in
+//                        BeaconRouteCardView(route: path)
+//                    }
+//                }
+//            }
         }
         .onAppear {
             handleSearch()
@@ -228,6 +227,5 @@ struct BeaconRouteSelectionView: View {
     }
     
     private func handleSearch() {
-        routePlanManager.planRoutes(from: from, to: destination!)
     }
 }

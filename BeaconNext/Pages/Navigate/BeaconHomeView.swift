@@ -104,9 +104,9 @@ struct BeaconHomeView: View {
                 self.isShowingRoutes = true
             }
         }
-//        .sheet(isPresented: $isShowingRoutes) {
-//            BeaconNavigationView(from: $from, destination: $destination, isPresented: //$isShowingRoutes)
-//        }
+        .sheet(isPresented: $isShowingRoutes) {
+            BeaconRouteSelectionView(from: $from, destination: $destination, isPresented: $isShowingRoutes)
+        }
         .padding()
         .navigationTitle("Beacon")
         .navigationBarTitleDisplayMode(.large)

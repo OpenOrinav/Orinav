@@ -1,10 +1,10 @@
 import SwiftUI
 import QMapKit
 import CoreLocation
-import Combine
 
 struct BeaconSearchView: View {
     @State private var searchText: String = ""
+    @State private var debounceWorkItem: DispatchWorkItem?
     @FocusState private var isSearchFieldFocused: Bool
     @Binding var isPresented: Bool
     var showCurrentLocation: Bool = false
@@ -29,17 +29,22 @@ struct BeaconSearchView: View {
                     .foregroundColor(.secondary)
                     .accessibilityHidden(true)
                 TextField("Search for a place or address", text: $searchText)
+                    .onChange(of: searchText) {
+                        debounceWorkItem?.cancel()
+                        guard searchText.count >= 1 else {
+                            searchManager.resetSearch()
+                            return
+                        }
+                        let work = DispatchWorkItem {
+                            performSearch(searchText)
+                        }
+                        debounceWorkItem = work
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: work)
+                    }
                     .focused($isSearchFieldFocused)
                     .accessibilityLabel("Search for a place or address")
                     .accessibilityAddTraits(.isSearchField)
                     .accessibilityHint("Type to search for a place or address")
-                    .onReceive(
-                        Just(searchText)
-                            .debounce(for: .milliseconds(400), scheduler: RunLoop.main)
-                            .removeDuplicates()
-                    ) { text in
-                        performSearch(text)
-                    }
             }
             .onAppear {
                 isSearchFieldFocused = true

@@ -1,8 +1,7 @@
 platform :ios, '18.0'
 target 'BeaconNext' do
-  pod 'AMapLocation-NO-IDFA'
-  pod 'AMapSearch-NO-IDFA'
-  pod 'AMapNavi-NO-IDFA', '~> 10.0.600'
+  pod 'TencentNavKit', '6.12.0'
+  pod 'libwebp'
 end
 
 post_install do

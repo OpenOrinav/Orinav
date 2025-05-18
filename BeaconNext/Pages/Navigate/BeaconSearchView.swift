@@ -1,5 +1,5 @@
 import SwiftUI
-import AMapSearchKit
+import QMapKit
 import CoreLocation
 
 struct BeaconSearchView: View {
@@ -7,16 +7,16 @@ struct BeaconSearchView: View {
     @FocusState private var isSearchFieldFocused: Bool
     @Binding var isPresented: Bool
     var showCurrentLocation: Bool = false
-    var onSelect: (AMapPOI?) -> Void
+    var onSelect: (QMSPoiData?) -> Void
     
     @EnvironmentObject private var locationManager: BeaconLocationDelegateSimple
     @EnvironmentObject private var searchManager: BeaconSearchDelegateSimple
     
-    private func calculateDistance(to geoPoint: AMapGeoPoint) -> CLLocationDistance? {
+    private func calculateDistance(to coord: CLLocationCoordinate2D) -> CLLocationDistance? {
         guard let userLocation = locationManager.lastLocation else { return nil }
         let poiLocation = CLLocation(
-            latitude: geoPoint.latitude,
-            longitude: geoPoint.longitude
+            latitude: coord.latitude,
+            longitude: coord.longitude
         )
         return userLocation.distance(from: poiLocation)
     }
@@ -68,33 +68,29 @@ struct BeaconSearchView: View {
             }
             
             if !searchManager.lastSearchResults.isEmpty {
-                List(searchManager.lastSearchResults, id: \.uid) { poi in
+                List(searchManager.lastSearchResults, id: \.id_) { poi in
                     HStack(alignment: .top, spacing: 16) {
-                        Image(systemName: BeaconUIUtils.iconName(for: poi.typecode))
+                        Image(systemName: BeaconUIUtils.iconName(for: poi.category_code))
                             .font(.system(size: 36))
-                            .foregroundColor(BeaconUIUtils.iconColor(for: poi.typecode))
+                            .foregroundColor(BeaconUIUtils.iconColor(for: poi.category_code))
                             .frame(width: 36, height: 36)
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 4) {
-                            if let name = poi.name {
-                                Text(name)
-                                    .font(.headline)
-                            }
-                            if let address = poi.address {
-                                if let geoPoint = poi.location,
-                                   let dist = calculateDistance(to: geoPoint) {
-                                    Text("\(BeaconUIUtils.formattedDistance(dist)) · \(address)")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                        .lineLimit(1)
-                                        .truncationMode(.tail)
-                                } else {
-                                    Text(address)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                        .lineLimit(1)
-                                        .truncationMode(.tail)
-                                }
+                            Text(poi.title)
+                                .font(.headline)
+                            if locationManager.lastLocation != nil,
+                               let dist = calculateDistance(to: poi.location) {
+                                Text("\(BeaconUIUtils.formattedDistance(dist)) · \(poi.address)")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                                    .truncationMode(.tail)
+                            } else {
+                                Text(poi.address)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                                    .truncationMode(.tail)
                             }
                         }
                     }
@@ -127,14 +123,9 @@ struct BeaconSearchView: View {
     }
     
     private func handleSearch() {
-        let request = AMapPOIKeywordsSearchRequest()
-        request.keywords = searchText
-        if let location = locationManager.lastLocation {
-            request.location = AMapGeoPoint.location(
-                withLatitude: location.coordinate.latitude,
-                longitude: location.coordinate.longitude
-            )
-        }
-        self.searchManager.searchPOIByKeywords(request)
+        self.searchManager
+            .searchPOIByKeywords(
+                searchText,
+                center: locationManager.lastLocation?.coordinate)
     }
 }

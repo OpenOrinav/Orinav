@@ -1,23 +1,33 @@
 import Foundation
-import AMapSearchKit
+import QMapKit
 
-class BeaconSearchDelegateSimple: NSObject, ObservableObject, AMapSearchDelegate {
-    private let searchManager: AMapSearchAPI
+class BeaconSearchDelegateSimple: NSObject, ObservableObject, QMSSearchDelegate {
+    private let searchManager: QMSSearcher
     
     override init() {
-        self.searchManager = AMapSearchAPI()
+        self.searchManager = QMSSearcher()
         super.init()
         self.searchManager.delegate = self
     }
     
-    @Published var lastSearchResults: [AMapPOI] = []
-    func searchPOIByKeywords(_ request: AMapPOIKeywordsSearchRequest) {
-        searchManager.aMapPOIKeywordsSearch(request)
+    @Published var lastSearchResults: [QMSPoiData] = []
+    func searchPOIByKeywords(_ keyword: String, center: CLLocationCoordinate2D?) {
+        let option = QMSPoiSearchOption()
+        option.keyword = keyword
+        option.added_fields = "category_code"
+        if let center = center {
+            option.setBoundaryByNearbyWithCenter(center, radius: 1000, autoExtend: true)
+        }
+        self.searchManager.searchWithPoiSearchOption(option)
     }
-
-    func onPOISearchDone(_ request: AMapPOISearchBaseRequest!, response: AMapPOISearchResponse!) {
-        guard let pois = response.pois else { return }
-        lastSearchResults = pois
+    
+    func search(
+        with poiSearchOption: QMSPoiSearchOption,
+        didReceive poiSearchResult: QMSPoiSearchResult
+    ) {
+        DispatchQueue.main.async {
+            self.lastSearchResults = poiSearchResult.dataArray
+        }
     }
     
     func resetSearch() {

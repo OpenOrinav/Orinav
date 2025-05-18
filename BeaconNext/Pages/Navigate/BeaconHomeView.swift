@@ -1,5 +1,5 @@
 import SwiftUI
-import AMapSearchKit
+import QMapKit
 
 struct BeaconHomeView: View {
     @EnvironmentObject var locationManager: BeaconLocationDelegateSimple
@@ -7,8 +7,8 @@ struct BeaconHomeView: View {
     @State private var isShowingSearch = false
     
     @State private var isShowingRoutes = false
-    @State private var from: AMapPOI? // If nil, use current location; otherwise, use the selected POI
-    @State private var destination: AMapPOI?
+    @State private var from: QMSPoiData? // If nil, use current location; otherwise, use the selected POI
+    @State private var destination: QMSPoiData?
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
@@ -18,12 +18,12 @@ struct BeaconHomeView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "location.fill")
                                 .accessibilityHidden(true)
-                            Text(locationManager.lastAddress?.poiName ?? "Loading...") // Current Location
+                            Text(locationManager.lastAddress ?? "Loading...") // Current Location
                                 .font(.headline)
                         }
                         .frame(maxWidth: .infinity)
                         .accessibilityElement(children: .combine)
-                        .accessibilityLabel("Current Location: \(locationManager.lastAddress?.poiName ?? "Loading...")")
+                        .accessibilityLabel("Current Location: \(locationManager.lastAddress ?? "Loading...")")
 
                         Button(action: {
                             isShowingSearch = true
@@ -104,9 +104,9 @@ struct BeaconHomeView: View {
                 self.isShowingRoutes = true
             }
         }
-        .sheet(isPresented: $isShowingRoutes) {
-            BeaconRouteSelectionView(from: $from, destination: $destination, isPresented: $isShowingRoutes)
-        }
+//        .sheet(isPresented: $isShowingRoutes) {
+//            BeaconNavigationView(from: $from, destination: $destination, isPresented: //$isShowingRoutes)
+//        }
         .padding()
         .navigationTitle("Beacon")
         .navigationBarTitleDisplayMode(.large)

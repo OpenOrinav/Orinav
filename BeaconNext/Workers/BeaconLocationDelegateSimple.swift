@@ -47,6 +47,8 @@ class BeaconLocationDelegateSimple: NSObject, ObservableObject, TencentLBSLocati
             let directions = ["North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"]
             let index = Int((degrees + 22.5) / 45) & 7
             let dir = directions[index]
+            
+            // FIXME This isn't triggering as much as I would like
             self.speakFacingDirection(direction: dir)
         }
     }

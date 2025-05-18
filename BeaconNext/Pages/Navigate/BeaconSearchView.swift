@@ -1,6 +1,7 @@
 import SwiftUI
 import QMapKit
 import CoreLocation
+import Combine
 
 struct BeaconSearchView: View {
     @State private var searchText: String = ""
@@ -32,8 +33,12 @@ struct BeaconSearchView: View {
                     .accessibilityLabel("Search for a place or address")
                     .accessibilityAddTraits(.isSearchField)
                     .accessibilityHint("Type to search for a place or address")
-                    .onChange(of: searchText) {
-                        handleSearch()
+                    .onReceive(
+                        Just(searchText)
+                            .debounce(for: .milliseconds(400), scheduler: RunLoop.main)
+                            .removeDuplicates()
+                    ) { text in
+                        performSearch(text)
                     }
             }
             .onAppear {
@@ -122,10 +127,15 @@ struct BeaconSearchView: View {
         )
     }
     
-    private func handleSearch() {
-        self.searchManager
-            .searchPOIByKeywords(
-                searchText,
-                center: locationManager.lastLocation?.coordinate)
+    private func performSearch(_ text: String) {
+        guard text.count >= 1 else {
+            // clear results if too short
+            searchManager.resetSearch()
+            return
+        }
+        searchManager.searchPOIByKeywords(
+            text,
+            center: locationManager.lastLocation?.coordinate
+        )
     }
 }

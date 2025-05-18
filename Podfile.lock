@@ -1,30 +1,46 @@
 PODS:
-  - AMapFoundation-NO-IDFA (1.8.2)
-  - AMapLocation-NO-IDFA (2.10.0):
-    - AMapFoundation-NO-IDFA (>= 1.8.0)
-  - AMapNavi-NO-IDFA (10.0.900):
-    - AMapFoundation-NO-IDFA (>= 1.8.2)
-  - AMapSearch-NO-IDFA (9.7.4):
-    - AMapFoundation-NO-IDFA (>= 1.8.0)
+  - libwebp (1.5.0):
+    - libwebp/demux (= 1.5.0)
+    - libwebp/mux (= 1.5.0)
+    - libwebp/sharpyuv (= 1.5.0)
+    - libwebp/webp (= 1.5.0)
+  - libwebp/demux (1.5.0):
+    - libwebp/webp
+  - libwebp/mux (1.5.0):
+    - libwebp/demux
+  - libwebp/sharpyuv (1.5.0)
+  - libwebp/webp (1.5.0):
+    - libwebp/sharpyuv
+  - TencentNavKit (6.12.0):
+    - TencentNavKit/TencentNavKit (= 6.12.0)
+    - TencentNavKit/TencentNavLocationKit (= 6.12.0)
+    - TencentNavKit/TencentNavMapFoundationKit (= 6.12.0)
+    - TencentNavKit/TencentNavMapKit (= 6.12.0)
+    - TencentNavKit/TNKAudioPlayer (= 6.12.0)
+  - TencentNavKit/TencentNavKit (6.12.0):
+    - TencentNavKit/TencentNavLocationKit
+    - TencentNavKit/TencentNavMapKit
+  - TencentNavKit/TencentNavLocationKit (6.12.0):
+    - TencentNavKit/TencentNavMapFoundationKit
+  - TencentNavKit/TencentNavMapFoundationKit (6.12.0)
+  - TencentNavKit/TencentNavMapKit (6.12.0):
+    - TencentNavKit/TencentNavMapFoundationKit
+  - TencentNavKit/TNKAudioPlayer (6.12.0):
+    - TencentNavKit/TencentNavKit
 
 DEPENDENCIES:
-  - AMapLocation-NO-IDFA
-  - AMapNavi-NO-IDFA (~> 10.0.600)
-  - AMapSearch-NO-IDFA
+  - libwebp
+  - TencentNavKit (= 6.12.0)
 
 SPEC REPOS:
   trunk:
-    - AMapFoundation-NO-IDFA
-    - AMapLocation-NO-IDFA
-    - AMapNavi-NO-IDFA
-    - AMapSearch-NO-IDFA
+    - libwebp
+    - TencentNavKit
 
 SPEC CHECKSUMS:
-  AMapFoundation-NO-IDFA: 6ce0ef596d4eb8d934ff498e56747b6de1247b05
-  AMapLocation-NO-IDFA: 735791aeb1ba52dff666e4158b86caf4b68b5be7
-  AMapNavi-NO-IDFA: bbfb7bd2d60161b87073429f405028be81add657
-  AMapSearch-NO-IDFA: 53b2193244be8f07f3be0a4d5161200236960587
+  libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
+  TencentNavKit: 00e941fe7da653739aeb62dc258ed85420d278e0
 
-PODFILE CHECKSUM: 2b02e17c400ec3295b44026a0545d4770bb731ef
+PODFILE CHECKSUM: 6986386a6f3c3d384081febb13b989b55096e13f
 
 COCOAPODS: 1.16.2

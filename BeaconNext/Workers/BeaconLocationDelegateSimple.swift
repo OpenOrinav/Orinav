@@ -1,86 +1,77 @@
-import AMapLocationKit
+import QMapKit
+import TencentNavKit
 import CoreLocation
 
-class BeaconLocationDelegateSimple: NSObject, ObservableObject, AMapLocationManagerDelegate, CLLocationManagerDelegate {
+class BeaconLocationDelegateSimple: NSObject, ObservableObject, TencentLBSLocationManagerDelegate {
     @Published var lastLocation: CLLocation?
-    @Published var lastAddress: AMapLocationReGeocode?
+    @Published var lastAddress: String?
     
-    private var locationManager: AMapLocationManager
-    private var headingManager: CLLocationManager
+    private var locationManager: TencentLBSLocationManager
     
     override init() {
-        guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "AmapAPIKey") as? String else {
-            fatalError("Missing AmapAPIKey in Info.plist")
+        guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "TencentAPIKey") as? String else {
+            fatalError("Missing TencentAPIKey in Info.plist")
         }
-        AMapServices.shared().apiKey = apiKey
+        QMapServices.shared().setPrivacyAgreement(true)
+        TNKNavServices.shared().setPrivacyAgreement(true)
+        self.locationManager = TencentLBSLocationManager()
         
-        // For development only
-        AMapLocationManager.updatePrivacyShow(.didShow, privacyInfo: .didContain)
-        AMapLocationManager.updatePrivacyAgree(.didAgree)
+        QMapServices.shared().apiKey = apiKey
+        TNKNavServices.shared().key = apiKey
+        self.locationManager.apiKey = apiKey
+        self.locationManager.pausesLocationUpdatesAutomatically = false
+        self.locationManager.requestLevel = .name
         
-        self.locationManager = AMapLocationManager()
-        self.headingManager = CLLocationManager()
+        let cl = CLLocationManager()
+        if (cl.authorizationStatus == .notDetermined) {
+            self.locationManager.requestWhenInUseAuthorization()
+        }
+        
         super.init()
-
         self.locationManager.delegate = self
-        self.locationManager.locatingWithReGeocode = true
+        self.locationManager.headingFilter = 10
+        self.locationManager.startUpdatingHeading()
         self.locationManager.startUpdatingLocation()
-
-
-        self.headingManager.delegate = self
-        self.headingManager.headingFilter = 20
-        self.headingManager.startUpdatingHeading()
-        
-        // Speak welcome message
-        DispatchQueue.main.async {
-            BeaconTTSService.shared.speak([
-                (text: "Welcome to Beacon.", language: "en-US")
-            ])
-        }
     }
     
-    
-    // MARK: - Location delegate
-    func amapLocationManager(_ manager: AMapLocationManager!, didUpdate location: CLLocation!, reGeocode: AMapLocationReGeocode!) {
+    func tencentLBSLocationManager(
+        _ manager: TencentLBSLocationManager,
+        didUpdate location: TencentLBSLocation
+    ) {
         DispatchQueue.main.async {
-            self.lastLocation = location
-            if let reGeocode = reGeocode {
-                self.speakAddress()
-                self.lastAddress = reGeocode
-            }
-        }
-    }
-    
-    // MARK: - Heading delegate
-    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
-        // Map heading (0–360) to eight compass points
-        let degrees = newHeading.magneticHeading
-        let directions = ["North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"]
-        let index = Int((degrees + 22.5) / 45) & 7
-        let dir = directions[index]
-        DispatchQueue.main.async {
+            self.lastLocation = location.location
+            self.lastAddress = location.name
+            self.speakAddress()
+            
+            let degrees = location.direction
+            let directions = ["North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"]
+            let index = Int((degrees + 22.5) / 45) & 7
+            let dir = directions[index]
             self.speakFacingDirection(direction: dir)
         }
     }
     
+    
     // MARK: - Speaking
     private var lastSpokenAddress: String?
     private var lastSpokenDirection: String?
+    private var isFirstWord = true // Arbitrarily delay speaking the direction
     
     func speakAddress() {
-        if lastAddress?.poiName != lastSpokenAddress {
+        if lastAddress != lastSpokenAddress {
             guard let lastAddress = lastAddress else { return }
             BeaconTTSService.shared.speak([
                 (text: "You are currently at", language: "en-US"),
-                (text: lastAddress.poiName ?? "unknown location", language: "zh-CN")
+                (text: lastAddress, language: "zh-CN")
             ])
-            lastSpokenAddress = lastAddress.poiName
+            lastSpokenAddress = lastAddress
+            isFirstWord = false
         }
     }
     
     // MARK: - Heading Delegate
     func speakFacingDirection(direction: String) {
-        if direction == lastSpokenDirection {
+        if direction == lastSpokenDirection || isFirstWord {
             return
         }
         BeaconTTSService.shared.speak([

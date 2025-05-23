@@ -11,4 +11,5 @@ Maybe... we can do something?
 1. Clone the repository.
 2. Run `pod install`. (Due to size constraints, we added `Pods` to `.gitignore`)
 3. Open `BeaconNext.xcworkspace` in Xcode. Do not open `BeaconNext.xcodeproj`.
-4. Build and run. (Development is typically done on a test device or iOS emulator)
+4. Create `BeaconNext/Configs/Secrets.xcconfig`. Put `TENCENT_API_KEY={key}` there.
+5. Build and run. (Development is typically done on a test device or iOS emulator)

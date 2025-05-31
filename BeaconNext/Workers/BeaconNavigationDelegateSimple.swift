@@ -3,10 +3,11 @@ import TencentNavKit
 import TNKAudioPlayer
 
 class BeaconNavigationDelegateSimple: NSObject, ObservableObject, TNKWalkNavDelegate, TNKWalkNavDataSource, TNKWalkNavViewDelegate {
-    let navManager = TNKWalkNavManager.sharedInstance()
+    let navManager: TNKWalkNavManager
     var navView: TNKWalkNavView?
     
     override init() {
+        navManager = TNKWalkNavManager.sharedInstance()
         super.init()
         navManager.audioPlayer = TNKAudioPlayer.shared()
         navManager.register(self)

@@ -5,11 +5,6 @@ class BeaconSearchDelegateSimple: NSObject, ObservableObject, QMSSearchDelegate 
     private let searchManager: QMSSearcher
     
     override init() {
-        guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "TencentAPIKey") as? String else {
-            fatalError("Missing TencentAPIKey in Info.plist")
-        }
-        QMSSearchServices.shared().apiKey = apiKey
-        
         self.searchManager = QMSSearcher()
         super.init()
         self.searchManager.delegate = self

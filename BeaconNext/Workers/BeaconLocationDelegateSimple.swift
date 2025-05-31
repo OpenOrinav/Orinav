@@ -8,16 +8,8 @@ class BeaconLocationDelegateSimple: NSObject, ObservableObject, TencentLBSLocati
     
     private var locationManager: TencentLBSLocationManager
     
-    override init() {
-        guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "TencentAPIKey") as? String else {
-            fatalError("Missing TencentAPIKey in Info.plist")
-        }
-        QMapServices.shared().setPrivacyAgreement(true)
-        TNKNavServices.shared().setPrivacyAgreement(true)
+    init(_ apiKey: String) {
         self.locationManager = TencentLBSLocationManager()
-        
-        QMapServices.shared().apiKey = apiKey
-        TNKNavServices.shared().key = apiKey
         self.locationManager.apiKey = apiKey
         self.locationManager.pausesLocationUpdatesAutomatically = false
         self.locationManager.requestLevel = .name

@@ -62,7 +62,7 @@ struct BeaconRouteCardView: View {
                 .fill(Color(.systemBackground))
         )
         .fullScreenCover(isPresented: $isPresentingNavigation) {
-            BeaconNavigationView(navManager: navManager, selectedRoute: route)
+            BeaconNavigationContainerView(navManager: navManager, selectedRoute: route)
                 .edgesIgnoringSafeArea(.all)
         }
     }

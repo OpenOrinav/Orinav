@@ -9,14 +9,11 @@ struct BeaconNavigationContainerView: View {
     @State private var isInExploreMode = false
 
     var body: some View {
-        ZStack {
-            if isInExploreMode {
+        BeaconNavigationView(navManager: navManager, selectedRoute: selectedRoute)
+            .edgesIgnoringSafeArea(.all)
+            .fullScreenCover(isPresented: $isInExploreMode) {
                 BeaconExploreView()
-            } else {
-                BeaconNavigationView(navManager: navManager, selectedRoute: selectedRoute)
-                    .edgesIgnoringSafeArea(.all)
             }
-        }
         .onReceive(motionManager.$isPhoneRaised) { raised in
             withAnimation {
                 isInExploreMode = raised

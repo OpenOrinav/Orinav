@@ -4,9 +4,6 @@ import UIKit
 import Accelerate
 import Metal
 
-/// An optimized detector that fuses semantic segmentation (TopFormer) and disparity (MiDaS)
-/// to identify nearby obstacles in a CGImage. Implements Algorithm 1 with flat buffers,
-/// Accelerate upsampling, and a two-pass union-find connected-component labeling.
 class BeaconObstacleDetector: ObservableObject {
     // MARK: - Configuration
     
@@ -51,6 +48,11 @@ class BeaconObstacleDetector: ObservableObject {
     // MARK: - Metal
     private let metalDevice: MTLDevice? = MTLCreateSystemDefaultDevice()
     private let argmaxPipeline: MTLComputePipelineState?
+    private let ccPipeline: MTLComputePipelineState?
+    
+    private var semLabelBuffer: MTLBuffer!
+    private var labelBufferA: MTLBuffer!
+    private var labelBufferB: MTLBuffer!
     
     init() {
         if let device = metalDevice,
@@ -64,6 +66,27 @@ class BeaconObstacleDetector: ObservableObject {
         } else {
             fatalError("Metal device or pipeline creation failed")
         }
+        
+        if let device = metalDevice,
+           let defaultLibrary = device.makeDefaultLibrary(),
+           let kernelFunc = defaultLibrary.makeFunction(name: "ccLabelPass") {
+            ccPipeline = try! device.makeComputePipelineState(function: kernelFunc)
+        } else {
+            fatalError("Failed to create CCL pipeline")
+        }
+        
+        semLabelBuffer = metalDevice!.makeBuffer(
+            length: segPixels * MemoryLayout<Int32>.stride,
+            options: .storageModeShared
+        )
+        labelBufferA = metalDevice!.makeBuffer(
+            length: segPixels * MemoryLayout<Int>.stride,
+            options: .storageModeShared
+        )
+        labelBufferB = metalDevice!.makeBuffer(
+            length: segPixels * MemoryLayout<Int>.stride,
+            options: .storageModeShared
+        )
     }
     
     // MARK: - UI Update
@@ -109,19 +132,141 @@ class BeaconObstacleDetector: ObservableObject {
         }
         
         // 2. Run TopFormer (segmentation)
-        profileStart("TopFormer")
         guard let segOutput = try? topFormer.prediction(input_image: segBuffer) else {
             return nil
         }
         let segmentation = computeArgmax(semMap: segOutput.var_1347)  // [262144]
+        guard let segmentation = segmentation else {
+            return nil
+        }
         
         // 3. Run MiDaS (disparity)
         guard let depthOutput = try? miDaS.prediction(x_1: depthBuffer) else {
             return nil
         }
-        let dispArray = depthOutput.var_1438ShapedArray  // [1,256,256]
+        let dispArray = depthOutput.var_1438  // [1,256,256]
         
-        return nil
+        
+        // 3.1 Upsample disparity from 256×256 to 512×512 using vImage
+        // Extract and use raw 256×256 float buffer via withUnsafeMutableBytes
+        var dispUpsampled = [Float](repeating: 0, count: segPixels)
+        dispArray.withUnsafeMutableBytes { rawBuffer, _ in
+            let dispPtr = rawBuffer.bindMemory(to: Float.self).baseAddress!
+            var srcBuffer = vImage_Buffer(data: UnsafeMutableRawPointer(mutating: dispPtr),
+                                          height: vImagePixelCount(depthHeight),
+                                          width: vImagePixelCount(depthWidth),
+                                          rowBytes: depthWidth * MemoryLayout<Float>.stride)
+            // Use withUnsafeMutableBufferPointer for destination
+            dispUpsampled.withUnsafeMutableBufferPointer { destPtr in
+                var dstBuffer = vImage_Buffer(data: destPtr.baseAddress!,
+                                              height: vImagePixelCount(segHeight),
+                                              width: vImagePixelCount(segWidth),
+                                              rowBytes: segWidth * MemoryLayout<Float>.stride)
+                vImageScale_PlanarF(&srcBuffer, &dstBuffer, nil, vImage_Flags(kvImageHighQualityResampling))
+            }
+        }
+        
+        guard let device = metalDevice,
+              let pipeline = ccPipeline,
+              let commandQueue = device.makeCommandQueue()
+        else {
+            return nil
+        }
+        
+        let semLabelsPtr = semLabelBuffer.contents().bindMemory(to: Int32.self, capacity: segPixels)
+        for i in 0..<segPixels {
+            semLabelsPtr[i] = segmentation[i]
+        }
+
+        let initialLabelsPtr = labelBufferA.contents().bindMemory(to: Int.self, capacity: segPixels)
+        for i in 0..<segPixels {
+            initialLabelsPtr[i] = i
+        }
+
+        let iterations = 10
+        for _ in 0..<iterations {
+            guard let commandBuffer = commandQueue.makeCommandBuffer(),
+                  let encoder = commandBuffer.makeComputeCommandEncoder()
+            else {
+                return nil
+            }
+            encoder.setComputePipelineState(pipeline)
+            encoder.setBuffer(semLabelBuffer, offset: 0, index: 0)
+            encoder.setBuffer(labelBufferA,   offset: 0, index: 1)
+            encoder.setBuffer(labelBufferB,   offset: 0, index: 2)
+            
+            var w: UInt32 = UInt32(segWidth)
+            var h: UInt32 = UInt32(segHeight)
+            var c: UInt32 = UInt32(classes)
+            encoder.setBytes(&w, length: MemoryLayout<UInt32>.stride, index: 3)
+            encoder.setBytes(&h, length: MemoryLayout<UInt32>.stride, index: 4)
+            encoder.setBytes(&c, length: MemoryLayout<UInt32>.stride, index: 5)
+            
+            let pixels = segPixels
+            let threadsPerThreadgroup = MTLSize(width: 256, height: 1, depth: 1)
+            let threadgroups = MTLSize(width: (pixels + 255) / 256, height: 1, depth: 1)
+            encoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup: threadsPerThreadgroup)
+            encoder.endEncoding()
+            commandBuffer.commit()
+            commandBuffer.waitUntilCompleted()
+            
+            swap(&labelBufferA, &labelBufferB)
+        }
+        
+        var finalLabels = [Int](repeating: 0, count: segPixels)
+        let finalPtr = labelBufferA.contents().bindMemory(to: Int.self, capacity: segPixels)
+        for i in 0..<segPixels {
+            finalLabels[i] = finalPtr[i]
+        }
+        
+        // 4. Now compute per-component max disparity and classThe same as before:
+        var maxDisp = [Float](repeating: -Float.greatestFiniteMagnitude, count: segPixels)
+        var classLabel = [Int32](repeating: -1, count: segPixels)
+        let globalMaxDisp = dispUpsampled.max() ?? 0
+        let threshold = thresholdDisparity * globalMaxDisp
+        
+        for i in 0..<segPixels {
+            let root = finalLabels[i]
+            let label = segmentation[i]
+            let d = dispUpsampled[i]
+            if classLabel[root] < 0 {
+                classLabel[root] = label
+            }
+            if d > maxDisp[root] {
+                maxDisp[root] = d
+            }
+        }
+        
+        var valid = [Bool](repeating: false, count: segPixels)
+        for i in 0..<segPixels {
+            // Only check actual roots
+            if finalLabels[i] == i {
+                if classLabel[i] != 52 && maxDisp[i] > threshold {
+                    valid[i] = true
+                }
+            }
+        }
+        
+        // Build output mask
+        let maskBytes = UnsafeMutablePointer<UInt8>.allocate(capacity: segPixels)
+        for i in 0..<segPixels {
+            let root = finalLabels[i]
+            maskBytes[i] = valid[root] ? 255 : 0
+        }
+        let grayColorSpace = CGColorSpaceCreateDeviceGray()
+        let context = CGContext(data: maskBytes,
+                                width: segWidth,
+                                height: segHeight,
+                                bitsPerComponent: 8,
+                                bytesPerRow: segWidth,
+                                space: grayColorSpace,
+                                bitmapInfo: CGImageAlphaInfo.none.rawValue)
+        guard let maskCGImage = context?.makeImage() else {
+            maskBytes.deallocate()
+            return nil
+        }
+        maskBytes.deallocate()
+        return maskCGImage
     }
     
     // MARK: - Utilities
@@ -158,7 +303,7 @@ class BeaconObstacleDetector: ObservableObject {
         else {
             return nil
         }
-
+        
         let shape = semMap.shape.map { $0.intValue }
         guard shape == [1, 150, 512, 512] else {
             print("Unexpected semMap shape: \(shape)")
@@ -166,15 +311,15 @@ class BeaconObstacleDetector: ObservableObject {
         }
         let pixelCount = shape[2] * shape[3]    // 512*512
         let channelCount = shape[1]            // 150
-
-        let floatPtr = semMap.dataPointer.bindMemory(
-            to: Float.self,
-            capacity: channelCount * pixelCount
-        )
+        
+        var floatPtr: UnsafePointer<Float>!
+        semMap.withUnsafeBytes { rawBuffer in
+            floatPtr = rawBuffer.bindMemory(to: Float.self).baseAddress!
+        }
         
         let lengthInBytes = channelCount * pixelCount * MemoryLayout<Float>.stride
         guard let inBuffer = device.makeBuffer(
-            bytesNoCopy: floatPtr,
+            bytesNoCopy: UnsafeMutableRawPointer(mutating: floatPtr),
             length: lengthInBytes,
             options: .storageModeShared,
             deallocator: nil)
@@ -182,7 +327,7 @@ class BeaconObstacleDetector: ObservableObject {
             print("Failed to create Metal input buffer")
             return nil
         }
-
+        
         let outLength = pixelCount * MemoryLayout<Int32>.stride
         guard let outBuffer = device.makeBuffer(
             length: outLength,
@@ -191,7 +336,7 @@ class BeaconObstacleDetector: ObservableObject {
             print("Failed to create Metal output buffer")
             return nil
         }
-
+        
         guard let commandQueue = device.makeCommandQueue(),
               let commandBuffer = commandQueue.makeCommandBuffer(),
               let encoder = commandBuffer.makeComputeCommandEncoder()
@@ -199,22 +344,22 @@ class BeaconObstacleDetector: ObservableObject {
             print("Failed to create Metal command encoder")
             return nil
         }
-
+        
         encoder.setComputePipelineState(pipeline)
         encoder.setBuffer(inBuffer, offset: 0, index: 0)
         encoder.setBuffer(outBuffer, offset: 0, index: 1)
-
+        
         var pc: UInt32 = UInt32(pixelCount)
         var cc: UInt32 = UInt32(channelCount)
         encoder.setBytes(&pc, length: MemoryLayout<UInt32>.stride, index: 2)
         encoder.setBytes(&cc, length: MemoryLayout<UInt32>.stride, index: 3)
-
+        
         let threadsPerThreadgroup = MTLSize(width: 256, height: 1, depth: 1)
         let threadGroups = MTLSize(
             width: (pixelCount + 255) / 256,
             height: 1,
             depth: 1)
-
+        
         encoder.dispatchThreadgroups(threadGroups, threadsPerThreadgroup: threadsPerThreadgroup)
         encoder.endEncoding()
         

@@ -3,7 +3,7 @@ import AVFoundation
 
 struct CameraView: UIViewControllerRepresentable {
     // Called every time we have a new CGImage (every 10 frames).
-    let frameHandler: (CGImage) -> Void
+    let frameHandler: (CGImage, Int) -> Void
 
     func makeUIViewController(context: Context) -> CameraViewController {
         let controller = CameraViewController()
@@ -18,7 +18,7 @@ struct CameraView: UIViewControllerRepresentable {
 class CameraViewController: UIViewController {
     var captureSession: AVCaptureSession?
     var videoOutput: AVCaptureVideoDataOutput?
-    var frameHandler: ((CGImage) -> Void)?
+    var frameHandler: ((CGImage, Int) -> Void)?
     private var frameCount: Int = 0
 
     override func viewDidLoad() {
@@ -67,7 +67,7 @@ extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
                        from connection: AVCaptureConnection) {
         frameCount += 1
         // Only process every 10th frame:
-        guard frameCount % 1 == 0,
+        guard frameCount % 10 == 0,
               let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
             return
         }
@@ -79,7 +79,7 @@ extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
         let context = CIContext()
         if let cgImage = context.createCGImage(ciImage, from: ciImage.extent) {
             DispatchQueue.main.async {
-                self.frameHandler?(cgImage)
+                self.frameHandler?(cgImage, self.frameCount)
             }
         }
     }

@@ -7,10 +7,11 @@ struct BeaconExploreView: View {
     var body: some View {
         ZStack {
             // Camera view resized to 512x512 and allowed to stretch
-            CameraView { cgImage in
-                obstacleDetector.detect(cgImage)
+            CameraView { cgImage, frame in
+                print("Began processing frame \(frame)")
+                obstacleDetector.detect(cgImage, frame: frame)
             }
-            .frame(width: 512, height: 512)
+            .edgesIgnoringSafeArea(.all)
             // Overlay the obstacle image semi-transparent on top
             if let obstacleCG = obstacleDetector.obstacleImage {
                 Image(decorative: obstacleCG, scale: 1.0, orientation: .up)

@@ -1,6 +1,7 @@
 import QMapKit
 import TencentNavKit
 import TNKAudioPlayer
+import CoreLocation
 
 class BeaconNavigationDelegateSimple: NSObject, ObservableObject, TNKWalkNavDelegate, TNKWalkNavDataSource, TNKWalkNavViewDelegate {
     let navManager: TNKWalkNavManager
@@ -16,6 +17,7 @@ class BeaconNavigationDelegateSimple: NSObject, ObservableObject, TNKWalkNavDele
     
     @Published var lastSearchResults: [TNKWalkRoute] = []
     @Published var searchLoading = false
+    @Published var isNavigating: Bool = false
     
     func resetSearchResults() {
         lastSearchResults.removeAll()
@@ -64,5 +66,13 @@ class BeaconNavigationDelegateSimple: NSObject, ObservableObject, TNKWalkNavDele
     
     func startNavigation(with: TNKWalkRoute) {
         navManager.startNav(withRouteID: with.routeID)
+        isNavigating = true
+    }
+    
+    func navViewCloseButtonClicked(_ navView: TNKBaseNavView) {
+        print("Here")
+        DispatchQueue.main.async {
+            self.isNavigating = false
+        }
     }
 }

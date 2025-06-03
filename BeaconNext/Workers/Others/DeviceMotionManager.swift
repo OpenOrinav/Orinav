@@ -19,7 +19,7 @@ class DeviceMotionManager: ObservableObject {
             let pitch = motion.attitude.pitch * 180 / .pi
             let roll = motion.attitude.roll * 180 / .pi
 
-            if pitch > 45 && abs(roll) < 35 {
+            if pitch > 60 && abs(roll) < 50 {
                 self.isPhoneRaised = true
             } else {
                 self.isPhoneRaised = false

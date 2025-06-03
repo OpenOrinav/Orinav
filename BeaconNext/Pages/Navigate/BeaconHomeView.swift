@@ -3,6 +3,7 @@ import QMapKit
 
 struct BeaconHomeView: View {
     @EnvironmentObject var locationManager: BeaconLocationDelegateSimple
+    @EnvironmentObject var navManager: BeaconNavigationDelegateSimple
     
     @State private var isShowingSearch = false
     
@@ -110,9 +111,15 @@ struct BeaconHomeView: View {
         .padding()
         .navigationTitle("Beacon")
         .navigationBarTitleDisplayMode(.large)
+        .onChange(of: navManager.isNavigating){
+            if !navManager.isNavigating {
+                isShowingRoutes = false
+                isShowingSearch = false
+            }
+        }
     }
 }
-
-#Preview {
-    BeaconHomeView()
-}
+//
+//#Preview {
+//    BeaconHomeView()
+//}

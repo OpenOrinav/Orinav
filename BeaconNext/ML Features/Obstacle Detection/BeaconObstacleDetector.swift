@@ -48,11 +48,6 @@ class BeaconObstacleDetector: ObservableObject {
     // MARK: - Metal
     private let metalDevice: MTLDevice? = MTLCreateSystemDefaultDevice()
     private let argmaxPipeline: MTLComputePipelineState?
-    private let ccPipeline: MTLComputePipelineState?
-    
-    private var semLabelBuffer: MTLBuffer!
-    private var labelBufferA: MTLBuffer!
-    private var labelBufferB: MTLBuffer!
     
     init() {
         if let device = metalDevice,
@@ -67,31 +62,12 @@ class BeaconObstacleDetector: ObservableObject {
             fatalError("Metal device or pipeline creation failed")
         }
         
-        if let device = metalDevice,
-           let defaultLibrary = device.makeDefaultLibrary(),
-           let kernelFunc = defaultLibrary.makeFunction(name: "ccLabelPass") {
-            ccPipeline = try! device.makeComputePipelineState(function: kernelFunc)
-        } else {
-            fatalError("Failed to create CCL pipeline")
-        }
-        
-        semLabelBuffer = metalDevice!.makeBuffer(
-            length: segPixels * MemoryLayout<Int32>.stride,
-            options: .storageModeShared
-        )
-        labelBufferA = metalDevice!.makeBuffer(
-            length: segPixels * MemoryLayout<Int>.stride,
-            options: .storageModeShared
-        )
-        labelBufferB = metalDevice!.makeBuffer(
-            length: segPixels * MemoryLayout<Int>.stride,
-            options: .storageModeShared
-        )
     }
     
     // MARK: - UI Update
     
     @Published var obstacleImage: CGImage?
+    @Published var originalImage: CGImage?
     
     /// Main entry: run segmentation + disparity + obstacle masking
     func detect(_ inputImage: CGImage, frame: Int) {
@@ -131,6 +107,27 @@ class BeaconObstacleDetector: ObservableObject {
             return nil
         }
         
+        // BEGIN DEBUG
+        // Resize and set originalImage
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        if let context = CGContext(
+            data: nil,
+            width: segWidth,
+            height: segHeight,
+            bitsPerComponent: image.bitsPerComponent,
+            bytesPerRow: segWidth * 4,
+            space: colorSpace,
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) {
+            context.draw(image, in: CGRect(x: 0, y: 0, width: segWidth, height: segHeight))
+            if let resized = context.makeImage() {
+                DispatchQueue.main.async {
+                    self.originalImage = resized
+                }
+            }
+        }
+        // END DBEUG
+        
         // 2. Run TopFormer (segmentation)
         guard let segOutput = try? topFormer.prediction(input_image: segBuffer) else {
             return nil
@@ -138,6 +135,24 @@ class BeaconObstacleDetector: ObservableObject {
         let segmentation = computeArgmax(semMap: segOutput.var_1347)  // [262144]
         guard let segmentation = segmentation else {
             return nil
+        }
+        
+        var finalLabels = [Int32](repeating: 0, count: segPixels)
+        
+        for label in Set(finalLabels) {
+            print(label)
+        }
+
+        // 2.1 Calculate connected components
+        segmentation.withUnsafeBufferPointer { segPtr in
+            finalLabels.withUnsafeMutableBufferPointer { outPtr in
+                c_connected_components(
+                    segPtr.baseAddress,
+                    Int32(segWidth),
+                    Int32(segHeight),
+                    outPtr.baseAddress
+                )
+            }
         }
         
         // 3. Run MiDaS (disparity)
@@ -165,60 +180,9 @@ class BeaconObstacleDetector: ObservableObject {
                 vImageScale_PlanarF(&srcBuffer, &dstBuffer, nil, vImage_Flags(kvImageHighQualityResampling))
             }
         }
-        
-        guard let device = metalDevice,
-              let pipeline = ccPipeline,
-              let commandQueue = device.makeCommandQueue()
-        else {
-            return nil
-        }
-        
-        let semLabelsPtr = semLabelBuffer.contents().bindMemory(to: Int32.self, capacity: segPixels)
-        for i in 0..<segPixels {
-            semLabelsPtr[i] = segmentation[i]
-        }
+    
+        /*
 
-        let initialLabelsPtr = labelBufferA.contents().bindMemory(to: Int.self, capacity: segPixels)
-        for i in 0..<segPixels {
-            initialLabelsPtr[i] = i
-        }
-
-        let iterations = 10
-        for _ in 0..<iterations {
-            guard let commandBuffer = commandQueue.makeCommandBuffer(),
-                  let encoder = commandBuffer.makeComputeCommandEncoder()
-            else {
-                return nil
-            }
-            encoder.setComputePipelineState(pipeline)
-            encoder.setBuffer(semLabelBuffer, offset: 0, index: 0)
-            encoder.setBuffer(labelBufferA,   offset: 0, index: 1)
-            encoder.setBuffer(labelBufferB,   offset: 0, index: 2)
-            
-            var w: UInt32 = UInt32(segWidth)
-            var h: UInt32 = UInt32(segHeight)
-            var c: UInt32 = UInt32(classes)
-            encoder.setBytes(&w, length: MemoryLayout<UInt32>.stride, index: 3)
-            encoder.setBytes(&h, length: MemoryLayout<UInt32>.stride, index: 4)
-            encoder.setBytes(&c, length: MemoryLayout<UInt32>.stride, index: 5)
-            
-            let pixels = segPixels
-            let threadsPerThreadgroup = MTLSize(width: 256, height: 1, depth: 1)
-            let threadgroups = MTLSize(width: (pixels + 255) / 256, height: 1, depth: 1)
-            encoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup: threadsPerThreadgroup)
-            encoder.endEncoding()
-            commandBuffer.commit()
-            commandBuffer.waitUntilCompleted()
-            
-            swap(&labelBufferA, &labelBufferB)
-        }
-        
-        var finalLabels = [Int](repeating: 0, count: segPixels)
-        let finalPtr = labelBufferA.contents().bindMemory(to: Int.self, capacity: segPixels)
-        for i in 0..<segPixels {
-            finalLabels[i] = finalPtr[i]
-        }
-        
         // 4. Now compute per-component max disparity and classThe same as before:
         var maxDisp = [Float](repeating: -Float.greatestFiniteMagnitude, count: segPixels)
         var classLabel = [Int32](repeating: -1, count: segPixels)
@@ -239,11 +203,9 @@ class BeaconObstacleDetector: ObservableObject {
         
         var valid = [Bool](repeating: false, count: segPixels)
         for i in 0..<segPixels {
-            // Only check actual roots
-            if finalLabels[i] == i {
-                if classLabel[i] != 52 && maxDisp[i] > threshold {
-                    valid[i] = true
-                }
+            let root = finalLabels[i]
+            if !ignoredClassIDs.contains(classLabel[root]) && maxDisp[root] > threshold {
+                valid[i] = true
             }
         }
         
@@ -253,6 +215,28 @@ class BeaconObstacleDetector: ObservableObject {
             let root = finalLabels[i]
             maskBytes[i] = valid[root] ? 255 : 0
         }
+        let grayColorSpace = CGColorSpaceCreateDeviceGray()
+        let context = CGContext(data: maskBytes,
+                                width: segWidth,
+                                height: segHeight,
+                                bitsPerComponent: 8,
+                                bytesPerRow: segWidth,
+                                space: grayColorSpace,
+                                bitmapInfo: CGImageAlphaInfo.none.rawValue)
+        guard let maskCGImage = context?.makeImage() else {
+            maskBytes.deallocate()
+            return nil
+        }
+        maskBytes.deallocate()
+        return maskCGImage
+         */
+        
+        let maskBytes = UnsafeMutablePointer<UInt8>.allocate(capacity: segPixels)
+        let maxLabel = finalLabels.max() ?? 1
+        for i in 0..<segPixels {
+            maskBytes[i] = UInt8((finalLabels[i] / maxLabel) * 255)
+        }
+        
         let grayColorSpace = CGColorSpaceCreateDeviceGray()
         let context = CGContext(data: maskBytes,
                                 width: segWidth,

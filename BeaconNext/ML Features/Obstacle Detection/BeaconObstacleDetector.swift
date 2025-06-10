@@ -138,10 +138,6 @@ class BeaconObstacleDetector: ObservableObject {
         }
         
         var finalLabels = [Int32](repeating: 0, count: segPixels)
-        
-        for label in Set(finalLabels) {
-            print(label)
-        }
 
         // 2.1 Calculate connected components
         segmentation.withUnsafeBufferPointer { segPtr in
@@ -181,8 +177,7 @@ class BeaconObstacleDetector: ObservableObject {
             }
         }
     
-        /*
-
+        
         // 4. Now compute per-component max disparity and classThe same as before:
         var maxDisp = [Float](repeating: -Float.greatestFiniteMagnitude, count: segPixels)
         var classLabel = [Int32](repeating: -1, count: segPixels)
@@ -190,7 +185,7 @@ class BeaconObstacleDetector: ObservableObject {
         let threshold = thresholdDisparity * globalMaxDisp
         
         for i in 0..<segPixels {
-            let root = finalLabels[i]
+            let root = Int(finalLabels[i])
             let label = segmentation[i]
             let d = dispUpsampled[i]
             if classLabel[root] < 0 {
@@ -201,9 +196,9 @@ class BeaconObstacleDetector: ObservableObject {
             }
         }
         
-        var valid = [Bool](repeating: false, count: segPixels)
+        var valid = [Bool](repeating: false, count: segPixels) // If true, this pixel is obstacle
         for i in 0..<segPixels {
-            let root = finalLabels[i]
+            let root = Int(finalLabels[i])
             if !ignoredClassIDs.contains(classLabel[root]) && maxDisp[root] > threshold {
                 valid[i] = true
             }
@@ -212,31 +207,9 @@ class BeaconObstacleDetector: ObservableObject {
         // Build output mask
         let maskBytes = UnsafeMutablePointer<UInt8>.allocate(capacity: segPixels)
         for i in 0..<segPixels {
-            let root = finalLabels[i]
-            maskBytes[i] = valid[root] ? 255 : 0
+            let root = Int(finalLabels[i])
+            maskBytes[i] = valid[root] ? 255 : 0 // If white, this pixel is obstacle
         }
-        let grayColorSpace = CGColorSpaceCreateDeviceGray()
-        let context = CGContext(data: maskBytes,
-                                width: segWidth,
-                                height: segHeight,
-                                bitsPerComponent: 8,
-                                bytesPerRow: segWidth,
-                                space: grayColorSpace,
-                                bitmapInfo: CGImageAlphaInfo.none.rawValue)
-        guard let maskCGImage = context?.makeImage() else {
-            maskBytes.deallocate()
-            return nil
-        }
-        maskBytes.deallocate()
-        return maskCGImage
-         */
-        
-        let maskBytes = UnsafeMutablePointer<UInt8>.allocate(capacity: segPixels)
-        let maxLabel = finalLabels.max() ?? 1
-        for i in 0..<segPixels {
-            maskBytes[i] = UInt8((finalLabels[i] / maxLabel) * 255)
-        }
-        
         let grayColorSpace = CGColorSpaceCreateDeviceGray()
         let context = CGContext(data: maskBytes,
                                 width: segWidth,

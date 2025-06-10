@@ -22,9 +22,13 @@ void c_connected_components(
     int32_t *out
 ) {
     int N = width * height;
-    // provisional labels, one per pixel
-    int *label = (int*)malloc(N * sizeof(int));
+    // allocate and zero-initialize label array
+    int *label = (int*)calloc(N, sizeof(int));
+    // allocate and initialize union-find parent array
     int *parent = (int*)malloc((N+1) * sizeof(int));
+    for (int i = 0; i <= N; i++) {
+        parent[i] = i;
+    }
     int next_label = 1;
 
     // First pass
@@ -61,8 +65,8 @@ void c_connected_components(
     }
 
     // Remap roots to compact 1…M
-    int *remap = (int*)malloc((next_label+1)*sizeof(int));
-    for (int i = 0; i <= next_label; i++) remap[i] = 0;
+    // allocate and zero-initialize remap array
+    int *remap = (int*)calloc((next_label+1), sizeof(int));
     int new_id = 1;
     for (int l = 1; l < next_label; l++) {
         int r = parent[l];

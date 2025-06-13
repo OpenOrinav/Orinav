@@ -1,5 +1,6 @@
 import Foundation
 import CoreMotion
+import CoreLocation
 import Combine
 
 class DeviceMotionManager: ObservableObject {
@@ -18,8 +19,8 @@ class DeviceMotionManager: ObservableObject {
 
             let pitch = motion.attitude.pitch * 180 / .pi
             let roll = motion.attitude.roll * 180 / .pi
-
-            if pitch > 60 && abs(roll) < 50 {
+            
+            if pitch > 55 && abs(roll) < 45 {
                 self.isPhoneRaised = true
             } else {
                 self.isPhoneRaised = false

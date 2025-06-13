@@ -70,9 +70,45 @@ class BeaconNavigationDelegateSimple: NSObject, ObservableObject, TNKWalkNavDele
     }
     
     func navViewCloseButtonClicked(_ navView: TNKBaseNavView) {
-        print("Here")
         DispatchQueue.main.async {
             self.isNavigating = false
         }
+    }
+    
+    var lastDirection: String? = nil
+    var lastFacingAngle: Double? = nil
+    
+    func walkNavManager(_ manager: TNKWalkNavManager, didUpdate location: TNKLocation) {
+        // location.matchedCourse 道路方向
+        // HeadingManager.shared.getValidHeading()! 手机方向
+        let roadAngle = location.matchedCourse
+        guard let facingAngle = HeadingManager.shared.getValidHeading() else {
+            print("Direction Not Avaliable")
+            return
+        }
+        
+        let signedDiff = (facingAngle - roadAngle + 540).truncatingRemainder(dividingBy: 360) - 180
+        
+        if abs(signedDiff) >= 40 {
+            let currentDirection = direction(from: signedDiff)
+            
+            if currentDirection != lastDirection || (lastFacingAngle != nil && abs(facingAngle - lastFacingAngle!) > 20) {
+//                print(currentDirection)
+                BeaconTTSService.shared.speak("Head \(currentDirection)")
+                lastDirection = currentDirection
+                lastFacingAngle = facingAngle
+            }
+        } else {
+            lastDirection = nil
+            lastFacingAngle = nil
+        }
+    }
+    
+    func direction(from angle: Double) -> String {
+        let normalized = angle >= 0 ? angle : 360 + angle
+        let adjusted = (normalized + 15).truncatingRemainder(dividingBy: 360)
+        let hour = Int(adjusted / 30)
+        let hourLabels = [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        return "\(hourLabels[hour]) o'clock"
     }
 }

@@ -1,4 +1,5 @@
 import AVFoundation
+import Foundation
 
 final class BeaconTTSService {
     static let shared = BeaconTTSService()
@@ -6,7 +7,7 @@ final class BeaconTTSService {
     
     private init() {}
     
-    func speak(_ text: String, language: String = "en-US") {
+    public func speak(_ text: String, language: String = "en-US") {
         guard !synthesizer.isSpeaking else { return }
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: language)

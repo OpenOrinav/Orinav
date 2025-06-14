@@ -45,25 +45,6 @@ class BeaconObstacleDetector: ObservableObject {
         }
     }()
     
-    // MARK: - Metal
-    private let metalDevice: MTLDevice? = MTLCreateSystemDefaultDevice()
-    private let argmaxPipeline: MTLComputePipelineState?
-    
-    init() {
-        if let device = metalDevice,
-           let defaultLibrary = device.makeDefaultLibrary(),
-           let kernelFunc = defaultLibrary.makeFunction(name: "argmaxAcrossChannels") {
-            do {
-                argmaxPipeline = try device.makeComputePipelineState(function: kernelFunc)
-            } catch {
-                fatalError("Failed to create Metal compute pipeline: \(error)")
-            }
-        } else {
-            fatalError("Metal device or pipeline creation failed")
-        }
-        
-    }
-    
     // MARK: - UI Update
     
     @Published var obstacleImage: CGImage?
@@ -128,13 +109,24 @@ class BeaconObstacleDetector: ObservableObject {
         }
         // END DBEUG
         
+        profileStart("Calculations")
+        
         // 2. Run TopFormer (segmentation)
         guard let segOutput = try? topFormer.prediction(input_image: segBuffer) else {
             return nil
         }
-        let segmentation = computeArgmax(semMap: segOutput.var_1347)  // [262144]
-        guard let segmentation = segmentation else {
-            return nil
+        let channelCount = Int32(classes)
+        let pixelCount = Int32(segPixels)
+        var segmentation = [Int32](repeating: 0, count: segPixels)
+        segOutput.var_1347.withUnsafeBufferPointer(ofType: Float.self) { semPtr in
+            segmentation.withUnsafeMutableBufferPointer { outPtr in
+                computeArgmax(
+                    semPtr.baseAddress,
+                    channelCount,
+                    pixelCount,
+                    outPtr.baseAddress
+                )
+            }
         }
         
         var finalLabels = [Int32](repeating: 0, count: segPixels)
@@ -222,6 +214,8 @@ class BeaconObstacleDetector: ObservableObject {
             return nil
         }
         maskBytes.deallocate()
+        
+        profileEnd("Calculations")
         return maskCGImage
     }
     
@@ -249,82 +243,6 @@ class BeaconObstacleDetector: ObservableObject {
     static func name(for id: Int) -> String? {
         guard id >= 0 && id < classNames.count else { return nil }
         return classNames[id]
-    }
-    
-    /// Use Metal to compute argmax over TopFormer logits.
-    private func computeArgmax(semMap: MLMultiArray) -> [Int32]? {
-        guard
-            let device = metalDevice,
-            let pipeline = argmaxPipeline
-        else {
-            return nil
-        }
-        
-        let shape = semMap.shape.map { $0.intValue }
-        guard shape == [1, 150, 512, 512] else {
-            print("Unexpected semMap shape: \(shape)")
-            return nil
-        }
-        let pixelCount = shape[2] * shape[3]    // 512*512
-        let channelCount = shape[1]            // 150
-        
-        var floatPtr: UnsafePointer<Float>!
-        semMap.withUnsafeBytes { rawBuffer in
-            floatPtr = rawBuffer.bindMemory(to: Float.self).baseAddress!
-        }
-        
-        let lengthInBytes = channelCount * pixelCount * MemoryLayout<Float>.stride
-        guard let inBuffer = device.makeBuffer(
-            bytesNoCopy: UnsafeMutableRawPointer(mutating: floatPtr),
-            length: lengthInBytes,
-            options: .storageModeShared,
-            deallocator: nil)
-        else {
-            print("Failed to create Metal input buffer")
-            return nil
-        }
-        
-        let outLength = pixelCount * MemoryLayout<Int32>.stride
-        guard let outBuffer = device.makeBuffer(
-            length: outLength,
-            options: .storageModeShared)
-        else {
-            print("Failed to create Metal output buffer")
-            return nil
-        }
-        
-        guard let commandQueue = device.makeCommandQueue(),
-              let commandBuffer = commandQueue.makeCommandBuffer(),
-              let encoder = commandBuffer.makeComputeCommandEncoder()
-        else {
-            print("Failed to create Metal command encoder")
-            return nil
-        }
-        
-        encoder.setComputePipelineState(pipeline)
-        encoder.setBuffer(inBuffer, offset: 0, index: 0)
-        encoder.setBuffer(outBuffer, offset: 0, index: 1)
-        
-        var pc: UInt32 = UInt32(pixelCount)
-        var cc: UInt32 = UInt32(channelCount)
-        encoder.setBytes(&pc, length: MemoryLayout<UInt32>.stride, index: 2)
-        encoder.setBytes(&cc, length: MemoryLayout<UInt32>.stride, index: 3)
-        
-        let threadsPerThreadgroup = MTLSize(width: 256, height: 1, depth: 1)
-        let threadGroups = MTLSize(
-            width: (pixelCount + 255) / 256,
-            height: 1,
-            depth: 1)
-        
-        encoder.dispatchThreadgroups(threadGroups, threadsPerThreadgroup: threadsPerThreadgroup)
-        encoder.endEncoding()
-        
-        commandBuffer.commit()
-        commandBuffer.waitUntilCompleted()
-        
-        let outPtr = outBuffer.contents().bindMemory(to: Int32.self, capacity: pixelCount)
-        let bufferPointer = UnsafeBufferPointer(start: outPtr, count: pixelCount)
-        return Array(bufferPointer)
     }
     
     /// Converts a CGImage into a CVPixelBuffer of given dimensions (BGRA).

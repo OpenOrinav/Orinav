@@ -142,7 +142,7 @@ class BeaconObstacleDetector: ObservableObject {
         // 2.1 Calculate connected components
         segmentation.withUnsafeBufferPointer { segPtr in
             finalLabels.withUnsafeMutableBufferPointer { outPtr in
-                c_connected_components(
+                findConnectedComponents(
                     segPtr.baseAddress,
                     Int32(segWidth),
                     Int32(segHeight),
@@ -178,7 +178,7 @@ class BeaconObstacleDetector: ObservableObject {
         }
     
         
-        // 4. Now compute per-component max disparity and classThe same as before:
+        // 4. Determine the connected components that are obstacles
         var maxDisp = [Float](repeating: -Float.greatestFiniteMagnitude, count: segPixels)
         var classLabel = [Int32](repeating: -1, count: segPixels)
         let globalMaxDisp = dispUpsampled.max() ?? 0
@@ -188,7 +188,7 @@ class BeaconObstacleDetector: ObservableObject {
             let root = Int(finalLabels[i])
             let label = segmentation[i]
             let d = dispUpsampled[i]
-            if classLabel[root] < 0 {
+            if classLabel[root] == -1 {
                 classLabel[root] = label
             }
             if d > maxDisp[root] {
@@ -199,7 +199,7 @@ class BeaconObstacleDetector: ObservableObject {
         var valid = [Bool](repeating: false, count: segPixels) // If true, this pixel is obstacle
         for i in 0..<segPixels {
             let root = Int(finalLabels[i])
-            if !ignoredClassIDs.contains(classLabel[root]) && maxDisp[root] > threshold {
+            if !ignoredClassIDs.contains(classLabel[root]) && maxDisp[root] < threshold {
                 valid[i] = true
             }
         }
@@ -207,8 +207,7 @@ class BeaconObstacleDetector: ObservableObject {
         // Build output mask
         let maskBytes = UnsafeMutablePointer<UInt8>.allocate(capacity: segPixels)
         for i in 0..<segPixels {
-            let root = Int(finalLabels[i])
-            maskBytes[i] = valid[root] ? 255 : 0 // If white, this pixel is obstacle
+            maskBytes[i] = valid[i] ? 255 : 0 // If white, this pixel is obstacle
         }
         let grayColorSpace = CGColorSpaceCreateDeviceGray()
         let context = CGContext(data: maskBytes,

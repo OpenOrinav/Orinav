@@ -1,3 +1,7 @@
+// There are a lot of issues with this.
+// First of all, it's very inaccurate.
+// Second, it's not power efficient.
+
 import Foundation
 import CoreML
 import UIKit
@@ -46,40 +50,34 @@ class BeaconObstacleDetector: ObservableObject {
     }()
     
     // MARK: - UI Update
-    
-    @Published var obstacleImage: CGImage?
-    @Published var originalImage: CGImage?
+    @Published var message: String = "Waiting for result."
     
     /// Main entry: run segmentation + disparity + obstacle masking
     func detect(_ inputImage: CGImage, frame: Int) {
         DispatchQueue.global(qos: .userInitiated).async {
-            let result = self.detectObstacles(from: inputImage)
-            print("Processed frame \(frame)")
+            let obstacles = self.detectObstacles(from: inputImage)
+            guard let obstacles = obstacles else {
+                return
+            }
+            let message = self.describeObstacleImage(zonePercentages: obstacles.1, zoneClasses: obstacles.2) ?? "Continue ahead."
             DispatchQueue.main.async {
-                self.obstacleImage = result
+                self.message = message
             }
         }
     }
     
-    var lastProfile: Date?
-    
-    func profileStart(_ name: String) {
-        lastProfile = Date()
-        print("Started profiling \(name)")
-    }
-    
-    func profileEnd(_ name: String) {
-        guard let start = lastProfile else {
-            print("No profile start for \(name)")
-            return
-        }
-        let duration = Date().timeIntervalSince(start)
-        print("Finished profiling \(name) in \(duration * 1000) ms")
-    }
     
     // MARK: - Main Algorithm
     
-    private func detectObstacles(from image: CGImage) -> CGImage? {
+    
+    /// Perform obstacle detection from a CGImage.
+    /// The zones are top left, top mid, top right, bottom left, bottom mid, and bottom right.
+    /// - Parameter from: The input CGImage to process.
+    /// - Returns: A tuple containing a boolean array, indicating:
+    ///                          (i) whether each pixel is an obstacle,
+    ///                          (ii) the obstacle percentage per zone,
+    ///                          (iii) the most frequent obstacle class ID per zone.
+    private func detectObstacles(from image: CGImage) -> ([Bool], [Float], [Int])? {
         // 1. Create pixel buffers for CoreML inputs
         guard
             let segBuffer = pixelBuffer(from: image, width: segWidth, height: segHeight),
@@ -87,29 +85,6 @@ class BeaconObstacleDetector: ObservableObject {
         else {
             return nil
         }
-        
-        // BEGIN DEBUG
-        // Resize and set originalImage
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        if let context = CGContext(
-            data: nil,
-            width: segWidth,
-            height: segHeight,
-            bitsPerComponent: image.bitsPerComponent,
-            bytesPerRow: segWidth * 4,
-            space: colorSpace,
-            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-        ) {
-            context.draw(image, in: CGRect(x: 0, y: 0, width: segWidth, height: segHeight))
-            if let resized = context.makeImage() {
-                DispatchQueue.main.async {
-                    self.originalImage = resized
-                }
-            }
-        }
-        // END DBEUG
-        
-        profileStart("Calculations")
         
         // 2. Run TopFormer (segmentation)
         guard let segOutput = try? topFormer.prediction(input_image: segBuffer) else {
@@ -188,15 +163,84 @@ class BeaconObstacleDetector: ObservableObject {
             }
         }
         
+        // Prepare per-zone, per-class counts
+        var zoneClassCounts = [Int](repeating: 0, count: 6 * classes)
+        
         var valid = [Bool](repeating: false, count: segPixels) // If true, this pixel is obstacle
+        var zoneTotals = [Int](repeating: 0, count: 6)
         for i in 0..<segPixels {
             let root = Int(finalLabels[i])
             if !ignoredClassIDs.contains(classLabel[root]) && maxDisp[root] < threshold {
                 valid[i] = true
+
+                // Determine which zone this pixel belongs to and add to the zone totals
+                let x = i % segWidth
+                let y = i / segWidth
+                let topZoneHeight = Int(Float(segHeight) * 0.3)
+                let bottomZoneStart = segHeight - Int(Float(segHeight) * 0.4)
+                let leftWidth = Int(Float(segWidth) * 0.25)
+                let midEnd = segWidth - leftWidth
+                var zone = -1
+                if y < topZoneHeight {
+                    if x < leftWidth {
+                        zone = 0
+                    } else if x < midEnd {
+                        zone = 1
+                    } else {
+                        zone = 2
+                    }
+                } else if y >= bottomZoneStart {
+                    if x < leftWidth {
+                        zone = 3
+                    } else if x < midEnd {
+                        zone = 4
+                    } else {
+                        zone = 5
+                    }
+                }
+                if zone >= 0 {
+                    zoneTotals[zone] += 1
+                    let classID = Int(segmentation[i])
+                    zoneClassCounts[zone * classes + classID] += 1
+                }
             }
         }
         
-        // Build output mask
+        // 4.1 Compute obstacle percentage per zone
+        let topZoneHeight = Int(Float(segHeight) * 0.3)
+        let bottomZoneStart = segHeight - Int(Float(segHeight) * 0.4)
+        let leftWidth = Int(Float(segWidth) * 0.25)
+        let midWidth = segWidth - 2 * leftWidth
+        let bottomZoneHeight = segHeight - bottomZoneStart
+
+        let zonePixelCounts: [Int] = [
+            topZoneHeight * leftWidth,
+            topZoneHeight * midWidth,
+            topZoneHeight * leftWidth,
+            bottomZoneHeight * leftWidth,
+            bottomZoneHeight * midWidth,
+            bottomZoneHeight * leftWidth
+        ]
+
+        var zones = [Float](repeating: 0, count: 6)
+        for j in 0..<6 {
+            zones[j] = Float(zoneTotals[j]) / Float(zonePixelCounts[j])
+        }
+
+        // 4.2 Determine most frequent class ID per zone
+        var zoneMaxClassIDs = [Int](repeating: 0, count: 6)
+        for j in 0..<6 {
+            let offset = j * classes
+            let slice = zoneClassCounts[offset..<offset + classes]
+            if let (maxIndex, _) = slice.enumerated().max(by: { $0.element < $1.element }) {
+                zoneMaxClassIDs[j] = maxIndex
+            }
+        }
+
+        return (valid, zones, zoneMaxClassIDs)
+    }
+    
+    private func createObstacleImage(from valid: [Bool]) -> CGImage? {
         let maskBytes = UnsafeMutablePointer<UInt8>.allocate(capacity: segPixels)
         for i in 0..<segPixels {
             maskBytes[i] = valid[i] ? 255 : 0 // If white, this pixel is obstacle
@@ -214,10 +258,42 @@ class BeaconObstacleDetector: ObservableObject {
             return nil
         }
         maskBytes.deallocate()
-        
-        profileEnd("Calculations")
         return maskCGImage
     }
+    
+    private func describeObstacleImage(zonePercentages: [Float], zoneClasses: [Int]) -> String? {
+        // We define a zone to have an obstacle if the percentage of obstacles is above 0.3.
+        var zones = [Bool](repeating: false, count: 6)
+        for i in 0..<6 {
+            if zonePercentages[i] > 0.3 {
+                zones[i] = true
+            }
+        }
+        
+        // 1. If both top mid and bottom mid zones have no obstacles, move ahead.
+        if !zones[1] && !zones[4] {
+            return nil
+        }
+        
+        var obstacleName = zones[1] ? BeaconObstacleDetector.name(for: zoneClasses[1]) : BeaconObstacleDetector.name(for: zoneClasses[4])
+        if obstacleName == nil {
+            obstacleName = "Obstacle"
+        }
+        
+        // 2. If any of top mid or bottom mid have an obstacle and both top left and bottom left have no obstacles, move left.
+        if (zones[1] || zones[4]) && !zones[0] && !zones[3] {
+            return "\(obstacleName!) ahead, move left."
+        }
+        
+        // 3. If any of top mid or bottom mid have an obstacle and both top right and bottom right have no obstacles, move right.
+        if (zones[1] || zones[4]) && !zones[2] && !zones[5] {
+            return "\(obstacleName!) ahead, move right."
+        }
+        
+        // 4. Otherwise, stop.
+        return "\(obstacleName!) ahead, stop."
+    }
+
     
     // MARK: - Utilities
     

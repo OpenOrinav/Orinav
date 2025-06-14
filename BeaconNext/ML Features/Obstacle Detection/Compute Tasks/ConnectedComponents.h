@@ -6,7 +6,7 @@
 
 /// segmentation: [width*height] class IDs
 /// labels_out: caller-allocated [width*height] output component IDs (0 = background)
-void c_connected_components(
+void findConnectedComponents(
     const int32_t *segmentation,
     int width,
     int height,

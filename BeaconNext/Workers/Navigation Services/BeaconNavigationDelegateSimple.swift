@@ -89,10 +89,10 @@ class BeaconNavigationDelegateSimple: NSObject, ObservableObject, TNKWalkNavDele
         
         let signedDiff = (facingAngle - roadAngle + 540).truncatingRemainder(dividingBy: 360) - 180
         
-        if abs(signedDiff) >= 40 {
+        if abs(signedDiff) >= 20 {
             let currentDirection = direction(from: signedDiff)
             
-            if currentDirection != lastDirection || (lastFacingAngle != nil && abs(facingAngle - lastFacingAngle!) > 20) {
+            if currentDirection != lastDirection || (lastFacingAngle != nil && abs(facingAngle - lastFacingAngle!) > 5) {
 //                print(currentDirection)
                 BeaconTTSService.shared.speak("Head \(currentDirection)")
                 lastDirection = currentDirection

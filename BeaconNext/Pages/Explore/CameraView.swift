@@ -1,9 +1,10 @@
 import SwiftUI
 import AVFoundation
+import ARKit
 
 struct CameraView: UIViewControllerRepresentable {
-    // Called every time we have a new CGImage (every 10 frames).
-    let frameHandler: (CGImage, Int) -> Void
+    // Called every time we have a new CGImage and depth map (every 10 frames).
+    let frameHandler: (CGImage, CVPixelBuffer, Int) -> Void
 
     func makeUIViewController(context: Context) -> CameraViewController {
         let controller = CameraViewController()
@@ -15,72 +16,50 @@ struct CameraView: UIViewControllerRepresentable {
     }
 }
 
-class CameraViewController: UIViewController {
-    var captureSession: AVCaptureSession?
-    var videoOutput: AVCaptureVideoDataOutput?
-    var frameHandler: ((CGImage, Int) -> Void)?
+class CameraViewController: UIViewController, ARSessionDelegate {
+    var arSession: ARSession!
+    var arConfig: ARWorldTrackingConfiguration!
+    var frameHandler: ((CGImage, CVPixelBuffer, Int) -> Void)?
     private var frameCount: Int = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupSession()
+        arSession = ARSession()
+        arSession.delegate = self
+        arConfig = ARWorldTrackingConfiguration()
+        arConfig.frameSemantics = .sceneDepth
+        arSession.run(arConfig)
+        
+        // Add a dummy AVCaptureVideoPreviewLayer replacement if needed:
+        let previewLayer = ARSKView(frame: view.bounds)
+        view.addSubview(previewLayer)
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         // Ensure the preview layer fills the view
-        if let previewLayer = view.layer.sublayers?.first(where: { $0 is AVCaptureVideoPreviewLayer }) as? AVCaptureVideoPreviewLayer {
+        if let previewLayer = view.subviews.first(where: { $0 is ARSKView }) {
             previewLayer.frame = view.bounds
         }
     }
 
-    private func setupSession() {
-        let session = AVCaptureSession()
-        session.sessionPreset = .high
-
-        // Use the back-facing camera:
-        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
-              let input = try? AVCaptureDeviceInput(device: camera) else {
-            return
-        }
-        session.addInput(input)
-
-        let output = AVCaptureVideoDataOutput()
-        output.setSampleBufferDelegate(self, queue: DispatchQueue(label: "camera.frame.queue"))
-        session.addOutput(output)
-
-        // Attach a preview layer so the user sees themselves:
-        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        previewLayer.videoGravity = .resizeAspectFill
-        previewLayer.connection?.videoRotationAngle = 90
-        view.layer.addSublayer(previewLayer)
-
-        captureSession = session
-        videoOutput = output
-        session.startRunning()
-    }
-}
-
-extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
-    func captureOutput(_ output: AVCaptureOutput,
-                       didOutput sampleBuffer: CMSampleBuffer,
-                       from connection: AVCaptureConnection) {
+    func session(_ session: ARSession, didUpdate frame: ARFrame) {
+        // Limit processing to every 10th frame
         frameCount += 1
-        // Only process every 10th frame:
-        guard frameCount % 10 == 0,
-              let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-            return
-        }
-
-        CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
-        defer { CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly) }
-
+        guard frameCount % 10 == 0 else { return }
+        
+        // Get camera image
+        let pixelBuffer = frame.capturedImage
         let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
         let context = CIContext()
-        if let cgImage = context.createCGImage(ciImage, from: ciImage.extent) {
-            DispatchQueue.main.async {
-                self.frameHandler?(cgImage, self.frameCount)
-            }
+        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
+        
+        // Get LiDAR depth map
+        guard let sceneDepth = frame.sceneDepth?.depthMap else { return }
+        
+        DispatchQueue.main.async {
+            // Pass both image and depthBuffer via frameHandler
+            self.frameHandler?(cgImage, sceneDepth, self.frameCount)
         }
     }
 }

@@ -6,8 +6,8 @@ struct BeaconExploreView: View {
     var body: some View {
         ZStack {
             // Camera view resized to 512x512 and allowed to stretch
-            CameraView { cgImage, frame in
-                obstacleDetector.detect(cgImage, frame: frame)
+            CameraView { cgImage, depth, frame in
+                obstacleDetector.detect(cgImage, depth: depth, frame: frame)
             }
             .edgesIgnoringSafeArea(.all)
             

@@ -1,7 +1,3 @@
-// There are a lot of issues with this.
-// First of all, it's very inaccurate.
-// Second, it's not power efficient.
-
 import Foundation
 import CoreML
 import UIKit
@@ -44,20 +40,15 @@ class BeaconObstacleDetector: ObservableObject {
     /// Class IDs to ignore outright (including “Path” as one entry).
     private let ignoredClassIDs: Set<Int32> = [52, 2, 3, 6, 11, 13]
     
-    /// Disparity threshold fraction (relative to the frame’s global max).
-    private let thresholdDisparity: Float = 0.3
+    /// Depth threshold before announcing as obstacle.
+    private let thresholdDepth: Float = 2.5
     
     /// Input size for TopFormer (semantic segmentation): 512×512.
     private let segWidth: Int = 512
     private let segHeight: Int = 512
     private let segPixels: Int = 512 * 512
     private let classes: Int = 150
-    
-    /// Input size for MiDaS (disparity): 256×256.
-    private let depthWidth: Int = 256
-    private let depthHeight: Int = 256
-    private let depthPixels: Int = 256 * 256
-    
+        
     
     // MARK: - Models
     
@@ -70,24 +61,15 @@ class BeaconObstacleDetector: ObservableObject {
         }
     }()
     
-    private let miDaS: MiDaS = {
-        do {
-            let config = MLModelConfiguration()
-            return try MiDaS(configuration: config)
-        } catch {
-            fatalError("Failed to load MiDaS model: \(error)")
-        }
-    }()
-    
     // MARK: - UI Update
-    @Published var message: String = "Waiting for result."
+    @Published var message: String = "Waiting for result..."
     @Published var image: CGImage? = nil
     @Published var originalImage: CGImage? = nil
     
     /// Main entry: run segmentation + disparity + obstacle masking
-    func detect(_ inputImage: CGImage, frame: Int) {
+    func detect(_ inputImage: CGImage, depth: CVPixelBuffer, frame: Int) {
         DispatchQueue.global(qos: .userInitiated).async {
-            let obstacles = self.detectObstacles(from: inputImage)
+            let obstacles = self.detectObstacles(from: inputImage, depth: depth)
             guard let obstacles = obstacles else {
                 return
             }
@@ -107,25 +89,48 @@ class BeaconObstacleDetector: ObservableObject {
     /// Perform obstacle detection from a CGImage.
     /// The zones are top left, top mid, top right, bottom left, bottom mid, and bottom right.
     /// - Parameter from: The input CGImage to process.
+    /// - Parameter depth: The depth information as a CVPixelBuffer (if available).
     /// - Returns: A tuple containing a boolean array, indicating:
     ///                          (i) whether each pixel is an obstacle,
     ///                          (ii) the obstacle percentage per zone,
     ///                          (iii) the most frequent obstacle class ID per zone.
-    private func detectObstacles(from image: CGImage) -> ([Bool], [Float], [Int])? {
-        // 0. Rotate input image 90° clockwise
+    private func detectObstacles(from image: CGImage, depth: CVPixelBuffer) -> ([Bool], [Float], [Int])? {
+        // ========================================================
+        // 1. Data normalization
+        // Rotate image by 90 degrees to orient correctly.
         let rotatedImage = image.rotated(by: -CGFloat.pi / 2) ?? image
         
-        
-        // 1. Create pixel buffers for CoreML inputs
-        guard
-            let segBuffer = pixelBuffer(from: rotatedImage, width: segWidth, height: segHeight),
-            let depthBuffer = pixelBuffer(from: rotatedImage, width: depthWidth, height: depthHeight)
-        else {
-            return nil
+        // Resize depth map to 512×512.
+        var resizedDepth = [Float](repeating: 0, count: segPixels)
+        CVPixelBufferLockBaseAddress(depth, .readOnly)
+        let srcW = CVPixelBufferGetWidth(depth)
+        let srcH = CVPixelBufferGetHeight(depth)
+        let srcRowBytes = CVPixelBufferGetBytesPerRow(depth)
+        if let base = CVPixelBufferGetBaseAddress(depth) {
+            var srcBuf = vImage_Buffer(
+                data: base,
+                height: vImagePixelCount(srcH),
+                width:  vImagePixelCount(srcW),
+                rowBytes: srcRowBytes
+            )
+            resizedDepth.withUnsafeMutableBufferPointer { destPtr in
+                var dstBuf = vImage_Buffer(
+                    data: destPtr.baseAddress!,
+                    height: vImagePixelCount(segHeight),
+                    width:  vImagePixelCount(segWidth),
+                    rowBytes: segWidth * MemoryLayout<Float>.stride
+                )
+                vImageScale_PlanarF(&srcBuf, &dstBuf, nil, vImage_Flags(kvImageHighQualityResampling))
+            }
         }
+        CVPixelBufferUnlockBaseAddress(depth, .readOnly)
+        
+        // Create pixel buffer for ML input.
+        guard let segBuffer = pixelBuffer(from: rotatedImage, width: segWidth, height: segHeight) else { return nil }
         
         // BEGIN DEBUG
         // Resize and set originalImage
+        // This is temporary - to allow showing the original image in the UI for visualization.
         let cs2 = CGColorSpaceCreateDeviceRGB()
         if let context = CGContext(
             data: nil,
@@ -145,6 +150,7 @@ class BeaconObstacleDetector: ObservableObject {
         }
         // END DBEUG
         
+        // ========================================================
         // 2. Run TopFormer (segmentation)
         guard let segOutput = try? topFormer.prediction(input_image: segBuffer) else {
             return nil
@@ -177,48 +183,21 @@ class BeaconObstacleDetector: ObservableObject {
             }
         }
         
-        // 3. Run MiDaS (disparity)
-        guard let depthOutput = try? miDaS.prediction(x_1: depthBuffer) else {
-            return nil
-        }
-        let dispArray = depthOutput.var_1438  // [1,256,256]
-        
-        
-        // 3.1 Upsample disparity from 256×256 to 512×512 using vImage
-        // Extract and use raw 256×256 float buffer via withUnsafeMutableBytes
-        var dispUpsampled = [Float](repeating: 0, count: segPixels)
-        dispArray.withUnsafeMutableBytes { rawBuffer, _ in
-            let dispPtr = rawBuffer.bindMemory(to: Float.self).baseAddress!
-            var srcBuffer = vImage_Buffer(data: UnsafeMutableRawPointer(mutating: dispPtr),
-                                          height: vImagePixelCount(depthHeight),
-                                          width: vImagePixelCount(depthWidth),
-                                          rowBytes: depthWidth * MemoryLayout<Float>.stride)
-            // Use withUnsafeMutableBufferPointer for destination
-            dispUpsampled.withUnsafeMutableBufferPointer { destPtr in
-                var dstBuffer = vImage_Buffer(data: destPtr.baseAddress!,
-                                              height: vImagePixelCount(segHeight),
-                                              width: vImagePixelCount(segWidth),
-                                              rowBytes: segWidth * MemoryLayout<Float>.stride)
-                vImageScale_PlanarF(&srcBuffer, &dstBuffer, nil, vImage_Flags(kvImageHighQualityResampling))
-            }
-        }
-        
-        
-        // 4. Determine the connected components that are obstacles
+        // ========================================================
+        // 3. Determine the connected components that are obstacles
+        // Calculate per-component maximum depth and class label first.
         var maxDisp = [Float](repeating: -Float.greatestFiniteMagnitude, count: segPixels)
         var classLabel = [Int32](repeating: -1, count: segPixels)
-        let globalMaxDisp = dispUpsampled.max() ?? 0
-        let threshold = thresholdDisparity * globalMaxDisp
         
         for i in 0..<segPixels {
             let root = Int(finalLabels[i])
             let label = segmentation[i]
-            let d = dispUpsampled[i]
             if classLabel[root] == -1 {
                 classLabel[root] = label
             }
-            if d > maxDisp[root] {
-                maxDisp[root] = d
+            
+            if resizedDepth[i] > maxDisp[root] {
+                maxDisp[root] = resizedDepth[i]
             }
         }
         
@@ -229,8 +208,9 @@ class BeaconObstacleDetector: ObservableObject {
         var zoneTotals = [Int](repeating: 0, count: 6)
         for i in 0..<segPixels {
             let root = Int(finalLabels[i])
-            if !ignoredClassIDs.contains(classLabel[root]) && maxDisp[root] < threshold {
-                valid[i] = true
+            // If this pixel is not in an ignored class and its maximum depth is below the threshold
+            if !ignoredClassIDs.contains(classLabel[root]) && maxDisp[root] < thresholdDepth {
+                valid[i] = true // Is obstacle
                 
                 // Determine which zone this pixel belongs to and add to the zone totals
                 let x = i % segWidth
@@ -265,7 +245,7 @@ class BeaconObstacleDetector: ObservableObject {
             }
         }
         
-        // 4.1 Compute obstacle percentage per zone
+        // 3.1 Compute obstacle percentage per zone
         let topZoneHeight = Int(Float(segHeight) * 0.3 * (Float(segHeight) / Float(rotatedImage.height)))
         let bottomZoneStart = segHeight - Int(Float(segHeight) * 0.4 * (Float(segHeight) / Float(rotatedImage.height)))
         let leftWidth = Int(Float(segWidth) * 0.2)
@@ -286,7 +266,7 @@ class BeaconObstacleDetector: ObservableObject {
             zones[j] = Float(zoneTotals[j]) / Float(zonePixelCounts[j])
         }
         
-        // 4.2 Determine most frequent class ID per zone
+        // 3.2 Determine most frequent class ID per zone
         var zoneMaxClassIDs = [Int](repeating: 0, count: 6)
         for j in 0..<6 {
             let offset = j * classes

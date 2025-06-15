@@ -8,6 +8,36 @@ import UIKit
 import Accelerate
 import Metal
 
+extension CGImage {
+    func rotated(by radians: CGFloat) -> CGImage? {
+        let originalWidth = size.width
+        let originalHeight = size.height
+
+        let rotatedViewBox = CGRect(x: 0, y: 0, width: originalWidth, height: originalHeight).applying(CGAffineTransform(rotationAngle: radians))
+        let rotatedSize = rotatedViewBox.size
+        guard let colorSpace = self.colorSpace,
+              let bitmapContext = CGContext(data: nil,
+                                           width: Int(rotatedSize.width),
+                                           height: Int(rotatedSize.height),
+                                           bitsPerComponent: bitsPerComponent,
+                                           bytesPerRow: 0,
+                                           space: colorSpace,
+                                           bitmapInfo: bitmapInfo.rawValue) else {
+            return nil
+        }
+        bitmapContext.translateBy(x: rotatedSize.width / 2.0, y: rotatedSize.height / 2.0)
+        bitmapContext.rotate(by: radians)
+        bitmapContext.translateBy(x: -originalWidth / 2.0, y: -originalHeight / 2.0)
+        bitmapContext.draw(self, in: CGRect(x: 0, y: 0, width: originalWidth, height: originalHeight))
+        return bitmapContext.makeImage()
+    }
+
+    var size: CGSize {
+        return CGSize(width: width, height: height)
+    }
+}
+
+
 class BeaconObstacleDetector: ObservableObject {
     // MARK: - Configuration
     
@@ -15,7 +45,7 @@ class BeaconObstacleDetector: ObservableObject {
     private let ignoredClassIDs: Set<Int32> = [52, 2, 3, 6, 11, 13]
     
     /// Disparity threshold fraction (relative to the frame’s global max).
-    private let thresholdDisparity: Float = 0.6
+    private let thresholdDisparity: Float = 0.3
     
     /// Input size for TopFormer (semantic segmentation): 512×512.
     private let segWidth: Int = 512
@@ -51,6 +81,8 @@ class BeaconObstacleDetector: ObservableObject {
     
     // MARK: - UI Update
     @Published var message: String = "Waiting for result."
+    @Published var image: CGImage? = nil
+    @Published var originalImage: CGImage? = nil
     
     /// Main entry: run segmentation + disparity + obstacle masking
     func detect(_ inputImage: CGImage, frame: Int) {
@@ -59,8 +91,10 @@ class BeaconObstacleDetector: ObservableObject {
             guard let obstacles = obstacles else {
                 return
             }
+            let image = self.createObstacleImage(from: obstacles.0)
             let message = self.describeObstacleImage(zonePercentages: obstacles.1, zoneClasses: obstacles.2) ?? "Continue ahead."
             DispatchQueue.main.async {
+                self.image = image
                 self.message = message
             }
         }
@@ -78,13 +112,38 @@ class BeaconObstacleDetector: ObservableObject {
     ///                          (ii) the obstacle percentage per zone,
     ///                          (iii) the most frequent obstacle class ID per zone.
     private func detectObstacles(from image: CGImage) -> ([Bool], [Float], [Int])? {
+        // 0. Rotate input image 90° clockwise
+        let rotatedImage = image.rotated(by: -CGFloat.pi / 2) ?? image
+        
+        
         // 1. Create pixel buffers for CoreML inputs
         guard
-            let segBuffer = pixelBuffer(from: image, width: segWidth, height: segHeight),
-            let depthBuffer = pixelBuffer(from: image, width: depthWidth, height: depthHeight)
+            let segBuffer = pixelBuffer(from: rotatedImage, width: segWidth, height: segHeight),
+            let depthBuffer = pixelBuffer(from: rotatedImage, width: depthWidth, height: depthHeight)
         else {
             return nil
         }
+        
+        // BEGIN DEBUG
+        // Resize and set originalImage
+        let cs2 = CGColorSpaceCreateDeviceRGB()
+        if let context = CGContext(
+            data: nil,
+            width: segWidth,
+            height: segHeight,
+            bitsPerComponent: rotatedImage.bitsPerComponent,
+            bytesPerRow: segWidth * 4,
+            space: cs2,
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) {
+            context.draw(rotatedImage, in: CGRect(x: 0, y: 0, width: segWidth, height: segHeight))
+            if let resized = context.makeImage() {
+                DispatchQueue.main.async {
+                    self.originalImage = resized
+                }
+            }
+        }
+        // END DBEUG
         
         // 2. Run TopFormer (segmentation)
         guard let segOutput = try? topFormer.prediction(input_image: segBuffer) else {
@@ -105,7 +164,7 @@ class BeaconObstacleDetector: ObservableObject {
         }
         
         var finalLabels = [Int32](repeating: 0, count: segPixels)
-
+        
         // 2.1 Calculate connected components
         segmentation.withUnsafeBufferPointer { segPtr in
             finalLabels.withUnsafeMutableBufferPointer { outPtr in
@@ -143,7 +202,7 @@ class BeaconObstacleDetector: ObservableObject {
                 vImageScale_PlanarF(&srcBuffer, &dstBuffer, nil, vImage_Flags(kvImageHighQualityResampling))
             }
         }
-    
+        
         
         // 4. Determine the connected components that are obstacles
         var maxDisp = [Float](repeating: -Float.greatestFiniteMagnitude, count: segPixels)
@@ -172,13 +231,13 @@ class BeaconObstacleDetector: ObservableObject {
             let root = Int(finalLabels[i])
             if !ignoredClassIDs.contains(classLabel[root]) && maxDisp[root] < threshold {
                 valid[i] = true
-
+                
                 // Determine which zone this pixel belongs to and add to the zone totals
                 let x = i % segWidth
                 let y = i / segWidth
-                let topZoneHeight = Int(Float(segHeight) * 0.3)
-                let bottomZoneStart = segHeight - Int(Float(segHeight) * 0.4)
-                let leftWidth = Int(Float(segWidth) * 0.25)
+                let topZoneHeight = Int(Float(segHeight) * 0.3 * (Float(segHeight) / Float(rotatedImage.height)))
+                let bottomZoneStart = segHeight - Int(Float(segHeight) * 0.4 * (Float(segHeight) / Float(rotatedImage.height)))
+                let leftWidth = Int(Float(segWidth) * 0.2)
                 let midEnd = segWidth - leftWidth
                 var zone = -1
                 if y < topZoneHeight {
@@ -207,12 +266,12 @@ class BeaconObstacleDetector: ObservableObject {
         }
         
         // 4.1 Compute obstacle percentage per zone
-        let topZoneHeight = Int(Float(segHeight) * 0.3)
-        let bottomZoneStart = segHeight - Int(Float(segHeight) * 0.4)
-        let leftWidth = Int(Float(segWidth) * 0.25)
+        let topZoneHeight = Int(Float(segHeight) * 0.3 * (Float(segHeight) / Float(rotatedImage.height)))
+        let bottomZoneStart = segHeight - Int(Float(segHeight) * 0.4 * (Float(segHeight) / Float(rotatedImage.height)))
+        let leftWidth = Int(Float(segWidth) * 0.2)
         let midWidth = segWidth - 2 * leftWidth
         let bottomZoneHeight = segHeight - bottomZoneStart
-
+        
         let zonePixelCounts: [Int] = [
             topZoneHeight * leftWidth,
             topZoneHeight * midWidth,
@@ -221,12 +280,12 @@ class BeaconObstacleDetector: ObservableObject {
             bottomZoneHeight * midWidth,
             bottomZoneHeight * leftWidth
         ]
-
+        
         var zones = [Float](repeating: 0, count: 6)
         for j in 0..<6 {
             zones[j] = Float(zoneTotals[j]) / Float(zonePixelCounts[j])
         }
-
+        
         // 4.2 Determine most frequent class ID per zone
         var zoneMaxClassIDs = [Int](repeating: 0, count: 6)
         for j in 0..<6 {
@@ -236,7 +295,7 @@ class BeaconObstacleDetector: ObservableObject {
                 zoneMaxClassIDs[j] = maxIndex
             }
         }
-
+        
         return (valid, zones, zoneMaxClassIDs)
     }
     
@@ -293,7 +352,7 @@ class BeaconObstacleDetector: ObservableObject {
         // 4. Otherwise, stop.
         return "\(obstacleName!) ahead, stop."
     }
-
+    
     
     // MARK: - Utilities
     

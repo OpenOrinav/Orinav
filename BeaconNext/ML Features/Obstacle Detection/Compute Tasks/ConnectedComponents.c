@@ -1,7 +1,7 @@
 #include "ConnectedComponents.h"
 #include <stdlib.h>
 
-static int find_root(int *parent, int x) {
+static int findRoot(int *parent, int x) {
     while (parent[x] != x) {
         parent[x] = parent[parent[x]];
         x = parent[x];
@@ -9,15 +9,15 @@ static int find_root(int *parent, int x) {
     return x;
 }
 
-static void union_labels(int *parent, int a, int b) {
-    int ra = find_root(parent, a);
-    int rb = find_root(parent, b);
+static void unionLabels(int *parent, int a, int b) {
+    int ra = findRoot(parent, a);
+    int rb = findRoot(parent, b);
     if (ra != rb) {
         parent[rb] = ra;
     }
 }
 
-void c_connected_components(
+void findConnectedComponents(
     const int32_t *seg, int width, int height,
     int32_t *out
 ) {
@@ -53,7 +53,7 @@ void c_connected_components(
                               : (left>0 ? left : up);
                 label[i] = min_lbl;
                 if (left>0 && up>0 && left!=up) {
-                    union_labels(parent, left, up);
+                    unionLabels(parent, left, up);
                 }
             }
         }
@@ -61,7 +61,7 @@ void c_connected_components(
 
     // Flatten union-find
     for (int l = 1; l < next_label; l++) {
-        parent[l] = find_root(parent, l);
+        parent[l] = findRoot(parent, l);
     }
 
     // Remap roots to compact 1…M

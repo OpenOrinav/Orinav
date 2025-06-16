@@ -69,16 +69,28 @@ class BeaconNavigationDelegateSimple: NSObject, ObservableObject, TNKWalkNavDele
         isNavigating = true
     }
     
+    func stopNavigation() {
+        navManager.stopNav()
+        isNavigating = false
+        navView?.removeFromSuperview()
+        navView = nil
+    }
+    
     func navViewCloseButtonClicked(_ navView: TNKBaseNavView) {
         DispatchQueue.main.async {
             self.isNavigating = false
+            self.stopNavigation()
         }
     }
     
     var lastDirection: String? = nil
     var lastFacingAngle: Double? = nil
+    var hasSpokenRightDirection: Bool = false
     
     func walkNavManager(_ manager: TNKWalkNavManager, didUpdate location: TNKLocation) {
+        
+        guard isNavigating else { return }
+        
         // location.matchedCourse 道路方向
         // HeadingManager.shared.getValidHeading()! 手机方向
         let roadAngle = location.matchedCourse
@@ -98,9 +110,15 @@ class BeaconNavigationDelegateSimple: NSObject, ObservableObject, TNKWalkNavDele
                 lastDirection = currentDirection
                 lastFacingAngle = facingAngle
             }
+            hasSpokenRightDirection = false
         } else {
             lastDirection = nil
             lastFacingAngle = nil
+            
+            if !hasSpokenRightDirection {
+                BeaconTTSService.shared.speak("You are at the right direction")
+                hasSpokenRightDirection = true
+            }
         }
     }
     

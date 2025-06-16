@@ -31,6 +31,7 @@ struct BeaconNextApp: App {
                 .environmentObject(locationManager)
                 .environmentObject(searchManager)
                 .environmentObject(navigationManager)
+                .environmentObject(FavoritesManager.shared)
         }
     }
 }

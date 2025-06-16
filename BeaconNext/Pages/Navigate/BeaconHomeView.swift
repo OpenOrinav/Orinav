@@ -11,6 +11,8 @@ struct BeaconHomeView: View {
     @State private var from: QMSPoiData? // If nil, use current location; otherwise, use the selected POI
     @State private var destination: QMSPoiData?
     
+    @ObservedObject var favoritesManager = FavoritesManager.shared
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
             VStack(alignment: .leading, spacing: 24) {
@@ -48,32 +50,42 @@ struct BeaconHomeView: View {
                     }
                 }
                 
+                // MARK: Favorites View
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Favorites")
                         .font(.title2)
                         .bold()
-                    HStack(spacing: 16) {
-                        FavoriteView(
-                            text: "Home",
-                            subtitle: "Close by",
-                            fullSubtitle: "Close by",
-                            icon: "house.circle.fill"
-                        )
-                        FavoriteView(
-                            text: "School",
-                            subtitle: "31m",
-                            fullSubtitle: "31 minutes",
-                            icon: "graduationcap.circle.fill"
-                        )
-                        FavoriteView(
-                            text: "World",
-                            subtitle: "999h",
-                            fullSubtitle: "999 hours",
-                            icon: "mappin.circle.fill"
-                        )
+                    
+                    if favoritesManager.favorites.isEmpty {
+                        Text("No favorites yet")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    } else {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                ForEach(favoritesManager.favorites, id: \.id_) { poi in
+                                    FavoriteCardView(
+                                        poi: poi,
+                                        onDelete: {
+                                            favoritesManager.removeFavorite(id: poi.id_)
+                                            BeaconTTSService.shared.speak(poi.title, language: "zh-CN")
+                                            BeaconTTSService.shared.speak("deleted from favorites")
+                                        },
+                                        onTap: {
+                                            from = nil
+                                            destination = poi
+                                            isShowingRoutes = true
+                                        }
+                                    )
+                                }
+                            }
+                            .padding(.top, 6)
+                        }
                     }
                 }
-                
+
+
+                // MARK: Beacon Promotion?
                 VStack(alignment: .leading, spacing: 16) {
                     VStack(alignment: .leading, spacing: 0) {
                         Text("Welcome to Beacon")

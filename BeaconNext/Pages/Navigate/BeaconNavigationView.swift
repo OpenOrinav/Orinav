@@ -104,12 +104,71 @@ struct BeaconRouteSelectionView: View {
     @Binding var isPresented: Bool
     @State private var isShowingSearchForFrom = false
     @State private var isShowingSearchForDestination = false
+    
+    @State private var showAddFavoriteAlert = false
+    @State private var pendingFavorite: QMSPoiData? = nil
+    @State private var showAlreadyExistsAlert = false
 
     @EnvironmentObject var locationManager: BeaconLocationDelegateSimple
     @EnvironmentObject var navManager: BeaconNavigationDelegateSimple
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
+            
+            if let dest = destination {
+                DestinationInfoView(poi: dest)
+                    .padding(.top, 12)
+                    .padding(.leading, 16)
+            }
+
+            
+            if let dest = destination {
+                Button(action: {
+                    if FavoritesManager.shared.favorites.contains(where: { $0.id_ == dest.id_ }) {
+                        showAlreadyExistsAlert = true
+                    } else {
+                        pendingFavorite = dest
+                        showAddFavoriteAlert = true
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "star.fill")
+                        Text("Add to Favorite")
+                    }
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.orange)
+                    .cornerRadius(8)
+                }
+                .padding(.bottom, 8)
+                .alert("Already in Favorites", isPresented: $showAlreadyExistsAlert) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text("This location is already in your favorites.")
+                }
+                .alert("Add to Favorites?", isPresented: $showAddFavoriteAlert) {
+                    Button("Add", role: .none) {
+                        if let poi = pendingFavorite {
+                            FavoritesManager.shared.addFavorite(poi: poi)
+                            BeaconTTSService.shared.speak(poi.title, language: "zh-CN")
+                            BeaconTTSService.shared.speak("Added to favorites")
+                            pendingFavorite = nil
+                        }
+                    }
+                    Button("Cancel", role: .cancel) {
+                        pendingFavorite = nil
+                    }
+                } message: {
+                    if let poi = pendingFavorite {
+                        Text("Do you want to add \"\(poi.title)\" to your favorites?")
+                    } else {
+                        Text("Do you want to add this location to your favorites?")
+                    }
+                }
+            }
+
+            // MARK: Directions
             Text("Directions")
                 .font(.title)
                 .bold()

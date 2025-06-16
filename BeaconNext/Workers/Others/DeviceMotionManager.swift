@@ -32,4 +32,3 @@ class DeviceMotionManager: ObservableObject {
         motionManager.stopDeviceMotionUpdates()
     }
 }
-

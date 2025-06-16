@@ -109,6 +109,7 @@ struct BeaconHomeView: View {
                     }
                 }
             }
+            .padding()
         }
         .sheet(isPresented: $isShowingSearch) {
             BeaconSearchView(isPresented: $isShowingSearch) { poi in
@@ -120,7 +121,6 @@ struct BeaconHomeView: View {
         .sheet(isPresented: $isShowingRoutes) {
             BeaconRouteSelectionView(from: $from, destination: $destination, isPresented: $isShowingRoutes)
         }
-        .padding()
         .navigationTitle("Beacon")
         .navigationBarTitleDisplayMode(.large)
         .onChange(of: navManager.isNavigating){
@@ -131,7 +131,3 @@ struct BeaconHomeView: View {
         }
     }
 }
-//
-//#Preview {
-//    BeaconHomeView()
-//}

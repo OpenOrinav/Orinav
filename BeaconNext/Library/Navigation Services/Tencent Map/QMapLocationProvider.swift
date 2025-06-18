@@ -3,7 +3,7 @@ import TencentNavKit
 import CoreLocation
 
 extension TencentLBSLocation: BeaconLocation {
-    var bLocation: CLLocationCoordinate2D {
+    var bCoordinate: CLLocationCoordinate2D {
         location.coordinate
     }
     

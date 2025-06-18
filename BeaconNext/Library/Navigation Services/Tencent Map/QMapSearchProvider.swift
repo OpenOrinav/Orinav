@@ -81,14 +81,14 @@ extension QMSPoiData: BeaconPOI {
         }
     }
 
-    public var bLocation: CLLocationCoordinate2D {
+    public var bCoordinate: CLLocationCoordinate2D {
         location
     }
 }
 
 class QMapSearchProvider: NSObject, BeaconSearchProvider, QMSSearchDelegate {
     private let searchManager: QMSSearcher
-    private var continuation: CheckedContinuation<[BeaconPOI], Error>?
+    private var continuation: CheckedContinuation<[any BeaconPOI], Never>?
     
     override init() {
         self.searchManager = QMSSearcher()
@@ -97,8 +97,8 @@ class QMapSearchProvider: NSObject, BeaconSearchProvider, QMSSearchDelegate {
         self.searchManager.delegate = self
     }
     
-    func searchByPOI(poi: String, center: CLLocationCoordinate2D?) async throws -> [BeaconPOI] {
-        return try await withCheckedThrowingContinuation { (cont: CheckedContinuation<[BeaconPOI], Error>) in
+    func searchByPOI(poi: String, center: CLLocationCoordinate2D?) async -> [any BeaconPOI] {
+        return await withCheckedContinuation { cont in
             self.continuation = cont
             
             let option = QMSPoiSearchOption()
@@ -119,14 +119,6 @@ class QMapSearchProvider: NSObject, BeaconSearchProvider, QMSSearchDelegate {
         didReceive poiSearchResult: QMSPoiSearchResult
     ) {
         continuation?.resume(returning: poiSearchResult.dataArray)
-        continuation = nil
-    }
-    
-    func search(
-        with searchOption: QMSSearchOption,
-        didFailWithError error: Error
-    ) {
-        continuation?.resume(throwing: error)
         continuation = nil
     }
     

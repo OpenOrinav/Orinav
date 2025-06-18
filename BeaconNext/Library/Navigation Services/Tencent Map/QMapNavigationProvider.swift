@@ -18,7 +18,7 @@ extension TNKSearchNavPoint: BeaconPOI {
         return .others
     }
     
-    var bLocation: CLLocationCoordinate2D {
+    var bCoordinate: CLLocationCoordinate2D {
         return coordinate
     }
 }
@@ -28,11 +28,11 @@ extension TNKWalkRoute: BeaconWalkRoute {
         return self.routeID
     }
     
-    var bOrigin: BeaconPOI {
+    var bOrigin: any BeaconPOI {
         return self.origin
     }
     
-    var bDestination: BeaconPOI {
+    var bDestination: any BeaconPOI {
         return self.destination
     }
     
@@ -47,35 +47,40 @@ extension TNKWalkRoute: BeaconWalkRoute {
 
 class QMapNavigationProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDelegate, TNKWalkNavViewDelegate, TNKWalkNavDataSource {
     let navManager: TNKWalkNavManager
-    let navView: TNKWalkNavView
+    let realNavView: TNKWalkNavView
     
     var endNavigation: (() -> Void)?
+    
+    var navView: UIView {
+        return realNavView
+    }
 
     override init() {
         navManager = TNKWalkNavManager.sharedInstance()
+        realNavView = TNKWalkNavView(frame: UIScreen.main.bounds)
+        
         super.init()
+        
         navManager.audioPlayer = TNKAudioPlayer.shared()
         navManager.register(self)
         navManager.navDataSource = self
-        
-        navView = TNKWalkNavView(frame: UIScreen.main.bounds)
-        navView.showUIElements = true
-        navView.delegate = self
-        navManager.register(navView)
+        realNavView.showUIElements = true
+        realNavView.delegate = self
+        navManager.register(realNavView)
     }
     
     func planRoutes(
-        from: BeaconPOI?,
-        to: BeaconPOI?,
-        location: CLLocationCoordinate2D?
-    ) async -> [BeaconWalkRoute] {
+        from: (any BeaconPOI)?,
+        to: (any BeaconPOI)?,
+        location: BeaconLocation
+    ) async -> [any BeaconWalkRoute] {
         let origin = TNKSearchNavPoint()
-        origin.coordinate = from?.bLocation ?? location!
+        origin.coordinate = from?.bCoordinate ?? location.bCoordinate
         origin.title = from?.bName
         origin.poiID = from?.bid
 
         let destination = TNKSearchNavPoint()
-        destination.coordinate = to?.bLocation ?? location!
+        destination.coordinate = to?.bCoordinate ?? location.bCoordinate
         destination.title = to?.bName
         destination.poiID = to?.bid
 
@@ -88,7 +93,7 @@ class QMapNavigationProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDele
                 DispatchQueue.main.async {
                     if let routes = result?.routes {
                         let beaconRoutes = routes
-                            .map { $0 as BeaconWalkRoute }
+                            .map { $0 as (any BeaconWalkRoute) }
                             .sorted { $0.bDistanceMeters < $1.bDistanceMeters }
                         continuation.resume(returning: beaconRoutes)
                     } else {
@@ -99,7 +104,7 @@ class QMapNavigationProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDele
         }
     }
     
-    func startNavigation(with: BeaconWalkRoute) {
+    func startNavigation(with: any BeaconWalkRoute) {
         navManager.startNav(withRouteID: with.bid)
     }
     

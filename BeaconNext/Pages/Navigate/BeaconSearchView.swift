@@ -5,13 +5,13 @@ import CoreLocation
 struct BeaconSearchView: View {
     @State private var searchText: String = ""
     @State private var debounceWorkItem: DispatchWorkItem?
-    @State private var searchResults: [BeaconPOI] = []
+    @State private var searchResults: [any BeaconPOI] = []
     @FocusState private var isSearchFieldFocused: Bool
     @Binding var isPresented: Bool
     var showCurrentLocation: Bool = false
-    var onSelect: (BeaconPOI?) -> Void
+    var onSelect: ((any BeaconPOI)?) -> Void
     
-    @EnvironmentObject var globalState: BeaconNavigationCoordinator
+    @EnvironmentObject var globalState: BeaconMappingCoordinator
     
     var body: some View {
         VStack(spacing: 8) {
@@ -80,14 +80,14 @@ struct BeaconSearchView: View {
                             Text(poi.wrappedValue.bName)
                                 .font(.headline)
                             if globalState.locationProvider.currentLocation != nil,
-                               let dist = globalState.locationProvider.currentLocation.distance(to: poi.location) {
-                                Text("\(BeaconUIUtils.formattedDistance(dist)) · \(poi.bAddress)")
+                               let dist = globalState.locationProvider.currentLocation?.distance(to: poi.wrappedValue.bCoordinate) {
+                                Text("\(BeaconUIUtils.formattedDistance(dist)) · \(poi.wrappedValue.bAddress)")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
                                     .truncationMode(.tail)
                             } else {
-                                Text(poi.address)
+                                Text(poi.wrappedValue.bAddress)
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
@@ -131,7 +131,7 @@ struct BeaconSearchView: View {
         Task {
             let results = await globalState.searchProvider.searchByPOI(
                 poi: text,
-                center: globalState.locationProvider.currentLocation?.bLocation
+                center: globalState.locationProvider.currentLocation?.bCoordinate
             )
             await MainActor.run {
                 searchResults = results

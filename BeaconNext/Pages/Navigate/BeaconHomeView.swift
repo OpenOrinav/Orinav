@@ -2,14 +2,13 @@ import SwiftUI
 import QMapKit
 
 struct BeaconHomeView: View {
-    @EnvironmentObject var locationManager: BeaconLocationDelegateSimple
-    @EnvironmentObject var navManager: BeaconNavigationDelegateSimple
+    @EnvironmentObject var globalState: BeaconNavigationCoordinator
     
     @State private var isShowingSearch = false
     
     @State private var isShowingRoutes = false
-    @State private var from: QMSPoiData? // If nil, use current location; otherwise, use the selected POI
-    @State private var destination: QMSPoiData?
+    @State private var from: BeaconPOI? // If nil, use current location; otherwise, use the selected POI
+    @State private var destination: BeaconPOI?
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
@@ -19,12 +18,12 @@ struct BeaconHomeView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "location.fill")
                                 .accessibilityHidden(true)
-                            Text(locationManager.lastAddress ?? "Loading...") // Current Location
+                            Text(globalState.locationProvider.currentLocation?.bName ?? "Loading...") // Current Location
                                 .font(.headline)
                         }
                         .frame(maxWidth: .infinity)
                         .accessibilityElement(children: .combine)
-                        .accessibilityLabel("Current Location: \(locationManager.lastAddress ?? "Loading...")")
+                        .accessibilityLabel("Current Location: \(globalState.locationProvider.currentLocation?.bName ?? "Loading...")")
 
                         Button(action: {
                             isShowingSearch = true

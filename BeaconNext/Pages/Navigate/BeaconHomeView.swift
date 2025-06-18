@@ -18,12 +18,12 @@ struct BeaconHomeView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "location.fill")
                                 .accessibilityHidden(true)
-                            Text(globalState.locationProvider.currentLocation?.bName ?? "Loading...") // Current Location
+                            Text(globalState.locationDelegate.currentLocation?.bName ?? "Loading...") // Current Location
                                 .font(.headline)
                         }
                         .frame(maxWidth: .infinity)
                         .accessibilityElement(children: .combine)
-                        .accessibilityLabel("Current Location: \(globalState.locationProvider.currentLocation?.bName ?? "Loading...")")
+                        .accessibilityLabel("Current Location: \(globalState.locationDelegate.currentLocation?.bName ?? "Loading...")")
 
                         Button(action: {
                             isShowingSearch = true
@@ -96,6 +96,7 @@ struct BeaconHomeView: View {
                     }
                 }
             }
+            .padding()
         }
         .sheet(isPresented: $isShowingSearch) {
             BeaconSearchView(isPresented: $isShowingSearch) { poi in
@@ -107,12 +108,7 @@ struct BeaconHomeView: View {
         .sheet(isPresented: $isShowingRoutes) {
             BeaconRouteSelectionView(from: $from, destination: $destination, isPresented: $isShowingRoutes)
         }
-        .padding()
         .navigationTitle("Beacon")
         .navigationBarTitleDisplayMode(.large)
     }
 }
-//
-//#Preview {
-//    BeaconHomeView()
-//}

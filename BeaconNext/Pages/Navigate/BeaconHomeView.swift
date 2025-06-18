@@ -2,13 +2,13 @@ import SwiftUI
 import QMapKit
 
 struct BeaconHomeView: View {
-    @EnvironmentObject var globalState: BeaconNavigationCoordinator
+    @EnvironmentObject var globalState: BeaconMappingCoordinator
     
     @State private var isShowingSearch = false
     
     @State private var isShowingRoutes = false
-    @State private var from: BeaconPOI? // If nil, use current location; otherwise, use the selected POI
-    @State private var destination: BeaconPOI?
+    @State private var from: (any BeaconPOI)? // If nil, use current location; otherwise, use the selected POI
+    @State private var destination: (any BeaconPOI)?
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
@@ -110,12 +110,6 @@ struct BeaconHomeView: View {
         .padding()
         .navigationTitle("Beacon")
         .navigationBarTitleDisplayMode(.large)
-        .onChange(of: navManager.isNavigating){
-            if !navManager.isNavigating {
-                isShowingRoutes = false
-                isShowingSearch = false
-            }
-        }
     }
 }
 //

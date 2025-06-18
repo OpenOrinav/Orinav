@@ -1,19 +1,19 @@
 import SwiftUI
 import CoreLocation
 
-protocol BeaconPOI {
+protocol BeaconPOI: Equatable {
     var bid: String { get }
     var bName: String { get }
     var bAddress: String { get }
     var bCategory: BeaconPOICategory { get }
-    var bLocation: CLLocationCoordinate2D { get }
+    var bCoordinate: CLLocationCoordinate2D { get }
 
     var bIcon: String { get }
     var bIconColor: Color { get }
 }
 
 extension BeaconPOI {
-    func bIcon() -> String {
+    var bIcon: String {
         switch bCategory {
         case .foodAndDrink:
             return "fork.knife.circle.fill"
@@ -93,6 +93,10 @@ extension BeaconPOI {
         case .others:
             return .secondary
         }
+    }
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.bid == rhs.bid
     }
 }
 

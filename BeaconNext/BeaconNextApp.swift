@@ -4,7 +4,7 @@ import TencentNavKit
 
 @main
 struct BeaconNextApp: App {
-    @StateObject private var globalState: BeaconNavigationCoordinator = BeaconNavigationCoordinator()
+    @StateObject private var globalState: BeaconMappingCoordinator = BeaconMappingCoordinator()
     
     var body: some Scene {
         WindowGroup {

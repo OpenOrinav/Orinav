@@ -39,8 +39,17 @@ class BeaconMappingCoordinator: ObservableObject {
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
-        navigationProvider.endNavigation = { [weak self] in
-            self.globalUIState.
+        
+        navigationProvider.endNavigation = { [self] in
+            DispatchQueue.main.async {
+                self.globalUIState.choosingRoutes = false
+                self.globalUIState.routeInNavigation = nil
+            }
+        }
+        navigationProvider.receiveRoadAngle = { [self] angle in
+            if globalUIState.routeInNavigation != nil {
+                locationDelegate.speakAngularDeviation(from: angle)
+            }
         }
     }
 }

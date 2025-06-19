@@ -63,7 +63,7 @@ struct BeaconPOIView: View {
             .buttonStyle(.borderedProminent)
             .tint(.blue)
             .disabled(globalUIState.poi == nil)
-            .accessibilityLabel("Start navigation")
+            .accessibilityLabel("Start walk navigation, takes \(poiTime == nil ? "..." : String(poiTime!)) \(poiTime == 1 ? "minute" : "minutes")")
             
             VStack(alignment: .leading, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {

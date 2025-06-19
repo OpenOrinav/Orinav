@@ -47,7 +47,7 @@ extension TNKWalkRoute: BeaconWalkRoute {
 
 class QMapNavigationProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDelegate, TNKWalkNavViewDelegate, TNKWalkNavDataSource {
     let navManager: TNKWalkNavManager
-    let realNavView: TNKWalkNavView
+    var realNavView: TNKWalkNavView
     
     var endNavigation: (() -> Void)?
     var receiveRoadAngle: ((CLLocationDistance) -> Void)?
@@ -103,6 +103,14 @@ class QMapNavigationProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDele
                 }
             }
         }
+    }
+    
+    func clearState() {
+        navManager.stopNav()
+        realNavView = TNKWalkNavView(frame: UIScreen.main.bounds)
+        realNavView.showUIElements = true
+        realNavView.delegate = self
+        navManager.register(realNavView)
     }
     
     func walkNavManager(_ manager: TNKWalkNavManager, didUpdate location: TNKLocation) {

@@ -13,7 +13,6 @@ struct BeaconNavigationContainerView: View {
     var body: some View {
         if let route = globalUIState.routeInNavigation {
             BeaconNavigationView(navManager: globalState.navigationProvider, selectedRoute: route)
-                .ignoresSafeArea(.all)
                 .fullScreenCover(isPresented: $isInExploreMode) {
                     BeaconExploreView()
                 }
@@ -22,6 +21,7 @@ struct BeaconNavigationContainerView: View {
                         isInExploreMode = raised
                     }
                 }
+                .ignoresSafeArea(edges: .all)
         }
     }
 }

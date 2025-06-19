@@ -9,4 +9,5 @@ protocol BeaconNavigationProvider {
     
     func planRoutes(from: (any BeaconPOI)?, to: (any BeaconPOI)?, location: BeaconLocation) async -> [any BeaconWalkRoute]
     func startNavigation(with: any BeaconWalkRoute)
+    func clearState()
 }

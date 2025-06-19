@@ -11,26 +11,26 @@ PODS:
   - libwebp/sharpyuv (1.5.0)
   - libwebp/webp (1.5.0):
     - libwebp/sharpyuv
-  - TencentNavKit (6.12.0):
-    - TencentNavKit/TencentNavKit (= 6.12.0)
-    - TencentNavKit/TencentNavLocationKit (= 6.12.0)
-    - TencentNavKit/TencentNavMapFoundationKit (= 6.12.0)
-    - TencentNavKit/TencentNavMapKit (= 6.12.0)
-    - TencentNavKit/TNKAudioPlayer (= 6.12.0)
-  - TencentNavKit/TencentNavKit (6.12.0):
+  - TencentNavKit (7.1.1):
+    - TencentNavKit/TencentNavKit (= 7.1.1)
+    - TencentNavKit/TencentNavLocationKit (= 7.1.1)
+    - TencentNavKit/TencentNavMapFoundationKit (= 7.1.1)
+    - TencentNavKit/TencentNavMapKit (= 7.1.1)
+    - TencentNavKit/TNKAudioPlayer (= 7.1.1)
+  - TencentNavKit/TencentNavKit (7.1.1):
     - TencentNavKit/TencentNavLocationKit
     - TencentNavKit/TencentNavMapKit
-  - TencentNavKit/TencentNavLocationKit (6.12.0):
+  - TencentNavKit/TencentNavLocationKit (7.1.1):
     - TencentNavKit/TencentNavMapFoundationKit
-  - TencentNavKit/TencentNavMapFoundationKit (6.12.0)
-  - TencentNavKit/TencentNavMapKit (6.12.0):
+  - TencentNavKit/TencentNavMapFoundationKit (7.1.1)
+  - TencentNavKit/TencentNavMapKit (7.1.1):
     - TencentNavKit/TencentNavMapFoundationKit
-  - TencentNavKit/TNKAudioPlayer (6.12.0):
+  - TencentNavKit/TNKAudioPlayer (7.1.1):
     - TencentNavKit/TencentNavKit
 
 DEPENDENCIES:
   - libwebp
-  - TencentNavKit (= 6.12.0)
+  - TencentNavKit (= 7.1.1)
 
 SPEC REPOS:
   trunk:
@@ -39,8 +39,8 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
-  TencentNavKit: 00e941fe7da653739aeb62dc258ed85420d278e0
+  TencentNavKit: 221be18885e1ab3f899d86aeacb39bdb6fc818a0
 
-PODFILE CHECKSUM: 6986386a6f3c3d384081febb13b989b55096e13f
+PODFILE CHECKSUM: ea3d8a0008eb0cb952e8ac7656996a9eb4fc0bc5
 
 COCOAPODS: 1.16.2

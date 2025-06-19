@@ -833,9 +833,6 @@
         }
       }
     },
-    "Start navigation" : {
-
-    },
     "Start navigation for this route" : {
       "localizations" : {
         "ar" : {
@@ -848,6 +845,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "开始导航此路线"
+          }
+        }
+      }
+    },
+    "Start walk navigation, takes %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Start walk navigation, takes %1$@ %2$@"
           }
         }
       }

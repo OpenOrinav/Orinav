@@ -122,7 +122,7 @@ struct BeaconHomeView: View {
         }
         .fullScreenCover(isPresented: createBinding(.navigation)) {
             BeaconNavigationContainerView()
-                .ignoresSafeArea(.all)
+                .ignoresSafeArea(edges: .all)
         }
         .navigationTitle("Beacon")
         .navigationBarTitleDisplayMode(.large)

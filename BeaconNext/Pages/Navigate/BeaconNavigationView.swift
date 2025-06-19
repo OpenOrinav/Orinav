@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct BeaconNavigationView: UIViewRepresentable {
     let navManager: BeaconNavigationProvider

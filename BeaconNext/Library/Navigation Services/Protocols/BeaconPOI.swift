@@ -100,7 +100,7 @@ extension BeaconPOI {
     }
 }
 
-public enum BeaconPOICategory: String, CaseIterable {
+public enum BeaconPOICategory: String, CaseIterable, Codable {
     case foodAndDrink      = "Food & Drink"
     case shopping          = "Shopping"
     case healthServices    = "Health Services"

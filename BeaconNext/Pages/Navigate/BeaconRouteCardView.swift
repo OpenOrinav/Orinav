@@ -3,10 +3,9 @@ import SwiftUI
 struct BeaconRouteCardView: View {
     let route: any BeaconWalkRoute
 
-    @State private var isPresentingNavigation = false
-
     @EnvironmentObject var globalState: BeaconMappingCoordinator
-
+    @EnvironmentObject var globalUIState: BeaconGlobalUIState
+    
     private var timeText: String {
         let minutes = route.bTimeMinutes
         let hours = minutes / 60
@@ -36,7 +35,8 @@ struct BeaconRouteCardView: View {
             }
             Spacer()
             Button("GO") {
-                isPresentingNavigation = true
+                globalUIState.routeInNavigation = route
+                globalUIState.currentPage = .navigation
             }
             .font(.body)
             .bold()
@@ -53,9 +53,5 @@ struct BeaconRouteCardView: View {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color(.systemBackground))
         )
-        .fullScreenCover(isPresented: $isPresentingNavigation) {
-            BeaconNavigationContainerView()
-                .edgesIgnoringSafeArea(.all)
-        }
     }
 }

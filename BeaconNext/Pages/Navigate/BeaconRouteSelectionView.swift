@@ -32,16 +32,13 @@ struct BeaconIconConnector: View {
 }
 
 struct BeaconRouteSelectionView: View {
-    @Binding var from: (any BeaconPOI)?
-    @Binding var destination: (any BeaconPOI)?
-    @Binding var isPresented: Bool
-    
     @State private var isShowingSearchForFrom = false
     @State private var isShowingSearchForDestination = false
     @State private var searchLoading = false
     @State private var searchResults: [any BeaconWalkRoute] = []
     
     @EnvironmentObject var globalState: BeaconMappingCoordinator
+    @EnvironmentObject var globalUIState: BeaconGlobalUIState
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -53,26 +50,26 @@ struct BeaconRouteSelectionView: View {
             VStack(spacing: 0) {
                 HStack(spacing: 12) {
                     BeaconIconConnector(
-                        topImage: Image(systemName: from == nil ? "location.circle.fill" : from!.bIcon),
-                        topColor: from == nil ? .blue : from!.bIconColor,
-                        bottomImage: Image(systemName: destination == nil ? "location.circle.fill" : destination!.bIcon),
-                        bottomColor: destination == nil ? .blue : destination!.bIconColor
+                        topImage: Image(systemName: globalUIState.routesFrom == nil ? "location.circle.fill" : globalUIState.routesFrom!.bIcon),
+                        topColor: globalUIState.routesFrom == nil ? .blue : globalUIState.routesFrom!.bIconColor,
+                        bottomImage: Image(systemName: globalUIState.routesDestination == nil ? "location.circle.fill" : globalUIState.routesDestination!.bIcon),
+                        bottomColor: globalUIState.routesDestination == nil ? .blue : globalUIState.routesDestination!.bIconColor
                     )
                     VStack(spacing: 12) {
                         // From text
                         Button {
                             isShowingSearchForFrom = true
                         } label: {
-                            Text(from?.bName ?? "My Location")
+                            Text(globalUIState.routesFrom?.bName ?? "My Location")
                                 .font(.body)
                                 .foregroundColor(.primary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .onChange(of: from?.bid) {
+                        .onChange(of: globalUIState.routesFrom?.bid) {
                             handleSearch()
                         }
                         .accessibilityLabel("Starting location")
-                        .accessibilityValue(from?.bName ?? "My Location")
+                        .accessibilityValue(globalUIState.routesFrom?.bName ?? "My Location")
                         .accessibilityHint("Double tap to select a starting point")
                         
                         Divider()
@@ -82,22 +79,22 @@ struct BeaconRouteSelectionView: View {
                         Button {
                             isShowingSearchForDestination = true
                         } label: {
-                            Text(destination?.bName ?? "My Location")
+                            Text(globalUIState.routesDestination?.bName ?? "My Location")
                                 .font(.body)
                                 .foregroundColor(.primary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .onChange(of: destination?.bid) {
+                        .onChange(of: globalUIState.routesDestination?.bid) {
                             handleSearch()
                         }
                         .accessibilityLabel("Destination")
-                        .accessibilityValue(destination?.bName ?? "My Location")
+                        .accessibilityValue(globalUIState.routesDestination?.bName ?? "My Location")
                         .accessibilityHint("Double tap to select destination")
                     }
                     Button {
-                        let oldFrom = from
-                        from = destination
-                        destination = oldFrom
+                        let oldFrom = globalUIState.routesFrom
+                        globalUIState.routesFrom = globalUIState.routesDestination
+                        globalUIState.routesDestination = oldFrom
                     } label: {
                         Image(systemName: "arrow.up.arrow.down")
                             .resizable()
@@ -141,7 +138,7 @@ struct BeaconRouteSelectionView: View {
                 isPresented: $isShowingSearchForFrom,
                 showCurrentLocation: true
             ) { poi in
-                from = poi
+                globalUIState.routesFrom = poi
             }
         }
         .sheet(isPresented: $isShowingSearchForDestination) {
@@ -149,18 +146,18 @@ struct BeaconRouteSelectionView: View {
                 isPresented: $isShowingSearchForDestination,
                 // Never allow destination to be My Location
             ) { poi in
-                destination = poi
+                globalUIState.routesDestination = poi
             }
         }
         .accessibilityAction(.escape) {
-            isPresented = false
+            globalUIState.currentPage = nil
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .padding()
         .background(Color(.secondarySystemBackground))
         .overlay(
             Button {
-                isPresented = false
+                globalUIState.currentPage = nil
             } label: {
                 EmptyView()
             }
@@ -174,8 +171,8 @@ struct BeaconRouteSelectionView: View {
         Task {
             let results = await globalState.navigationProvider
                 .planRoutes(
-                    from: from,
-                    to: destination,
+                    from: globalUIState.routesFrom,
+                    to: globalUIState.routesDestination,
                     location: globalState.locationProvider.currentLocation!
                 )
             await MainActor.run {

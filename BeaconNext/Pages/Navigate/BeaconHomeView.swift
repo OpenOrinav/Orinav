@@ -68,9 +68,9 @@ struct BeaconHomeView: View {
                                             BeaconTTSService.shared.speak("deleted from favorites")
                                         },
                                         onTap: {
-                                            globalUIState.choosingRoutes = true
-                                            globalUIState.from = nil
-                                            globalUIState.destination = poi
+                                            globalUIState.currentPage = .routes
+                                            globalUIState.routesFrom = nil
+                                            globalUIState.routesDestination = poi
                                         }
                                     )
                                 }
@@ -107,17 +107,35 @@ struct BeaconHomeView: View {
             }
             .padding()
         }
+        // Present pages
         .sheet(isPresented: $isShowingSearch) {
             BeaconSearchView(isPresented: $isShowingSearch) { poi in
-                globalUIState.from = nil
-                globalUIState.destination = poi
-                globalUIState.choosingRoutes = true
+                globalUIState.routesFrom = nil
+                globalUIState.routesDestination = poi
+                globalUIState.currentPage = .routes
             }
         }
-        .sheet(isPresented: $globalUIState.choosingRoutes) {
-            BeaconRouteSelectionView(from: $globalUIState.from, destination: $globalUIState.destination, isPresented: $globalUIState.choosingRoutes)
+        .sheet(isPresented: createBinding(.routes)) {
+            BeaconRouteSelectionView()
+        }
+        .fullScreenCover(isPresented: createBinding(.navigation)) {
+            BeaconNavigationContainerView()
+                .ignoresSafeArea(.all)
         }
         .navigationTitle("Beacon")
         .navigationBarTitleDisplayMode(.large)
+    }
+    
+    func createBinding(_ page: BeaconPage) -> Binding<Bool> {
+        Binding(
+            get: { globalUIState.currentPage == page },
+            set: { isPresented in
+                if isPresented {
+                    globalUIState.currentPage = page
+                } else {
+                    globalUIState.currentPage = nil
+                }
+            }
+        )
     }
 }

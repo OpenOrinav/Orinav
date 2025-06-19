@@ -42,9 +42,22 @@ struct BeaconRouteSelectionView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Directions")
-                .font(.title)
-                .bold()
+            HStack {
+                Text("Directions")
+                    .font(.title)
+                    .bold()
+                
+                Button {
+                    globalUIState.currentPage = nil
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(.secondary)
+                }
+                .accessibilityLabel("Close")
+                .accessibilityHint("Dismisses the route selection sheet")
+            }
             
             // From/destination selection
             VStack(spacing: 0) {
@@ -155,15 +168,6 @@ struct BeaconRouteSelectionView: View {
         .frame(maxHeight: .infinity, alignment: .top)
         .padding()
         .background(Color(.secondarySystemBackground))
-        .overlay(
-            Button {
-                globalUIState.currentPage = nil
-            } label: {
-                EmptyView()
-            }
-                .accessibilityLabel("Close")
-                .accessibilityHint("Dismisses the route selection sheet")
-        )
     }
     
     private func handleSearch() {

@@ -110,10 +110,12 @@ struct BeaconHomeView: View {
         // Present pages
         .sheet(isPresented: $isShowingSearch) {
             BeaconSearchView(isPresented: $isShowingSearch) { poi in
-                globalUIState.routesFrom = nil
-                globalUIState.routesDestination = poi
-                globalUIState.currentPage = .routes
+                globalUIState.poi = poi
+                globalUIState.currentPage = .poi
             }
+        }
+        .sheet(isPresented: createBinding(.poi)) {
+            BeaconPOIView()
         }
         .sheet(isPresented: createBinding(.routes)) {
             BeaconRouteSelectionView()

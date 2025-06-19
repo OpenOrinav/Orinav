@@ -11,15 +11,17 @@ struct BeaconNavigationContainerView: View {
     @Environment(\.presentationMode) private var presentationMode
 
     var body: some View {
-        BeaconNavigationView(navManager: globalState.navigationProvider, selectedRoute: globalUIState.routeInNavigation!)
-            .edgesIgnoringSafeArea(.all)
-            .fullScreenCover(isPresented: $isInExploreMode) {
-                BeaconExploreView()
-            }
-        .onReceive(motionManager.$isPhoneRaised) { raised in
-            withAnimation {
-                isInExploreMode = raised
-            }
+        if let route = globalUIState.routeInNavigation {
+            BeaconNavigationView(navManager: globalState.navigationProvider, selectedRoute: route)
+                .ignoresSafeArea(.all)
+                .fullScreenCover(isPresented: $isInExploreMode) {
+                    BeaconExploreView()
+                }
+                .onReceive(motionManager.$isPhoneRaised) { raised in
+                    withAnimation {
+                        isInExploreMode = raised
+                    }
+                }
         }
     }
 }

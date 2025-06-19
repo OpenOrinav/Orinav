@@ -42,12 +42,11 @@ class BeaconMappingCoordinator: ObservableObject {
         
         navigationProvider.endNavigation = { [self] in
             DispatchQueue.main.async {
-                self.globalUIState.choosingRoutes = false
-                self.globalUIState.routeInNavigation = nil
+                self.globalUIState.currentPage = nil
             }
         }
         navigationProvider.receiveRoadAngle = { [self] angle in
-            if globalUIState.routeInNavigation != nil {
+            if globalUIState.currentPage == .navigation {
                 locationDelegate.speakAngularDeviation(from: angle)
             }
         }

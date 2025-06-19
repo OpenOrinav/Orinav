@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct CardView: View {
-    let title: String
-    let text: String
+    let title: LocalizedStringResource
+    let text: LocalizedStringResource
     let color: Color
 
     @GestureState private var isPressed = false

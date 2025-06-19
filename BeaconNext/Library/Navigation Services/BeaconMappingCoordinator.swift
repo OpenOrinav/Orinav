@@ -8,9 +8,13 @@ class BeaconMappingCoordinator: ObservableObject {
     var locationDelegate: StandardLocationDelegate
     var navigationProvider: BeaconNavigationProvider
     
+    var globalUIState: BeaconGlobalUIState
+    
     private var cancellable: AnyCancellable?
     
-    init() {
+    init(globalUIState: BeaconGlobalUIState) {
+        self.globalUIState = globalUIState
+        
         // Set Tencent Map API keys
         guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "TencentAPIKey") as? String else {
             fatalError("Missing TencentAPIKey in Info.plist")
@@ -26,11 +30,17 @@ class BeaconMappingCoordinator: ObservableObject {
         locationDelegate = StandardLocationDelegate()
         navigationProvider = QMapNavigationProvider()
         
+        providerReinit()
+    }
+    
+    func providerReinit() {
         locationProvider.delegate = locationDelegate
-        
         cancellable = locationDelegate.objectWillChange
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
+        navigationProvider.endNavigation = { [weak self] in
+            self.globalUIState.
+        }
     }
 }

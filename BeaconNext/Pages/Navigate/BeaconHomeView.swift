@@ -3,12 +3,9 @@ import QMapKit
 
 struct BeaconHomeView: View {
     @EnvironmentObject var globalState: BeaconMappingCoordinator
+    @EnvironmentObject var globalUIState: BeaconGlobalUIState
     
     @State private var isShowingSearch = false
-    
-    @State private var isShowingRoutes = false
-    @State private var from: (any BeaconPOI)? // If nil, use current location; otherwise, use the selected POI
-    @State private var destination: (any BeaconPOI)?
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
@@ -100,13 +97,13 @@ struct BeaconHomeView: View {
         }
         .sheet(isPresented: $isShowingSearch) {
             BeaconSearchView(isPresented: $isShowingSearch) { poi in
-                self.from = nil
-                self.destination = poi
-                self.isShowingRoutes = true
+                globalUIState.from = nil
+                globalUIState.destination = poi
+                globalUIState.choosingRoutes = true
             }
         }
-        .sheet(isPresented: $isShowingRoutes) {
-            BeaconRouteSelectionView(from: $from, destination: $destination, isPresented: $isShowingRoutes)
+        .sheet(isPresented: $globalUIState.choosingRoutes) {
+            BeaconRouteSelectionView(from: $globalUIState.from, destination: $globalUIState.destination, isPresented: $globalUIState.choosingRoutes)
         }
         .navigationTitle("Beacon")
         .navigationBarTitleDisplayMode(.large)

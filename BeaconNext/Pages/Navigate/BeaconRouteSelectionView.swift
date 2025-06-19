@@ -47,6 +47,8 @@ struct BeaconRouteSelectionView: View {
                     .font(.title)
                     .bold()
                 
+                Spacer()
+                
                 Button {
                     globalUIState.currentPage = nil
                 } label: {
@@ -167,7 +169,7 @@ struct BeaconRouteSelectionView: View {
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .padding()
-        .background(Color(.secondarySystemBackground))
+        .background(.ultraThickMaterial)
     }
     
     private func handleSearch() {

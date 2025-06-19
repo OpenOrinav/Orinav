@@ -68,9 +68,8 @@ struct BeaconHomeView: View {
                                             BeaconTTSService.shared.speak("deleted from favorites")
                                         },
                                         onTap: {
-                                            globalUIState.currentPage = .routes
-                                            globalUIState.routesFrom = nil
-                                            globalUIState.routesDestination = poi
+                                            globalUIState.poi = poi
+                                            globalUIState.currentPage = .poi
                                         }
                                     )
                                 }
@@ -116,6 +115,7 @@ struct BeaconHomeView: View {
         }
         .sheet(isPresented: createBinding(.poi)) {
             BeaconPOIView()
+                .presentationDetents([.medium])
         }
         .sheet(isPresented: createBinding(.routes)) {
             BeaconRouteSelectionView()

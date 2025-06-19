@@ -6,9 +6,10 @@ struct BeaconPOIView: View {
     @EnvironmentObject var globalUIState: BeaconGlobalUIState
     
     @State private var poiTime: Int? = nil
+    @State private var isFavorited: Bool = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text(globalUIState.poi?.bName ?? "...")
                     .font(.title)
@@ -16,16 +17,18 @@ struct BeaconPOIView: View {
                     .truncationMode(.tail)
                     .bold()
                 
+                Spacer()
+                
                 if let poi = globalUIState.poi {
-                    let isFavorited = FavoritesManager.shared.favorites.contains { $0.bid == poi.bid }
                     Button {
                         if isFavorited {
                             FavoritesManager.shared.removeFavorite(id: poi.bid)
                         } else {
                             FavoritesManager.shared.addFavorite(poi: poi)
                         }
+                        isFavorited.toggle()
                     } label: {
-                        Image(systemName: isFavorited ? "star.fill" : "star")
+                        Image(systemName: "star.circle.fill")
                             .resizable()
                             .frame(width: 24, height: 24)
                             .foregroundColor(isFavorited ? .yellow : .secondary)
@@ -46,34 +49,38 @@ struct BeaconPOIView: View {
                 .accessibilityHint("Dismisses the POI sheet")
             }
             
-            Button("Walk · \(poiTime == nil ? "..." : String(poiTime!)) \(poiTime == 1 ? "minute" : "minutes")") {
+            Button {
                 if let poi = globalUIState.poi {
                     globalUIState.routesFrom = nil
                     globalUIState.routesDestination = poi
                     globalUIState.currentPage = .routes
                 }
+            } label: {
+                Text("Walk · \(poiTime == nil ? "..." : String(poiTime!)) \(poiTime == 1 ? "minute" : "minutes")")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
             }
             .buttonStyle(.borderedProminent)
             .tint(.blue)
-            .frame(maxWidth: .infinity)
             .disabled(globalUIState.poi == nil)
             .accessibilityLabel("Start navigation")
             
             VStack(alignment: .leading, spacing: 12) {
-                VStack(spacing: 4) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Address")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Text(globalUIState.poi!.bAddress)
                 }
                 
-                VStack(spacing: 4) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Category")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Text(globalUIState.poi!.bCategory.rawValue)
                 }
             }
+            .frame(maxWidth: .infinity)
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 10)
@@ -82,13 +89,16 @@ struct BeaconPOIView: View {
         }
         .onAppear {
             findPOITime()
+            if let poi = globalUIState.poi {
+                isFavorited = FavoritesManager.shared.favorites.contains { $0.bid == poi.bid }
+            }
         }
         .accessibilityAction(.escape) {
             globalUIState.currentPage = nil
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .padding()
-        .background(Color(.secondarySystemBackground))
+        .background(.ultraThickMaterial)
     }
     
     func findPOITime() {
@@ -105,4 +115,3 @@ struct BeaconPOIView: View {
         }
     }
 }
-

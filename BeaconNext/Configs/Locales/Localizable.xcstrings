@@ -96,6 +96,9 @@
         }
       }
     },
+    "Add to Favorites" : {
+
+    },
     "Add to Favorites?" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -112,6 +115,12 @@
           }
         }
       }
+    },
+    "Address" : {
+
+    },
+    "Adds this POI to your favorites" : {
+
     },
     "Already in Favorites" : {
       "extractionState" : "stale",
@@ -193,6 +202,9 @@
           }
         }
       }
+    },
+    "Category" : {
+
     },
     "Choice" : {
       "extractionState" : "manual",
@@ -335,6 +347,9 @@
           }
         }
       }
+    },
+    "Dismisses the POI sheet" : {
+
     },
     "Dismisses the route selection sheet" : {
       "localizations" : {
@@ -516,9 +531,6 @@
           }
         }
       }
-    },
-    "Impact" : {
-
     },
     "Language Setting" : {
       "extractionState" : "manual",
@@ -712,6 +724,9 @@
         }
       }
     },
+    "Remove from Favorites" : {
+
+    },
     "Remove from favorites?" : {
       "localizations" : {
         "ar" : {
@@ -727,6 +742,9 @@
           }
         }
       }
+    },
+    "Removes this POI from your favorites" : {
+
     },
     "Route: %@ estimated" : {
       "localizations" : {
@@ -815,6 +833,9 @@
         }
       }
     },
+    "Start navigation" : {
+
+    },
     "Start navigation for this route" : {
       "localizations" : {
         "ar" : {
@@ -882,9 +903,6 @@
         }
       }
     },
-    "test" : {
-
-    },
     "This location is already in your favorites." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -914,6 +932,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "点击以搜索一个地点或地址"
+          }
+        }
+      }
+    },
+    "Walk · %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Walk · %1$@ %2$@"
           }
         }
       }

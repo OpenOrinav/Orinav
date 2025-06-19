@@ -5,10 +5,12 @@ import TencentNavKit
 @main
 struct BeaconNextApp: App {
     @StateObject private var globalState: BeaconMappingCoordinator
-    @StateObject private var globalUIState: BeaconGlobalUIState = BeaconGlobalUIState()
+    @StateObject private var globalUIState: BeaconGlobalUIState
     
     init() {
-        _globalState = StateObject(wrappedValue: BeaconMappingCoordinator(globalUIState: globalUIState))
+        let ui = BeaconGlobalUIState()
+        _globalUIState = StateObject(wrappedValue: ui)
+        _globalState = StateObject(wrappedValue: BeaconMappingCoordinator(globalUIState: ui))
     }
     
     var body: some Scene {

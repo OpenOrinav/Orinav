@@ -59,18 +59,18 @@ struct BeaconHomeView: View {
                     } else {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 16) {
-                                ForEach(favoritesManager.favorites, id: \.id_) { poi in
+                                ForEach(favoritesManager.favorites, id: \.bid) { poi in
                                     FavoriteCardView(
                                         poi: poi,
                                         onDelete: {
-                                            favoritesManager.removeFavorite(id: poi.id_)
-                                            BeaconTTSService.shared.speak(poi.title, language: "zh-CN")
+                                            favoritesManager.removeFavorite(id: poi.bid)
+                                            BeaconTTSService.shared.speak(poi.bName, language: "zh-CN")
                                             BeaconTTSService.shared.speak("deleted from favorites")
                                         },
                                         onTap: {
-                                            from = nil
-                                            destination = poi
-                                            isShowingRoutes = true
+                                            globalUIState.choosingRoutes = true
+                                            globalUIState.from = nil
+                                            globalUIState.destination = poi
                                         }
                                     )
                                 }

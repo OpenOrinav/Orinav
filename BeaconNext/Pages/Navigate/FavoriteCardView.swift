@@ -2,7 +2,7 @@ import SwiftUI
 import QMapKit
 
 struct FavoriteCardView: View {
-    let poi: QMSPoiData
+    let poi: any BeaconPOI
     let onDelete: () -> Void
     let onTap: () -> Void
 
@@ -12,13 +12,13 @@ struct FavoriteCardView: View {
         ZStack(alignment: .topTrailing) {
             Button(action: onTap) {
                 VStack(spacing: 8) {
-                    Image(systemName: BeaconUIUtils.iconName(for: poi.category_code))
+                    Image(systemName: poi.bIcon)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 40, height: 40)
-                        .foregroundColor(BeaconUIUtils.iconColor(for: poi.category_code))
+                        .foregroundColor(poi.bIconColor)
 
-                    Text(poi.title)
+                    Text(poi.bName)
                         .font(.caption)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
@@ -41,7 +41,7 @@ struct FavoriteCardView: View {
                     .clipShape(Circle())
             }
             .offset(x: 8, y: -8)
-            .accessibilityLabel("Remove \(poi.title) from favorites")
+            .accessibilityLabel("Remove \(poi.bName) from favorites")
         }
         .alert("Remove from favorites?", isPresented: $showDeleteAlert) {
             Button("Delete", role: .destructive) {
@@ -49,7 +49,7 @@ struct FavoriteCardView: View {
             }
             Button("Cancel", role: .cancel) { }
         } message: {
-            Text("Are you sure you want to remove \"\(poi.title)\" from your favorites?")
+            Text("Are you sure you want to remove \"\(poi.bName)\" from your favorites?")
         }
     }
 }

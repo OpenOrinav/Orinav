@@ -1,10 +1,10 @@
 import Foundation
-import QMapKit
+import CoreLocation
 
 class FavoritesManager: ObservableObject {
     static let shared = FavoritesManager()
     
-    @Published var favorites: [QMSPoiData] = [] {
+    @Published var favorites: [any BeaconPOI] = [] {
         didSet {
             saveFavoritesToDisk()
         }
@@ -16,14 +16,14 @@ class FavoritesManager: ObservableObject {
         loadFavoritesFromDisk()
     }
 
-    func addFavorite(poi: QMSPoiData) {
-        if !favorites.contains(where: { $0.id_ == poi.id_ }) {
+    func addFavorite(poi: any BeaconPOI) {
+        if !favorites.contains(where: { $0.bid == poi.bid }) {
             favorites.append(poi)
         }
     }
 
     func removeFavorite(id: String) {
-        favorites.removeAll { $0.id_ == id }
+        favorites.removeAll { $0.bid == id }
     }
 
     // MARK: - Local Persistence
@@ -40,36 +40,34 @@ class FavoritesManager: ObservableObject {
               let simplified = try? JSONDecoder().decode([SimplifiedPOI].self, from: data) else {
             return
         }
-        self.favorites = simplified.map { $0.toQMSPoiData() }
+        self.favorites = simplified
     }
 }
 
 // MARK: - Codable Simplified POI
 
-private struct SimplifiedPOI: Codable {
-    let id_: String
-    let title: String
-    let address: String
+private struct SimplifiedPOI: Codable, BeaconPOI {
+    let bid: String
+    let bName: String
+    let bAddress: String
     let lat: Double
     let lng: Double
-    let category_code: String
-
-    init(from poi: QMSPoiData) {
-        self.id_ = poi.id_
-        self.title = poi.title
-        self.address = poi.address
-        self.lat = poi.location.latitude
-        self.lng = poi.location.longitude
-        self.category_code = poi.category_code
+    let category: String
+    
+    var bCoordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: lat, longitude: lng)
     }
-
-    func toQMSPoiData() -> QMSPoiData {
-        let poi = QMSPoiData()
-        poi.id_ = id_
-        poi.title = title
-        poi.address = address
-        poi.location = CLLocationCoordinate2D(latitude: lat, longitude: lng)
-        poi.category_code = category_code
-        return poi
+    
+    var bCategory: BeaconPOICategory {
+        return BeaconPOICategory(rawValue: category) ?? .others
+    }
+    
+    init(from poi: any BeaconPOI) {
+        self.bid = poi.bid
+        self.bName = poi.bName
+        self.bAddress = poi.bAddress
+        self.category = poi.bCategory.rawValue
+        self.lat = poi.bCoordinate.latitude
+        self.lng = poi.bCoordinate.longitude
     }
 }

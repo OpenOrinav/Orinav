@@ -37,7 +37,7 @@ class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider, 
         
         super.init()
         self.locationManager.delegate = self
-        self.locationManager.headingFilter = 10
+        self.locationManager.headingFilter = 5
         self.locationManager.startUpdatingHeading()
         self.locationManager.startUpdatingLocation()
     }

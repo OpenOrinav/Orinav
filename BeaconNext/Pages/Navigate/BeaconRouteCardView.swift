@@ -5,7 +5,11 @@ struct BeaconRouteCardView: View {
 
     @EnvironmentObject var globalState: BeaconMappingCoordinator
     @EnvironmentObject var globalUIState: BeaconGlobalUIState
+<<<<<<< Updated upstream
     
+=======
+
+>>>>>>> Stashed changes
     private var timeText: String {
         let minutes = route.bTimeMinutes
         let hours = minutes / 60
@@ -36,7 +40,11 @@ struct BeaconRouteCardView: View {
             Spacer()
             Button("GO") {
                 globalUIState.routeInNavigation = route
+<<<<<<< Updated upstream
                 globalUIState.currentPage = .navigation
+=======
+                isPresentingNavigation = true
+>>>>>>> Stashed changes
             }
             .font(.body)
             .bold()

@@ -12,14 +12,35 @@ struct BeaconSettingsView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Current Language:")
-                .font(.headline)
             
-            Text(localizedLanguageName)
-                .font(.body)
-                .foregroundColor(.gray)
+            HStack {
+                Text("Current Language:")
+                    .font(.headline)
+                
+                Text(localizedLanguageName)
+                    .font(.body)
+                    .foregroundColor(.gray)
+            }
+            .padding()
             
-            Spacer()
+            HStack {
+                Button ("success") {
+                    HapticsManager.NotificationHaptic(for: .success)
+                }
+                .padding()
+                
+                Button ("warning") {
+                    HapticsManager.NotificationHaptic(for: .warning)
+                }
+                .padding()
+                
+                Button ("error") {
+                    HapticsManager.NotificationHaptic(for: .error)
+                }
+                .padding()
+            }
+            .padding()
+            
         }
         .padding()
         .navigationTitle("Settings")

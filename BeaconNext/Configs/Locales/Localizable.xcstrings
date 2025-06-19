@@ -24,6 +24,7 @@
       }
     },
     "%@: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -62,6 +63,7 @@
       }
     },
     "Add" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -78,6 +80,7 @@
       }
     },
     "Add to Favorite" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -94,6 +97,7 @@
       }
     },
     "Add to Favorites?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -110,6 +114,7 @@
       }
     },
     "Already in Favorites" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -364,6 +369,7 @@
       }
     },
     "Do you want to add \"%@\" to your favorites?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -380,6 +386,7 @@
       }
     },
     "Do you want to add this location to your favorites?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -442,6 +449,9 @@
           }
         }
       }
+    },
+    "error" : {
+
     },
     "Explore" : {
       "localizations" : {
@@ -506,6 +516,9 @@
           }
         }
       }
+    },
+    "Impact" : {
+
     },
     "Language Setting" : {
       "extractionState" : "manual",
@@ -666,6 +679,7 @@
       }
     },
     "OK" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -682,6 +696,7 @@
       }
     },
     "Remove %@ from favorites" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -832,6 +847,9 @@
         }
       }
     },
+    "success" : {
+
+    },
     "Swap start and destination" : {
       "localizations" : {
         "ar" : {
@@ -864,7 +882,11 @@
         }
       }
     },
+    "test" : {
+
+    },
     "This location is already in your favorites." : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -895,6 +917,9 @@
           }
         }
       }
+    },
+    "warning" : {
+
     },
     "Welcome to Beacon" : {
       "localizations" : {

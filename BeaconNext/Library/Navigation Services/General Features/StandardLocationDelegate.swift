@@ -116,7 +116,7 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
                 let deltaY = abs(accel.y - last.y)
                 let deltaZ = abs(accel.z - last.z)
                 
-                let shakeThreshold = 1.0 // Sensitivity
+                let shakeThreshold = 0.8 // Sensitivity
                 let cooldown: TimeInterval = 3.0
                 
                 if deltaX > shakeThreshold || deltaY > shakeThreshold || deltaZ > shakeThreshold {

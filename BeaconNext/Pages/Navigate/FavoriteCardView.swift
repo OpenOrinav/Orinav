@@ -17,9 +17,13 @@ struct FavoriteCardView: View {
                 VStack(spacing: 0) {
                     Text(poi.bName)
                         .font(.headline)
-                    Text(poi.bAddress)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                    Text(poi.bCategory.rawValue)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                 }
             }
             .accessibilityElement(children: .combine)

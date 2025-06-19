@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CardView: View {
+struct PromotionCardView: View {
     let title: LocalizedStringResource
     let text: LocalizedStringResource
     let color: Color

@@ -50,6 +50,7 @@ class QMapNavigationProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDele
     let realNavView: TNKWalkNavView
     
     var endNavigation: (() -> Void)?
+    var receiveRoadAngle: ((CLLocationDistance) -> Void)?
     
     var navView: UIView {
         return realNavView
@@ -101,6 +102,12 @@ class QMapNavigationProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDele
                     }
                 }
             }
+        }
+    }
+    
+    func walkNavManager(_ manager: TNKWalkNavManager, didUpdate location: TNKLocation) {
+        if let receiveRoadAngle = receiveRoadAngle {
+            receiveRoadAngle(location.matchedCourse)
         }
     }
     

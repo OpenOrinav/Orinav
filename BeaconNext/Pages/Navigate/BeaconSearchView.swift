@@ -5,22 +5,13 @@ import CoreLocation
 struct BeaconSearchView: View {
     @State private var searchText: String = ""
     @State private var debounceWorkItem: DispatchWorkItem?
+    @State private var searchResults: [any BeaconPOI] = []
     @FocusState private var isSearchFieldFocused: Bool
     @Binding var isPresented: Bool
     var showCurrentLocation: Bool = false
-    var onSelect: (QMSPoiData?) -> Void
+    var onSelect: ((any BeaconPOI)?) -> Void
     
-    @EnvironmentObject private var locationManager: BeaconLocationDelegateSimple
-    @EnvironmentObject private var searchManager: BeaconSearchDelegateSimple
-    
-    private func calculateDistance(to coord: CLLocationCoordinate2D) -> CLLocationDistance? {
-        guard let userLocation = locationManager.lastLocation else { return nil }
-        let poiLocation = CLLocation(
-            latitude: coord.latitude,
-            longitude: coord.longitude
-        )
-        return userLocation.distance(from: poiLocation)
-    }
+    @EnvironmentObject var globalState: BeaconMappingCoordinator
     
     var body: some View {
         VStack(spacing: 8) {
@@ -32,7 +23,7 @@ struct BeaconSearchView: View {
                     .onChange(of: searchText) {
                         debounceWorkItem?.cancel()
                         guard searchText.count >= 1 else {
-                            searchManager.resetSearch()
+                            searchResults = []
                             return
                         }
                         let work = DispatchWorkItem {
@@ -48,7 +39,7 @@ struct BeaconSearchView: View {
             }
             .onAppear {
                 isSearchFieldFocused = true
-                searchManager.resetSearch()
+                searchResults = []
             }
             .padding(8)
             .background(
@@ -56,7 +47,7 @@ struct BeaconSearchView: View {
                     .fill(Color.secondary.opacity(0.2))
             )
             
-            if showCurrentLocation && searchManager.lastSearchResults.isEmpty {
+            if showCurrentLocation && searchResults.isEmpty {
                 HStack(spacing: 16) {
                     Image(systemName: "location.circle.fill")
                         .font(.system(size: 36))
@@ -77,26 +68,26 @@ struct BeaconSearchView: View {
                 }
             }
             
-            if !searchManager.lastSearchResults.isEmpty {
-                List(searchManager.lastSearchResults, id: \.id_) { poi in
+            if !searchResults.isEmpty {
+                List($searchResults, id: \.bid) { poi in
                     HStack(alignment: .top, spacing: 16) {
-                        Image(systemName: BeaconUIUtils.iconName(for: poi.category_code))
+                        Image(systemName: poi.wrappedValue.bIcon)
                             .font(.system(size: 36))
-                            .foregroundColor(BeaconUIUtils.iconColor(for: poi.category_code))
+                            .foregroundColor(poi.wrappedValue.bIconColor)
                             .frame(width: 36, height: 36)
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(poi.title)
+                            Text(poi.wrappedValue.bName)
                                 .font(.headline)
-                            if locationManager.lastLocation != nil,
-                               let dist = calculateDistance(to: poi.location) {
-                                Text("\(BeaconUIUtils.formattedDistance(dist)) · \(poi.address)")
+                            if globalState.locationProvider.currentLocation != nil,
+                               let dist = globalState.locationProvider.currentLocation?.distance(to: poi.wrappedValue.bCoordinate) {
+                                Text("\(BeaconUIUtils.formattedDistance(dist)) · \(poi.wrappedValue.bAddress)")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
                                     .truncationMode(.tail)
                             } else {
-                                Text(poi.address)
+                                Text(poi.wrappedValue.bAddress)
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
@@ -107,7 +98,7 @@ struct BeaconSearchView: View {
                     .padding(.vertical, 4)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        onSelect(poi)
+                        onSelect(poi.wrappedValue)
                         isPresented = false
                     }
                 }
@@ -134,13 +125,17 @@ struct BeaconSearchView: View {
     
     private func performSearch(_ text: String) {
         guard text.count >= 1 else {
-            // clear results if too short
-            searchManager.resetSearch()
+            searchResults = []
             return
         }
-        searchManager.searchPOIByKeywords(
-            text,
-            center: locationManager.lastLocation?.coordinate
-        )
+        Task {
+            let results = await globalState.searchProvider.searchByPOI(
+                poi: text,
+                center: globalState.locationProvider.currentLocation?.bCoordinate
+            )
+            await MainActor.run {
+                searchResults = results
+            }
+        }
     }
 }

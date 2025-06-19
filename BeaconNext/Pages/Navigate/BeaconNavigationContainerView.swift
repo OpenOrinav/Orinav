@@ -2,8 +2,8 @@ import SwiftUI
 import TencentNavKit
 
 struct BeaconNavigationContainerView: View {
-    @ObservedObject var navManager: BeaconNavigationDelegateSimple
-    let selectedRoute: TNKWalkRoute
+    @EnvironmentObject private var globalState: BeaconMappingCoordinator
+    @EnvironmentObject private var globalUIState: BeaconGlobalUIState
 
     @StateObject private var motionManager = DeviceMotionManager()
     @State private var isInExploreMode = false
@@ -11,7 +11,7 @@ struct BeaconNavigationContainerView: View {
     @Environment(\.presentationMode) private var presentationMode
 
     var body: some View {
-        BeaconNavigationView(navManager: navManager, selectedRoute: selectedRoute)
+        BeaconNavigationView(navManager: globalState.navigationProvider, selectedRoute: globalUIState.routeInNavigation!)
             .edgesIgnoringSafeArea(.all)
             .fullScreenCover(isPresented: $isInExploreMode) {
                 BeaconExploreView()
@@ -19,11 +19,6 @@ struct BeaconNavigationContainerView: View {
         .onReceive(motionManager.$isPhoneRaised) { raised in
             withAnimation {
                 isInExploreMode = raised
-            }
-        }
-        .onChange(of: navManager.isNavigating) {
-            if !navManager.isNavigating {
-                presentationMode.wrappedValue.dismiss()
             }
         }
     }

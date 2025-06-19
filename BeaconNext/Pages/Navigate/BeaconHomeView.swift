@@ -2,14 +2,10 @@ import SwiftUI
 import QMapKit
 
 struct BeaconHomeView: View {
-    @EnvironmentObject var locationManager: BeaconLocationDelegateSimple
-    @EnvironmentObject var navManager: BeaconNavigationDelegateSimple
+    @EnvironmentObject var globalState: BeaconMappingCoordinator
+    @EnvironmentObject var globalUIState: BeaconGlobalUIState
     
     @State private var isShowingSearch = false
-    
-    @State private var isShowingRoutes = false
-    @State private var from: QMSPoiData? // If nil, use current location; otherwise, use the selected POI
-    @State private var destination: QMSPoiData?
     
     @ObservedObject var favoritesManager = FavoritesManager.shared
     
@@ -21,12 +17,12 @@ struct BeaconHomeView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "location.fill")
                                 .accessibilityHidden(true)
-                            Text(locationManager.lastAddress ?? "Loading...") // Current Location
+                            Text(globalState.locationDelegate.currentLocation?.bName ?? "Loading...") // Current Location
                                 .font(.headline)
                         }
                         .frame(maxWidth: .infinity)
                         .accessibilityElement(children: .combine)
-                        .accessibilityLabel("Current Location: \(locationManager.lastAddress ?? "Loading...")")
+                        .accessibilityLabel("Current Location: \(globalState.locationDelegate.currentLocation?.bName ?? "Loading...")")
 
                         Button(action: {
                             isShowingSearch = true
@@ -113,21 +109,15 @@ struct BeaconHomeView: View {
         }
         .sheet(isPresented: $isShowingSearch) {
             BeaconSearchView(isPresented: $isShowingSearch) { poi in
-                self.from = nil
-                self.destination = poi
-                self.isShowingRoutes = true
+                globalUIState.from = nil
+                globalUIState.destination = poi
+                globalUIState.choosingRoutes = true
             }
         }
-        .sheet(isPresented: $isShowingRoutes) {
-            BeaconRouteSelectionView(from: $from, destination: $destination, isPresented: $isShowingRoutes)
+        .sheet(isPresented: $globalUIState.choosingRoutes) {
+            BeaconRouteSelectionView(from: $globalUIState.from, destination: $globalUIState.destination, isPresented: $globalUIState.choosingRoutes)
         }
         .navigationTitle("Beacon")
         .navigationBarTitleDisplayMode(.large)
-        .onChange(of: navManager.isNavigating){
-            if !navManager.isNavigating {
-                isShowingRoutes = false
-                isShowingSearch = false
-            }
-        }
     }
 }

@@ -1,0 +1,136 @@
+import Foundation
+import CoreLocation
+import CoreMotion
+
+class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate {
+    @Published var currentLocation: BeaconLocation?
+    @Published var currentHeading: CLLocationDirection?
+    
+    init() {
+        startShakeDetection()
+    }
+    
+    func didUpdateLocation(_ location: BeaconLocation) {
+        DispatchQueue.main.async {
+            self.currentLocation = location
+            self.speakAddress()
+        }
+    }
+    
+    func didUpdateHeading(_ heading: CLLocationDirection) {
+        DispatchQueue.main.async {
+            self.currentHeading = heading
+            self.speakFacingDirection()
+        }
+    }
+    
+    // MARK: - Relevant features
+    private var lastSpokenAddress: String?
+    private var lastSpokenDirection: String?
+    private var isFirstWord = true
+    
+    // = Speak the user's location whenever it changes or when the user shakes the device
+    func speakAddress(force: Bool = false) {
+        guard let currentAddress = currentLocation?.bName else { return }
+        
+        if force || currentAddress != lastSpokenAddress {
+            BeaconTTSService.shared.speak([
+                (text: "You are currently at", language: "en-US"),
+                (text: currentAddress, language: "zh-CN")
+            ])
+            lastSpokenAddress = currentAddress
+            isFirstWord = false
+        }
+    }
+    
+    // = Speak the user's facing direction whenever it changes
+    func speakFacingDirection() {
+        guard let degrees = currentHeading else { return }
+        let directions = ["North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"]
+        let index = Int((degrees + 22.5) / 45) & 7
+        let dir = directions[index]
+        
+        if dir == lastSpokenDirection || isFirstWord {
+            return
+        }
+        BeaconTTSService.shared.speak([
+            (text: dir, language: "en-US")
+        ])
+        lastSpokenDirection = dir
+    }
+    
+    // = Speak when the user deviates significantly from a correct heading
+    var lastDirection: String? = nil
+    var lastFacingAngle: CLLocationDirection? = nil
+    var hasSpokenRightDirection: Bool = false
+    
+    func speakAngularDeviation(from correctHeading: CLLocationDirection) {
+        guard let currentHeading = currentHeading else { return }
+        
+        let signedDiff = (currentHeading - correctHeading + 540).truncatingRemainder(dividingBy: 360) - 180
+        
+        if abs(signedDiff) >= 20 {
+            let currentDirection = oClockRepresentation(from: signedDiff)
+            
+            if currentDirection != lastDirection || (lastFacingAngle != nil && abs(currentHeading - lastFacingAngle!) > 5) {
+                BeaconTTSService.shared.speak("Head \(currentDirection)")
+                lastDirection = currentDirection
+                lastFacingAngle = currentHeading
+            }
+            hasSpokenRightDirection = false
+        } else {
+            lastDirection = nil
+            lastFacingAngle = nil
+            
+            if !hasSpokenRightDirection {
+                BeaconTTSService.shared.speak("You are at the right direction")
+                hasSpokenRightDirection = true
+            }
+        }
+    }
+    
+    func oClockRepresentation(from angle: Double) -> String {
+        let normalized = angle >= 0 ? angle : 360 + angle
+        let adjusted = (normalized + 15).truncatingRemainder(dividingBy: 360)
+        let hour = Int(adjusted / 30)
+        let hourLabels = [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        return "\(hourLabels[hour]) o'clock"
+    }
+    
+    // = Repeat current location when the user shakes the device
+    private var motionManager = CMMotionManager()
+    private var lastShakeTime: Date? = nil
+    private var lastAccel: CMAcceleration?
+    
+    private func startShakeDetection() {
+        guard motionManager.isAccelerometerAvailable else { return }
+        
+        motionManager.accelerometerUpdateInterval = 0.1
+        motionManager.startAccelerometerUpdates(to: .main) { data, error in
+            guard let data = data else { return }
+            
+            let accel = data.acceleration
+            
+            if let last = self.lastAccel {
+                let deltaX = abs(accel.x - last.x)
+                let deltaY = abs(accel.y - last.y)
+                let deltaZ = abs(accel.z - last.z)
+                
+                let shakeThreshold = 1.0 // Sensitivity
+                let cooldown: TimeInterval = 3.0
+                
+                if deltaX > shakeThreshold || deltaY > shakeThreshold || deltaZ > shakeThreshold {
+                    let now = Date()
+                    if let last = self.lastShakeTime, now.timeIntervalSince(last) < cooldown {
+                        return
+                    }
+                    
+                    self.lastShakeTime = now
+                    self.speakAddress(force: true)
+                }
+            }
+            
+            self.lastAccel = accel
+        }
+    }
+}

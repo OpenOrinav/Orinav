@@ -12,16 +12,15 @@ struct BeaconNavigationContainerView: View {
 
     var body: some View {
         if let route = globalUIState.routeInNavigation {
-            BeaconNavigationView(navManager: globalState.navigationProvider, selectedRoute: route)
-                .fullScreenCover(isPresented: $isInExploreMode) {
-                    BeaconExploreView()
-                }
-                .onReceive(motionManager.$isPhoneRaised) { raised in
-                    withAnimation {
-                        isInExploreMode = raised
-                    }
-                }
-                .ignoresSafeArea(edges: .all)
+            let status = globalState.navigationDelegate.status
+            
+            Text("TODO")
+            Text(String(status?.bCurrentSpeed ?? -1))
+            Text(status?.bNextRoad ?? "N")
+            Text(status?.bTurnType.rawValue ?? "N")
+            Text(status?.bCurrentRoad ?? "N")
+            Text(String(status?.bTotalDistanceRemainingMeters ?? -1))
+            Text(String(status?.bDistanceToNextSegmentMeters ?? -1))
         }
     }
 }

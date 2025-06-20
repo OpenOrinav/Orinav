@@ -37,6 +37,7 @@ struct BeaconRouteCardView: View {
             Button("GO") {
                 globalUIState.routeInNavigation = route
                 globalUIState.currentPage = .navigation
+                globalState.navigationProvider.startNavigation(with: route)
             }
             .font(.body)
             .bold()

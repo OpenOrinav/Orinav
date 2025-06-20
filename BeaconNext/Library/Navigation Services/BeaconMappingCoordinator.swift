@@ -4,9 +4,12 @@ import Combine
 
 class BeaconMappingCoordinator: ObservableObject {
     var searchProvider: BeaconSearchProvider
+    
     var locationProvider: BeaconLocationProvider
     var locationDelegate: StandardLocationDelegate
+    
     var navigationProvider: BeaconNavigationProvider
+    var navigationDelegate: StandardNavigationDelegate
     
     var globalUIState: BeaconGlobalUIState
     
@@ -29,26 +32,17 @@ class BeaconMappingCoordinator: ObservableObject {
         locationProvider = QMapLocationProvider()
         locationDelegate = StandardLocationDelegate()
         navigationProvider = QMapNavigationProvider()
+        navigationDelegate = StandardNavigationDelegate(globalUIState: globalUIState, locationDelegate: locationDelegate)
         
         providerReinit()
     }
     
     func providerReinit() {
         locationProvider.delegate = locationDelegate
+        navigationProvider.delegate = navigationDelegate
         cancellable = locationDelegate.objectWillChange
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
-        
-        navigationProvider.endNavigation = { [self] in
-            DispatchQueue.main.async {
-                self.globalUIState.currentPage = nil
-            }
-        }
-        navigationProvider.receiveRoadAngle = { [self] angle in
-            if globalUIState.currentPage == .navigation {
-                locationDelegate.speakAngularDeviation(from: angle)
-            }
-        }
     }
 }

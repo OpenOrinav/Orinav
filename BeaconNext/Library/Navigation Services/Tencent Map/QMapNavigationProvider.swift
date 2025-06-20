@@ -1,56 +1,11 @@
 import TencentNavKit
 import TNKAudioPlayer
 
-extension TNKSearchNavPoint: BeaconPOI {
-    var bid: String {
-        return poiID ?? "defaultLocation"
-    }
-    
-    var bName: String {
-        return title ?? "Location"
-    }
-    
-    var bAddress: String {
-        return ""
-    }
-    
-    var bCategory: BeaconPOICategory {
-        return .others
-    }
-    
-    var bCoordinate: CLLocationCoordinate2D {
-        return coordinate
-    }
-}
-
-extension TNKWalkRoute: BeaconWalkRoute {
-    var bid: String {
-        return self.routeID
-    }
-    
-    var bOrigin: any BeaconPOI {
-        return self.origin
-    }
-    
-    var bDestination: any BeaconPOI {
-        return self.destination
-    }
-    
-    var bDistanceMeters: Int {
-        return Int(self.totalDistance)
-    }
-    
-    var bTimeMinutes: Int {
-        return Int(self.totalTime)
-    }
-}
-
 class QMapNavigationProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDelegate, TNKWalkNavViewDelegate, TNKWalkNavDataSource {
     let navManager: TNKWalkNavManager
     var realNavView: TNKWalkNavView
     
-    var endNavigation: (() -> Void)?
-    var receiveRoadAngle: ((CLLocationDistance) -> Void)?
+    var delegate: BeaconNavigationProviderDelegate?
     
     var navView: UIView {
         return realNavView
@@ -114,9 +69,11 @@ class QMapNavigationProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDele
     }
     
     func walkNavManager(_ manager: TNKWalkNavManager, didUpdate location: TNKLocation) {
-        if let receiveRoadAngle = receiveRoadAngle {
-            receiveRoadAngle(location.matchedCourse)
-        }
+        delegate?.onReceiveRoadAngle(location.matchedCourse)
+    }
+    
+    func walkNavManager(_ manager: TNKWalkNavManager, update navigationData: TNKWalkNavigationData) {
+        delegate?.onReceiveNavigationStatus(navigationData)
     }
     
     func startNavigation(with: any BeaconWalkRoute) {
@@ -124,8 +81,76 @@ class QMapNavigationProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDele
     }
     
     func navViewCloseButtonClicked(_ navView: TNKBaseNavView) {
-        if let endNavigation = endNavigation {
-            endNavigation()
-        }
+        delegate?.onEndNavigation()
+    }
+}
+
+extension TNKSearchNavPoint: BeaconPOI {
+    var bid: String {
+        return poiID ?? "defaultLocation"
+    }
+    
+    var bName: String {
+        return title ?? "Location"
+    }
+    
+    var bAddress: String {
+        return ""
+    }
+    
+    var bCategory: BeaconPOICategory {
+        return .others
+    }
+    
+    var bCoordinate: CLLocationCoordinate2D {
+        return coordinate
+    }
+}
+
+extension TNKWalkRoute: BeaconWalkRoute {
+    var bid: String {
+        return self.routeID
+    }
+    
+    var bOrigin: any BeaconPOI {
+        return self.origin
+    }
+    
+    var bDestination: any BeaconPOI {
+        return self.destination
+    }
+    
+    var bDistanceMeters: Int {
+        return Int(self.totalDistance)
+    }
+    
+    var bTimeMinutes: Int {
+        return Int(self.totalTime)
+    }
+}
+
+extension TNKWalkNavigationData: BeaconNavigationStatus {
+    var bNextRoad: String {
+        return nextRoadName
+    }
+    
+    var bCurrentRoad: String {
+        return currentRoadName
+    }
+    
+    var bDistanceToNextSegmentMeters: Int {
+        return Int(nextDistanceLeft)
+    }
+    
+    var bTotalDistanceRemainingMeters: Int {
+        return Int(totalDistanceLeft)
+    }
+    
+    var bCurrentSpeed: Int {
+        return Int(currentSpeed)
+    }
+    
+    var bTurnType: BeaconTurnType {
+        return .left // FIXME investigate the real turn types
     }
 }

@@ -5,6 +5,8 @@ import CoreMotion
 class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate {
     @Published var currentLocation: BeaconLocation?
     @Published var currentHeading: CLLocationDirection?
+    private var hapticTimer: Timer?
+    private var currentDeviationAngle: Double = 0
     
     init() {
         startShakeDetection()
@@ -59,7 +61,47 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
         lastSpokenDirection = dir
     }
     
-    // = Repeat current location when the user shakes the device
+    // = Speak when the user deviates significantly from a correct heading
+    var lastDirection: String? = nil
+    var lastFacingAngle: CLLocationDirection? = nil
+    var hasSpokenRightDirection: Bool = false
+    
+    func speakAngularDeviation(from correctHeading: CLLocationDirection) {
+        guard let currentHeading = currentHeading else { return }
+        
+        let signedDiff = (currentHeading - correctHeading + 540).truncatingRemainder(dividingBy: 360) - 180
+        
+        if abs(signedDiff) >= 20 {
+            let currentDirection = oClockRepresentation(from: signedDiff)
+            
+            if currentDirection != lastDirection || (lastFacingAngle != nil && abs(currentHeading - lastFacingAngle!) > 5) {
+                BeaconTTSService.shared.speak("Head \(currentDirection)")
+                lastDirection = currentDirection
+                lastFacingAngle = currentHeading
+            }
+            hasSpokenRightDirection = false
+            startHapticFeedbackBasedOn(angle: signedDiff)
+        } else {
+            lastDirection = nil
+            lastFacingAngle = nil
+            
+            if !hasSpokenRightDirection {
+                stopHapticTimer()
+                HapticsManager.correctDir()
+                BeaconTTSService.shared.speak("You are at the right direction")
+                hasSpokenRightDirection = true
+            }
+        }
+    }
+    
+    func oClockRepresentation(from angle: Double) -> String {
+        let normalized = angle >= 0 ? angle : 360 + angle
+        let adjusted = (normalized + 15).truncatingRemainder(dividingBy: 360)
+        let hour = Int(adjusted / 30)
+        let hourLabels = [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        return "\(hourLabels[hour]) o'clock"
+    }
+    
     private var motionManager = CMMotionManager()
     private var lastShakeTime: Date? = nil
     private var lastAccel: CMAcceleration?
@@ -95,4 +137,31 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
             self.lastAccel = accel
         }
     }
+    
+    private func stopHapticTimer() {
+        hapticTimer?.invalidate()
+        hapticTimer = nil
+    }
+    
+    private func startHapticFeedbackBasedOn(angle: Double) {
+        stopHapticTimer()
+
+        let interval = vibrationInterval(for: angle)
+
+        hapticTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
+            HapticsManager.impactHaptic(for: 1.0)
+        }
+    }
+    
+    private func vibrationInterval(for angle: Double) -> TimeInterval {
+        let absAngle = abs(angle)
+        
+        if absAngle >= 50 {
+            return 0.2
+        }
+
+        let normalized = absAngle / 50.0
+        return 1.5 - normalized * (1.5 - 0.2)
+    }
+    
 }

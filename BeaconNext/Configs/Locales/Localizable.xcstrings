@@ -96,9 +96,6 @@
         }
       }
     },
-    "Add to Favorites" : {
-
-    },
     "Add to Favorites?" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -832,6 +829,9 @@
           }
         }
       }
+    },
+    "Start navigation" : {
+
     },
     "Start navigation for this route" : {
       "localizations" : {

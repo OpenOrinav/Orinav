@@ -53,7 +53,7 @@ extension MapboxLocationProvider: CLLocationManagerDelegate {
         placeAutocomplete.suggestions(for: latest.coordinate) { result in
             switch result {
             case .success(let suggestions):
-                self.delegate?.didUpdateLocation(suggestions[0])
+                self.delegate?.didUpdateLocation(MapboxWrappedBeaconLocation(suggestions[0]))
 
             case .failure(let error):
                 print("MapboxLocationProvider error (Mapbox): \(error)")
@@ -70,12 +70,18 @@ extension MapboxLocationProvider: CLLocationManagerDelegate {
     }
 }
 
-extension PlaceAutocomplete.Suggestion: BeaconLocation {
+class MapboxWrappedBeaconLocation: BeaconLocation {
+    private let mapboxPOI: PlaceAutocomplete.Suggestion
+    
+    init(_ mapboxPOI: PlaceAutocomplete.Suggestion) {
+        self.mapboxPOI = mapboxPOI
+    }
+    
     var bCoordinate: CLLocationCoordinate2D {
-        return coordinate!
+        return mapboxPOI.coordinate!
     }
     
     var bName: String? {
-        return name
+        return mapboxPOI.name
     }
 }

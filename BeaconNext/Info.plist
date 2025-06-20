@@ -4,7 +4,7 @@
 <dict>
 	<key>TencentAPIKey</key>
 	<string>${TENCENT_API_KEY}</string>
-	<key>MapboxAccessToken</key>
+	<key>MBXAccessToken</key>
 	<string>${MAPBOX_ACCESS_TOKEN}</string>
 	<key>UIBackgroundModes</key>
 	<array>

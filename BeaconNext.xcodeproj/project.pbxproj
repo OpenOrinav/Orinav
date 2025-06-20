@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		58912B7726EF76AFB0EEA6E0 /* libPods-BeaconNext.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 273ED9AA66FA0D0B807BBFA2 /* libPods-BeaconNext.a */; };
+		B8C59E8C2E04E5C800776756 /* MapboxSearch in Frameworks */ = {isa = PBXBuildFile; productRef = B8C59E8B2E04E5C800776756 /* MapboxSearch */; };
+		B8C59E8E2E04E5C800776756 /* MapboxSearchUI in Frameworks */ = {isa = PBXBuildFile; productRef = B8C59E8D2E04E5C800776756 /* MapboxSearchUI */; };
+		B8C59E912E04E87600776756 /* MapboxSearch in Frameworks */ = {isa = PBXBuildFile; productRef = B8C59E902E04E87600776756 /* MapboxSearch */; };
+		B8C59E932E04E87600776756 /* MapboxSearchUI in Frameworks */ = {isa = PBXBuildFile; productRef = B8C59E922E04E87600776756 /* MapboxSearchUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +49,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				58912B7726EF76AFB0EEA6E0 /* libPods-BeaconNext.a in Frameworks */,
+				B8C59E932E04E87600776756 /* MapboxSearchUI in Frameworks */,
+				B8C59E912E04E87600776756 /* MapboxSearch in Frameworks */,
+				B8C59E8E2E04E5C800776756 /* MapboxSearchUI in Frameworks */,
+				B8C59E8C2E04E5C800776756 /* MapboxSearch in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,6 +146,10 @@
 			);
 			mainGroup = B8E1966C2DD580A100C2D235;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B8C59E8F2E04E87600776756 /* XCRemoteSwiftPackageReference "mapbox-search-ios" */,
+				B8C59E942E04E8CC00776756 /* XCRemoteSwiftPackageReference "mapbox-navigation-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B8E196762DD580A100C2D235 /* Products */;
 			projectDirPath = "";
@@ -498,6 +510,56 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B8C59E8A2E04E5C800776756 /* XCRemoteSwiftPackageReference "search-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mapbox/search-ios.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.13.0;
+			};
+		};
+		B8C59E8F2E04E87600776756 /* XCRemoteSwiftPackageReference "mapbox-search-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mapbox/mapbox-search-ios";
+			requirement = {
+				kind = exactVersion;
+				version = 2.12.2;
+			};
+		};
+		B8C59E942E04E8CC00776756 /* XCRemoteSwiftPackageReference "mapbox-navigation-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mapbox/mapbox-navigation-ios.git";
+			requirement = {
+				kind = exactVersion;
+				version = 3.9.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B8C59E8B2E04E5C800776756 /* MapboxSearch */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8C59E8A2E04E5C800776756 /* XCRemoteSwiftPackageReference "search-ios" */;
+			productName = MapboxSearch;
+		};
+		B8C59E8D2E04E5C800776756 /* MapboxSearchUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8C59E8A2E04E5C800776756 /* XCRemoteSwiftPackageReference "search-ios" */;
+			productName = MapboxSearchUI;
+		};
+		B8C59E902E04E87600776756 /* MapboxSearch */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8C59E8F2E04E87600776756 /* XCRemoteSwiftPackageReference "mapbox-search-ios" */;
+			productName = MapboxSearch;
+		};
+		B8C59E922E04E87600776756 /* MapboxSearchUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8C59E8F2E04E87600776756 /* XCRemoteSwiftPackageReference "mapbox-search-ios" */;
+			productName = MapboxSearchUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B8E1966D2DD580A100C2D235 /* Project object */;
 }

@@ -14,6 +14,10 @@ struct BeaconSettingsView: View {
         VStack(alignment: .leading, spacing: 16) {
             
             HStack {
+                Image(systemName: "globe")
+                    .foregroundColor(.blue)
+                    .font(.system(size: 30))
+                
                 Text("Current Language:")
                     .font(.headline)
                 
@@ -21,7 +25,6 @@ struct BeaconSettingsView: View {
                     .font(.body)
                     .foregroundColor(.gray)
             }
-            .padding()
             
             HStack {
                 Button ("success") {
@@ -40,6 +43,8 @@ struct BeaconSettingsView: View {
                 .padding()
             }
             .padding()
+            
+            Spacer()
             
         }
         .padding()

@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import CoreHaptics
 
 class HapticsManager {
     enum FeedbackType {
@@ -23,32 +24,21 @@ class HapticsManager {
     }
     
     static func impactHaptic(for intensity: Double) {
-        let impactGenerator = UIImpactFeedbackGenerator()
-        impactGenerator.impactOccurred(intensity: intensity)
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.prepare()
+        generator.impactOccurred(intensity: intensity)
     }
     
     static func correctDir() {
         let impactGenerator = UIImpactFeedbackGenerator(style: .medium)
         impactGenerator.prepare()
 
-//        let delays: [Double] = [0.1, 0.2, 0.5]
+        let delays: [Double] = [0.2, 0.4, 0.5]
 
-//        for delay in delays {
-//            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-//                impactGenerator.impactOccurred(intensity: 0.5)
-//            }
-//        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            impactGenerator.impactOccurred(intensity: 0.7)
+        for delay in delays {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                impactGenerator.impactOccurred(intensity: 1.0)
+            }
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-            impactGenerator.impactOccurred(intensity: 0.7)
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
-            impactGenerator.impactOccurred(intensity: 1.0)
-        }
-        
-        
     }
 }

@@ -81,7 +81,7 @@ extension QMSPoiData: BeaconPOI {
         }
     }
 
-    public var bCoordinate: CLLocationCoordinate2D {
+    public var bCoordinate: CLLocationCoordinate2D? {
         location
     }
 }

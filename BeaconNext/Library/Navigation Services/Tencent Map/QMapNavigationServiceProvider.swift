@@ -1,15 +1,13 @@
+import SwiftUI
 import TencentNavKit
 import TNKAudioPlayer
 
-class QMapNavigationProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDelegate, TNKWalkNavViewDelegate, TNKWalkNavDataSource {
+class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDelegate, TNKWalkNavViewDelegate, TNKWalkNavDataSource {
+    
     let navManager: TNKWalkNavManager
     var realNavView: TNKWalkNavView
     
     var delegate: BeaconNavigationProviderDelegate?
-    
-    var navView: UIView {
-        return realNavView
-    }
 
     override init() {
         navManager = TNKWalkNavManager.sharedInstance()
@@ -76,12 +74,28 @@ class QMapNavigationProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDele
         delegate?.onReceiveNavigationStatus(navigationData)
     }
     
-    func startNavigation(with: any BeaconWalkRoute) {
+    func startNavigation(with: any BeaconWalkRoute) -> AnyView {
         navManager.startNav(withRouteID: with.bid)
+        return AnyView(QMapNavigationView(navManager: self, navView: realNavView))
     }
     
     func navViewCloseButtonClicked(_ navView: TNKBaseNavView) {
         delegate?.onEndNavigation()
+    }
+}
+
+struct QMapNavigationView: UIViewRepresentable {
+    let navManager: any BeaconNavigationProvider
+    let navView: TNKWalkNavView
+    
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        view.addSubview(navView)
+        return view
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {
+        
     }
 }
 
@@ -102,7 +116,7 @@ extension TNKSearchNavPoint: BeaconPOI {
         return .others
     }
     
-    var bCoordinate: CLLocationCoordinate2D {
+    var bCoordinate: CLLocationCoordinate2D? {
         return coordinate
     }
 }

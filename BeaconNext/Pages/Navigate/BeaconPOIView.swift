@@ -72,6 +72,7 @@ struct BeaconPOIView: View {
                         .foregroundStyle(.secondary)
                     Text(globalUIState.poi!.bAddress)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Category")
@@ -79,8 +80,9 @@ struct BeaconPOIView: View {
                         .foregroundStyle(.secondary)
                     Text(globalUIState.poi!.bCategory.rawValue)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 10)

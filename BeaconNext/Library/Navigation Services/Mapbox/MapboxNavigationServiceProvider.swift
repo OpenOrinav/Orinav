@@ -12,13 +12,6 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider {
     
     var controller: NavigationViewController?
     
-    var navView: UIView {
-        if let controller = controller {
-            return controller.view
-        }
-        return UIView()
-    }
-    
     func planRoutes(
         from: (any BeaconPOI)?,
         to: (any BeaconPOI)?,
@@ -27,10 +20,14 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider {
         do {
             routes = try await mnp.mapboxNavigation.routingProvider().calculateRoutes(
                 options: NavigationRouteOptions(
-                    coordinates: [from?.bCoordinate ?? location.bCoordinate, to?.bCoordinate ?? location.bCoordinate],
+                    waypoints: [
+                        Waypoint(coordinate: from?.bCoordinate ?? location.bCoordinate, name: from?.bName),
+                        Waypoint(coordinate: to?.bCoordinate ?? location.bCoordinate, name: to?.bName)
+                    ],
                     profileIdentifier: .walking
                 )
             ).value
+            print(routes!.mainRoute.route.typicalTravelTime)
             return routes!.allRoutes().map { route in
                 MapboxRouteWrapper(
                     mapboxRoute: route,
@@ -47,18 +44,29 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider {
     func clearState() {
     }
     
-    func startNavigation(with: any BeaconWalkRoute) { // DEBUG
-        DispatchQueue.main.async {
-            self.controller = NavigationViewController(
-                navigationRoutes: self.routes!,
-                navigationOptions: NavigationOptions(
-                    mapboxNavigation: self.mnp.mapboxNavigation,
-                    voiceController: self.mnp.routeVoiceController,
-                    eventsManager: self.mnp.eventsManager()
-                )
+    @MainActor func startNavigation(with: any BeaconWalkRoute) -> AnyView { // DEBUG
+        controller = NavigationViewController(
+            navigationRoutes: self.routes!,
+            navigationOptions: NavigationOptions(
+                mapboxNavigation: self.mnp.mapboxNavigation,
+                voiceController: self.mnp.routeVoiceController,
+                eventsManager: self.mnp.eventsManager()
             )
-            self.controller!.modalPresentationStyle = .fullScreen
-        }
+        )
+        controller!.modalPresentationStyle = .fullScreen
+        return AnyView(MapboxNavigationContainerView(controller: controller!))
+    }
+}
+
+struct MapboxNavigationContainerView: UIViewControllerRepresentable {
+    let controller: NavigationViewController
+    
+    func makeUIViewController(context: Context) -> NavigationViewController {
+        controller
+    }
+    
+    func updateUIViewController(_ vc: NavigationViewController, context: Context) {
+        // respond to any SwiftUI state changes here
     }
 }
 
@@ -85,7 +93,7 @@ class BeaconLocationPOIWrapper: BeaconPOI {
         return .others
     }
     
-    var bCoordinate: CLLocationCoordinate2D {
+    var bCoordinate: CLLocationCoordinate2D? {
         return location.bCoordinate
     }
 }

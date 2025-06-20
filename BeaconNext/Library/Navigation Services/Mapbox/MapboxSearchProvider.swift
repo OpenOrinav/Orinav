@@ -44,8 +44,8 @@ extension PlaceAutocomplete.Suggestion: BeaconPOI, @retroactive Equatable {
         return description ?? ""
     }
     
-    var bCoordinate: CLLocationCoordinate2D {
-        return coordinate!
+    var bCoordinate: CLLocationCoordinate2D? {
+        return coordinate
     }
     
     var bCategory: BeaconPOICategory {

@@ -6,7 +6,7 @@ protocol BeaconPOI: Equatable {
     var bName: String { get }
     var bAddress: String { get }
     var bCategory: BeaconPOICategory { get }
-    var bCoordinate: CLLocationCoordinate2D { get }
+    var bCoordinate: CLLocationCoordinate2D? { get }
 
     var bIcon: String { get }
     var bIconColor: Color { get }
@@ -49,7 +49,7 @@ extension BeaconPOI {
             return "wrench.and.screwdriver.circle.fill"
         case .cultural:
             return "building.columns.circle.fill"
-        case .others:
+        default:
             return "mappin.circle.fill"
         }
     }

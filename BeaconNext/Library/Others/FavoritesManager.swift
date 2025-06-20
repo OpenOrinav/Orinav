@@ -50,12 +50,13 @@ private struct SimplifiedPOI: Codable, BeaconPOI {
     let bid: String
     let bName: String
     let bAddress: String
-    let lat: Double
-    let lng: Double
+    let lat: Double?
+    let lng: Double?
     let category: String
     
-    var bCoordinate: CLLocationCoordinate2D {
-        CLLocationCoordinate2D(latitude: lat, longitude: lng)
+    var bCoordinate: CLLocationCoordinate2D? {
+        guard let lat = lat, let lng = lng else { return nil }
+        return CLLocationCoordinate2D(latitude: lat, longitude: lng)
     }
     
     var bCategory: BeaconPOICategory {
@@ -67,7 +68,7 @@ private struct SimplifiedPOI: Codable, BeaconPOI {
         self.bName = poi.bName
         self.bAddress = poi.bAddress
         self.category = poi.bCategory.rawValue
-        self.lat = poi.bCoordinate.latitude
-        self.lng = poi.bCoordinate.longitude
+        self.lat = poi.bCoordinate?.latitude
+        self.lng = poi.bCoordinate?.longitude
     }
 }

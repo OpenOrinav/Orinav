@@ -26,7 +26,7 @@ struct PromotionCardView: View {
                 .shadow(color: color.opacity(0.3), radius: 8)
         )
         .contentShape(RoundedRectangle(cornerRadius: 24))
-        .scaleEffect(isPressed ? 0.95 : 1.0)
+        .scaleEffect(isPressed ? 0.95 as CGFloat : 1.0 as CGFloat)
         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPressed)
         .gesture(
             DragGesture(minimumDistance: 0)

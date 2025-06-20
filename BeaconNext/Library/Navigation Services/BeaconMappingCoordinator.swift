@@ -28,10 +28,10 @@ class BeaconMappingCoordinator: ObservableObject {
         TNKNavServices.shared().key = apiKey
         QMSSearchServices.shared().apiKey = apiKey
         
-        searchProvider = QMapSearchProvider()
-        locationProvider = QMapLocationProvider()
+        searchProvider = MapboxSearchProvider()
+        locationProvider = MapboxLocationProvider()
         locationDelegate = StandardLocationDelegate()
-        navigationProvider = QMapNavigationProvider()
+        navigationProvider = MapboxNavigationServiceProvider()
         navigationDelegate = StandardNavigationDelegate(globalUIState: globalUIState, locationDelegate: locationDelegate)
         
         providerReinit()

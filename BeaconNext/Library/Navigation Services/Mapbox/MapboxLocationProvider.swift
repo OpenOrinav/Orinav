@@ -2,7 +2,10 @@ import Foundation
 import CoreLocation
 import MapboxSearch
 
-class MapboxLocationProvider: NSObject {
+class MapboxLocationProvider: NSObject, BeaconLocationProvider {
+    var currentLocation: (any BeaconLocation)?
+    var currentHeading: CLLocationDirection?
+    
     var delegate: BeaconLocationProviderDelegate?
     private let locationManager = CLLocationManager()
 
@@ -54,7 +57,7 @@ extension MapboxLocationProvider: CLLocationManagerDelegate {
             switch result {
             case .success(let suggestions):
                 self.delegate?.didUpdateLocation(MapboxWrappedBeaconLocation(suggestions[0]))
-
+                self.currentLocation = MapboxWrappedBeaconLocation(suggestions[0])
             case .failure(let error):
                 print("MapboxLocationProvider error (Mapbox): \(error)")
             }
@@ -63,6 +66,7 @@ extension MapboxLocationProvider: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         delegate?.didUpdateHeading(newHeading.trueHeading >= 0 ? newHeading.trueHeading : newHeading.magneticHeading)
+        currentHeading = newHeading.trueHeading >= 0 ? newHeading.trueHeading : newHeading.magneticHeading
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

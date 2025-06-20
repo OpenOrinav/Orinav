@@ -2,6 +2,47 @@ import Foundation
 import CoreLocation
 import QMapKit
 
+class QMapSearchProvider: NSObject, BeaconSearchProvider, QMSSearchDelegate {
+    private let searchManager: QMSSearcher
+    private var continuation: CheckedContinuation<[any BeaconPOI], Never>?
+    
+    override init() {
+        self.searchManager = QMSSearcher()
+
+        super.init()
+        self.searchManager.delegate = self
+    }
+    
+    func searchByPOI(poi: String, center: CLLocationCoordinate2D?) async -> [any BeaconPOI] {
+        return await withCheckedContinuation { cont in
+            self.continuation = cont
+            
+            let option = QMSPoiSearchOption()
+            option.keyword = poi
+            option.added_fields = "category_code"
+            if let center = center {
+                option.setBoundaryByNearbyWithCenter(center, radius: 1000, autoExtend: true)
+            }
+            
+            self.searchManager.searchWithPoiSearchOption(option)
+        }
+    }
+    
+    // MARK: - QMSSearchDelegate
+    
+    func search(
+        with poiSearchOption: QMSPoiSearchOption,
+        didReceive poiSearchResult: QMSPoiSearchResult
+    ) {
+        continuation?.resume(returning: poiSearchResult.dataArray)
+        continuation = nil
+    }
+    
+    func resetSearch() {
+        continuation = nil
+    }
+}
+
 extension QMSPoiData: BeaconPOI {
     public var bid: String {
         id_
@@ -81,48 +122,7 @@ extension QMSPoiData: BeaconPOI {
         }
     }
 
-    public var bCoordinate: CLLocationCoordinate2D? {
+    public var bCoordinate: CLLocationCoordinate2D {
         location
-    }
-}
-
-class QMapSearchProvider: NSObject, BeaconSearchProvider, QMSSearchDelegate {
-    private let searchManager: QMSSearcher
-    private var continuation: CheckedContinuation<[any BeaconPOI], Never>?
-    
-    override init() {
-        self.searchManager = QMSSearcher()
-
-        super.init()
-        self.searchManager.delegate = self
-    }
-    
-    func searchByPOI(poi: String, center: CLLocationCoordinate2D?) async -> [any BeaconPOI] {
-        return await withCheckedContinuation { cont in
-            self.continuation = cont
-            
-            let option = QMSPoiSearchOption()
-            option.keyword = poi
-            option.added_fields = "category_code"
-            if let center = center {
-                option.setBoundaryByNearbyWithCenter(center, radius: 1000, autoExtend: true)
-            }
-            
-            self.searchManager.searchWithPoiSearchOption(option)
-        }
-    }
-    
-    // MARK: - QMSSearchDelegate
-    
-    func search(
-        with poiSearchOption: QMSPoiSearchOption,
-        didReceive poiSearchResult: QMSPoiSearchResult
-    ) {
-        continuation?.resume(returning: poiSearchResult.dataArray)
-        continuation = nil
-    }
-    
-    func resetSearch() {
-        continuation = nil
     }
 }

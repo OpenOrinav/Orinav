@@ -3,6 +3,7 @@ protocol BeaconWalkRoute: Equatable {
     var bOrigin: any BeaconPOI { get }
     var bDestination: any BeaconPOI { get }
     var bDistanceMeters: Int { get }
+    var bDescription: String { get }
     var bTimeMinutes: Int { get }
 }
 

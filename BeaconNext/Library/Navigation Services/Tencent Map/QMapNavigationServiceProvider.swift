@@ -116,7 +116,7 @@ extension TNKSearchNavPoint: BeaconPOI {
         return .others
     }
     
-    var bCoordinate: CLLocationCoordinate2D? {
+    var bCoordinate: CLLocationCoordinate2D {
         return coordinate
     }
 }
@@ -140,6 +140,10 @@ extension TNKWalkRoute: BeaconWalkRoute {
     
     var bTimeMinutes: Int {
         return Int(self.totalTime)
+    }
+    
+    var bDescription: String {
+        return self.recommendReason
     }
 }
 

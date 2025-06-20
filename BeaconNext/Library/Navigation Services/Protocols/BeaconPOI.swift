@@ -6,7 +6,7 @@ protocol BeaconPOI: Equatable {
     var bName: String { get }
     var bAddress: String { get }
     var bCategory: BeaconPOICategory { get }
-    var bCoordinate: CLLocationCoordinate2D? { get }
+    var bCoordinate: CLLocationCoordinate2D { get }
 
     var bIcon: String { get }
     var bIconColor: Color { get }
@@ -28,27 +28,27 @@ extension BeaconPOI {
         case .lodging:
             return "bed.double.circle.fill"
         case .transportation:
-            return "car.2.circle.fill"
+            return "car.circle.fill"
         case .grocery:
             return "cart.circle.fill"
         case .outdoors:
             return "leaf.circle.fill"
         case .entertainment:
-            return "ticket.circle.fill"
+            return "popcorn.circle.fill"
         case .financialServices:
             return "dollarsign.circle.fill"
         case .sportsAndFitness:
             return "sportscourt.circle.fill"
         case .government:
-            return "person.2.crop.square.fill"
+            return "person.2.circle.fill"
         case .placeOfWorship:
-            return "person.3.sequence.fill"
+            return "staroflife.circle.fill"
         case .residential:
             return "house.circle.fill"
         case .services:
-            return "wrench.and.screwdriver.circle.fill"
+            return "gear.circle.fill"
         case .cultural:
-            return "building.columns.circle.fill"
+            return "photo.artframe.circle.fill"
         default:
             return "mappin.circle.fill"
         }
@@ -75,7 +75,7 @@ extension BeaconPOI {
         case .outdoors:
             return .green
         case .entertainment:
-            return .pink
+            return .red
         case .financialServices:
             return .green
         case .sportsAndFitness:

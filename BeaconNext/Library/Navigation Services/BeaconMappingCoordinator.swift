@@ -2,6 +2,7 @@ import QMapKit
 import TencentNavKit
 import Combine
 
+@MainActor
 class BeaconMappingCoordinator: ObservableObject {
     var searchProvider: BeaconSearchProvider
     
@@ -28,10 +29,10 @@ class BeaconMappingCoordinator: ObservableObject {
         TNKNavServices.shared().key = apiKey
         QMSSearchServices.shared().apiKey = apiKey
         
-        searchProvider = QMapSearchProvider()
-        locationProvider = QMapLocationProvider()
+        searchProvider = MapboxSearchProvider()
+        locationProvider = MapboxLocationProvider()
         locationDelegate = StandardLocationDelegate()
-        navigationProvider = QMapNavigationServiceProvider()
+        navigationProvider = MapboxNavigationServiceProvider()
         navigationDelegate = StandardNavigationDelegate(globalUIState: globalUIState, locationDelegate: locationDelegate)
         
         providerReinit()

@@ -4,13 +4,19 @@ import MapboxNavigationUIKit
 import MapboxDirections
 import MapboxSearch
 
+@MainActor
 class MapboxNavigationServiceProvider: BeaconNavigationProvider {
     var delegate: (any BeaconNavigationProviderDelegate)?
-    let mnp = MapboxNavigationProvider(coreConfig: .init())
+    let mnp: MapboxNavigationProvider
     
-    var routes: NavigationRoutes? // DEBUG
-    
+    var routes: NavigationRoutes?
     var controller: NavigationViewController?
+    let core: MapboxNavigation
+    
+    init() {
+        mnp = MapboxNavigationProvider(coreConfig: .init(credentials: .init(), locationSource: .live))
+        core = mnp.mapboxNavigation
+    }
     
     func planRoutes(
         from: (any BeaconPOI)?,
@@ -18,23 +24,31 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider {
         location: BeaconLocation
     ) async -> [any BeaconWalkRoute] {
         do {
-            routes = try await mnp.mapboxNavigation.routingProvider().calculateRoutes(
+            routes = try await core.routingProvider().calculateRoutes(
                 options: NavigationRouteOptions(
                     waypoints: [
                         Waypoint(coordinate: from?.bCoordinate ?? location.bCoordinate, name: from?.bName),
                         Waypoint(coordinate: to?.bCoordinate ?? location.bCoordinate, name: to?.bName)
                     ],
-                    profileIdentifier: .walking
+                    profileIdentifier: .walking,
+                    queryItems: [URLQueryItem(name: "alternatives", value: "true")]
                 )
             ).value
-            print(routes!.mainRoute.route.typicalTravelTime)
-            return routes!.allRoutes().map { route in
-                MapboxRouteWrapper(
-                    mapboxRoute: route,
+            
+            var resultingRoutes: [MapboxRouteWrapper] = []
+            resultingRoutes.append(MapboxRouteWrapper(
+                mapboxRoute: routes!.mainRoute,
+                origin: from ?? BeaconLocationPOIWrapper(location),
+                destination: to ?? BeaconLocationPOIWrapper(location)
+            ))
+            for alternative in routes!.alternativeRoutes {
+                resultingRoutes.append(MapboxRouteWrapper(
+                    mapboxRoute: alternative,
                     origin: from ?? BeaconLocationPOIWrapper(location),
                     destination: to ?? BeaconLocationPOIWrapper(location)
-                )
+                ))
             }
+            return resultingRoutes
         } catch {
             print("MapboxNavigationServiceProvider error: \(error)")
             return []
@@ -44,7 +58,15 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider {
     func clearState() {
     }
     
-    @MainActor func startNavigation(with: any BeaconWalkRoute) -> AnyView { // DEBUG
+    func startNavigation(with: any BeaconWalkRoute) -> AnyView { // DEBUG
+        print("Attempting to start navigation")
+        let actualRoute = with as! MapboxRouteWrapper
+//        if routes!.mainRoute.routeId != actualRoute.routeId {
+//            routes = routes!.selecting(alternativeRoute: routes!.alternativeRoutes.first { $0.routeId == actualRoute.routeId }!)
+//        }
+        
+        core.tripSession().startActiveGuidance(with: routes!, startLegIndex: 0)
+        
         controller = NavigationViewController(
             navigationRoutes: self.routes!,
             navigationOptions: NavigationOptions(
@@ -66,7 +88,6 @@ struct MapboxNavigationContainerView: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ vc: NavigationViewController, context: Context) {
-        // respond to any SwiftUI state changes here
     }
 }
 
@@ -93,29 +114,37 @@ class BeaconLocationPOIWrapper: BeaconPOI {
         return .others
     }
     
-    var bCoordinate: CLLocationCoordinate2D? {
+    var bCoordinate: CLLocationCoordinate2D {
         return location.bCoordinate
     }
 }
 
 class MapboxRouteWrapper: BeaconWalkRoute {
-    var bid = "mapbox_route"
-    
-    var mapboxRoute: MapboxDirections.Route
+    var bid: String
+    var routeId: RouteId
+    var bDistanceMeters: Int
+    var bTimeMinutes: Int
     var bOrigin: any BeaconPOI
     var bDestination: any BeaconPOI
+    var bDescription: String
     
-    init(mapboxRoute: MapboxDirections.Route, origin: any BeaconPOI, destination: any BeaconPOI) {
-        self.mapboxRoute = mapboxRoute
+    init(mapboxRoute: NavigationRoute, origin: any BeaconPOI, destination: any BeaconPOI) {
+        self.bid = mapboxRoute.routeId.description
+        self.routeId = mapboxRoute.routeId
         self.bOrigin = origin
         self.bDestination = destination
+        self.bDistanceMeters = Int(mapboxRoute.route.distance)
+        self.bTimeMinutes = Int(mapboxRoute.route.expectedTravelTime / 60.0)
+        self.bDescription = "Via \(mapboxRoute.route.description)"
     }
     
-    var bDistanceMeters: Int {
-        return Int(mapboxRoute.distance)
-    }
-    
-    var bTimeMinutes: Int {
-        return Int(mapboxRoute.expectedTravelTime / 60.0)
+    init(mapboxRoute: AlternativeRoute, origin: any BeaconPOI, destination: any BeaconPOI) {
+        self.bid = mapboxRoute.routeId.description
+        self.routeId = mapboxRoute.routeId
+        self.bOrigin = origin
+        self.bDestination = destination
+        self.bDistanceMeters = Int(mapboxRoute.route.distance)
+        self.bTimeMinutes = Int(mapboxRoute.route.expectedTravelTime / 60.0)
+        self.bDescription = "Via \(mapboxRoute.route.description)"
     }
 }

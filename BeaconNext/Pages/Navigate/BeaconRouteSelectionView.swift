@@ -78,6 +78,8 @@ struct BeaconRouteSelectionView: View {
                             Text(globalUIState.routesFrom?.bName ?? "My Location")
                                 .font(.body)
                                 .foregroundColor(.primary)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .onChange(of: globalUIState.routesFrom?.bid) {
@@ -97,6 +99,8 @@ struct BeaconRouteSelectionView: View {
                             Text(globalUIState.routesDestination?.bName ?? "My Location")
                                 .font(.body)
                                 .foregroundColor(.primary)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .onChange(of: globalUIState.routesDestination?.bid) {

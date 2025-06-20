@@ -29,7 +29,7 @@ struct BeaconRouteCardView: View {
                     .font(.title2)
                     .accessibilityLabel("Route: \(timeText) estimated")
                     .bold()
-                Text(distanceText)
+                Text("\(distanceText) · \(route.bDescription)")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -37,7 +37,6 @@ struct BeaconRouteCardView: View {
             Button("GO") {
                 globalUIState.routeInNavigation = route
                 globalUIState.currentPage = .navigation
-                globalState.navigationProvider.startNavigation(with: route)
             }
             .font(.body)
             .bold()

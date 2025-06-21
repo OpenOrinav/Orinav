@@ -95,7 +95,7 @@
         }
       }
     },
-    "Adds this POI to your favorites" : {
+    "Adds this place to your favorites" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -138,7 +138,23 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "确认要删除收藏 \"%@\" 吗?"
+            "value" : "确认要取消收藏 \"%@\" 吗?"
+          }
+        }
+      }
+    },
+    "Automatic" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تلقائيًا"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动选择"
           }
         }
       }
@@ -239,29 +255,6 @@
         }
       }
     },
-    "Choice" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "خيار"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choice"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选项"
-          }
-        }
-      }
-    },
     "Close" : {
       "localizations" : {
         "ar" : {
@@ -278,25 +271,18 @@
         }
       }
     },
-    "Current language code" : {
-      "extractionState" : "manual",
+    "Cultural" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "رمز اللغة الحالي"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Current language code"
+            "value" : "ثقافي"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当前语言代码"
+            "value" : "文化"
           }
         }
       }
@@ -328,7 +314,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "删除"
+            "value" : "取消收藏"
           }
         }
       }
@@ -344,7 +330,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "确认删除?"
+            "value" : "确认取消收藏?"
           }
         }
       }
@@ -381,7 +367,7 @@
         }
       }
     },
-    "Dismisses the POI sheet" : {
+    "Dismisses the place sheet" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -493,6 +479,22 @@
         }
       }
     },
+    "Education" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعليمي"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "教育"
+          }
+        }
+      }
+    },
     "Enter the Explore tab to hear nearby places as you go. You can also raise your device for the same environment awareness feature." : {
       "localizations" : {
         "ar" : {
@@ -505,6 +507,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "进入“探索”页面，即可在行进途中听到附近地点的信息。您也可以抬起设备，以启用同样的环境感知功能。"
+          }
+        }
+      }
+    },
+    "Entertainment" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ترفيهي"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "娱乐"
           }
         }
       }
@@ -557,6 +575,38 @@
         }
       }
     },
+    "Financial Services" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الخدمات المالية"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "金融服务"
+          }
+        }
+      }
+    },
+    "Food & Drink" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الطعام والشراب"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "餐饮"
+          }
+        }
+      }
+    },
     "Go" : {
       "localizations" : {
         "ar" : {
@@ -585,6 +635,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "出发"
+          }
+        }
+      }
+    },
+    "Government" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الحكومة"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "政府"
+          }
+        }
+      }
+    },
+    "Grocery" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "بقالة"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日用百货"
+          }
+        }
+      }
+    },
+    "Health Services" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الخدمات الصحية"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "健康服务"
           }
         }
       }
@@ -660,25 +758,34 @@
         }
       }
     },
-    "Loading…" : {
-      "extractionState" : "manual",
+    "Loading..." : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تحميل..."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading…"
+            "value" : "جارٍ التحميل…"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "加载中…"
+          }
+        }
+      }
+    },
+    "Lodging" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الإقامة"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "住宿"
           }
         }
       }
@@ -695,6 +802,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "地图服务商"
+          }
+        }
+      }
+    },
+    "Mapbox (Global)" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapbox (عالمي)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapbox (全球)"
           }
         }
       }
@@ -827,6 +950,70 @@
         }
       }
     },
+    "Office" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مكتب"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "办公室"
+          }
+        }
+      }
+    },
+    "Others" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أخرى"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他"
+          }
+        }
+      }
+    },
+    "Outdoors" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أماكن خارجية"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "户外"
+          }
+        }
+      }
+    },
+    "Place of Worship" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مكان عبادة"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宗教场所"
+          }
+        }
+      }
+    },
     "Previous" : {
       "localizations" : {
         "ar" : {
@@ -854,12 +1041,12 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "删除收藏"
+            "value" : "取消收藏"
           }
         }
       }
     },
-    "Removes this POI from your favorites" : {
+    "Removes this place from your favorites" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -870,7 +1057,23 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "删除本收藏"
+            "value" : "取消收藏本地点"
+          }
+        }
+      }
+    },
+    "Residential" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سكني"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "居住区"
           }
         }
       }
@@ -955,6 +1158,22 @@
         }
       }
     },
+    "Services" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "خدمات"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务"
+          }
+        }
+      }
+    },
     "Settings" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -974,6 +1193,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "设置"
+          }
+        }
+      }
+    },
+    "Shopping" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تسوق"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "购物"
+          }
+        }
+      }
+    },
+    "Sports & Fitness" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الرياضة واللياقة البدنية"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "运动与健身"
           }
         }
       }
@@ -1090,6 +1341,22 @@
         }
       }
     },
+    "Tencent Map (China only)" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tencent Map (الصين فقط)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "腾讯地图 (仅中国)"
+          }
+        }
+      }
+    },
     "To get started navigating, simply search for places or addresses. While navigating, you can shake your device to hear instructions. You can also raise your device for environment awareness, such as learning about obstacles and traffic lights." : {
       "localizations" : {
         "ar" : {
@@ -1102,6 +1369,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "只需搜索地点或地址即可开始导航。在导航过程中，您可以摇动设备来听取指引。您也可以面向前方、抬起设备，获取环境信息，例如障碍物和红绿灯等情况。"
+          }
+        }
+      }
+    },
+    "Transportation" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "النقل"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交通"
           }
         }
       }

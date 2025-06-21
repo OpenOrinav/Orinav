@@ -17,7 +17,7 @@ struct BeaconSettingsView: View {
             Section(header: Text("Navigation")) {
                 Picker("Map Provider", selection: $settings.mapProvider) {
                     ForEach(MapProvider.allCases, id: \.self) { provider in
-                        Text(provider.rawValue.capitalized).tag(provider)
+                        Text(provider.localizedName).tag(provider)
                     }
                 }
             }

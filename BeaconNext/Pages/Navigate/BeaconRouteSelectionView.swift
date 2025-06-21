@@ -45,7 +45,7 @@ struct BeaconRouteSelectionView: View {
                         Button {
                             isShowingSearchForFrom = true
                         } label: {
-                            Text(globalUIState.routesFrom?.bName ?? "My Location")
+                            Text(globalUIState.routesFrom?.bName ?? String(localized: "My Location"))
                                 .font(.body)
                                 .foregroundColor(.primary)
                                 .lineLimit(1)
@@ -66,7 +66,7 @@ struct BeaconRouteSelectionView: View {
                         Button {
                             isShowingSearchForDestination = true
                         } label: {
-                            Text(globalUIState.routesDestination?.bName ?? "My Location")
+                            Text(globalUIState.routesDestination?.bName ?? String(localized: "My Location"))
                                 .font(.body)
                                 .foregroundColor(.primary)
                                 .lineLimit(1)

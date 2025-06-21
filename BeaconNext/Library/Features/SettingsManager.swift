@@ -38,4 +38,12 @@ public enum MapProvider: String, CaseIterable {
     case location = "Automatic"
     case tencent = "Tencent Map (China only)"
     case mapbox = "Mapbox (Global)"
+    
+    var localizedName: LocalizedStringKey {
+        switch self {
+        case .location: return "Automatic"
+        case .tencent: return "Tencent Map (China only)"
+        case .mapbox: return "Mapbox (Global)"
+        }
+    }
 }

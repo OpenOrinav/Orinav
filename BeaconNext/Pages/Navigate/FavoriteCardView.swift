@@ -19,7 +19,7 @@ struct FavoriteCardView: View {
                         .font(.headline)
                         .lineLimit(1)
                         .truncationMode(.tail)
-                    Text(poi.bCategory.rawValue)
+                    Text(poi.bCategory.localizedName)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .lineLimit(1)

@@ -33,7 +33,7 @@ struct BeaconPOIView: View {
                             .foregroundColor(isFavorited ? .yellow : .secondary)
                     }
                     .accessibilityLabel(isFavorited ? "Remove from Favorites" : "Add to Favorites")
-                    .accessibilityHint(isFavorited ? "Removes this POI from your favorites" : "Adds this POI to your favorites")
+                    .accessibilityHint(isFavorited ? "Removes this place from your favorites" : "Adds this place to your favorites")
                 }
                 
                 Button {
@@ -45,7 +45,7 @@ struct BeaconPOIView: View {
                         .foregroundColor(.secondary)
                 }
                 .accessibilityLabel("Close")
-                .accessibilityHint("Dismisses the POI sheet")
+                .accessibilityHint("Dismisses the place sheet")
             }
             
             Button {
@@ -77,7 +77,7 @@ struct BeaconPOIView: View {
                     Text("Category")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text(globalUIState.poi!.bCategory.rawValue)
+                    Text(globalUIState.poi!.bCategory.localizedName)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }

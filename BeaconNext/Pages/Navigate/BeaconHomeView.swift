@@ -18,8 +18,13 @@ struct BeaconHomeView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "location.fill")
                                 .accessibilityHidden(true)
-                            Text(globalState.locationDelegate.currentLocation?.bName ?? "Loading...") // Current Location
-                                .font(.headline)
+                            if let name = globalState.locationDelegate.currentLocation?.bName {
+                                Text(name) // Current Location
+                                    .font(.headline)
+                            } else {
+                                Text("Loading...")
+                                    .font(.headline)
+                            }
                         }
                         .frame(maxWidth: .infinity)
                         .accessibilityElement(children: .combine)

@@ -119,4 +119,45 @@ public enum BeaconPOICategory: String, CaseIterable, Codable {
     case services          = "Services"
     case cultural          = "Cultural"
     case others            = "Others"
+    
+    var localizedName: LocalizedStringKey {
+        switch self {
+        case .foodAndDrink:
+            return "Food & Drink"
+        case .shopping:
+            return "Shopping"
+        case .healthServices:
+            return "Health Services"
+        case .office:
+            return "Office"
+        case .education:
+            return "Education"
+        case .lodging:
+            return "Lodging"
+        case .transportation:
+            return "Transportation"
+        case .grocery:
+            return "Grocery"
+        case .outdoors:
+            return "Outdoors"
+        case .entertainment:
+            return "Entertainment"
+        case .financialServices:
+            return "Financial Services"
+        case .sportsAndFitness:
+            return "Sports & Fitness"
+        case .government:
+            return "Government"
+        case .placeOfWorship:
+            return "Place of Worship"
+        case .residential:
+            return "Residential"
+        case .services:
+            return "Services"
+        case .cultural:
+            return "Cultural"
+        case .others:
+            return "Others"
+        }
+    }
 }

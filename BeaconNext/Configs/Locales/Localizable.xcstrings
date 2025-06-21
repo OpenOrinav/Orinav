@@ -298,7 +298,23 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当前位置：%@"
+            "value" : "当前位置: %@"
+          }
+        }
+      }
+    },
+    "Current Location: Loading..." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الموقع الحالي: جارٍ التحميل…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前位置: 加载中…"
           }
         }
       }

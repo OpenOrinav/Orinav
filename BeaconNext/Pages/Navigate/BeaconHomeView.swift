@@ -28,7 +28,9 @@ struct BeaconHomeView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .accessibilityElement(children: .combine)
-                        .accessibilityLabel("Current Location: \(globalState.locationDelegate.currentLocation?.bName ?? "Loading...")")
+                        .accessibilityLabel(
+                            globalState.locationDelegate.currentLocation?.bName == nil ? "Current Location: Loading..." : "Current Location: \(globalState.locationDelegate.currentLocation!.bName!)"
+                        )
 
                         Button(action: {
                             isShowingSearch = true

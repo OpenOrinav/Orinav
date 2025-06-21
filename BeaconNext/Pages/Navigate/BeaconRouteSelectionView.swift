@@ -56,7 +56,7 @@ struct BeaconRouteSelectionView: View {
                             handleSearch()
                         }
                         .accessibilityLabel("Starting location")
-                        .accessibilityValue(globalUIState.routesFrom?.bName ?? "My Location")
+                        .accessibilityValue(globalUIState.routesFrom?.bName ?? String(localized: "My Location"))
                         .accessibilityHint("Double tap to select a starting point")
                         
                         Divider()
@@ -77,7 +77,7 @@ struct BeaconRouteSelectionView: View {
                             handleSearch()
                         }
                         .accessibilityLabel("Destination")
-                        .accessibilityValue(globalUIState.routesDestination?.bName ?? "My Location")
+                        .accessibilityValue(globalUIState.routesDestination?.bName ?? String(localized: "My Location"))
                         .accessibilityHint("Double tap to select destination")
                     }
                     Button {

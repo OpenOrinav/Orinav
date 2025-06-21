@@ -16,6 +16,7 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
     func onEndNavigation() {
         DispatchQueue.main.async {
             self.globalUIState.currentPage = nil
+            BeaconTTSService.shared.speak("Navigation ended")
         }
     }
     

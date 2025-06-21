@@ -10,11 +10,11 @@ struct FavoriteCardView: View {
     
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: 4) {
+            HStack(spacing: 8) {
                 Image(systemName: poi.bIcon)
                     .font(.system(size: 48, weight: .regular))
                     .foregroundColor(poi.bIconColor)
-                VStack(spacing: 0) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(poi.bName)
                         .font(.headline)
                         .lineLimit(1)
@@ -30,17 +30,20 @@ struct FavoriteCardView: View {
             .accessibilityLabel(poi.bName)
         }
         .contextMenu {
-            Button("Delete", action: { showDeleteAlert = true })
-                .foregroundColor(.red)
+            Button(role: .destructive) {
+                showDeleteAlert = true
+            } label: {
+                Text("Delete")
+            }
         }
         .buttonStyle(.plain)
-        .alert("Remove from favorites?", isPresented: $showDeleteAlert) {
+        .alert("Delete from favorites?", isPresented: $showDeleteAlert) {
             Button("Delete", role: .destructive) {
                 onDelete()
             }
             Button("Cancel", role: .cancel) { }
         } message: {
-            Text("Are you sure you want to remove \"\(poi.bName)\" from your favorites?")
+            Text("Are you sure you want to delete \"\(poi.bName)\" from your favorites?")
         }
     }
 }

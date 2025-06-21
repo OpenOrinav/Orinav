@@ -156,7 +156,11 @@
         }
       }
     },
+    "Are you sure you want to delete \"%@\" from your favorites?" : {
+
+    },
     "Are you sure you want to remove \"%@\" from your favorites?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -316,6 +320,9 @@
           }
         }
       }
+    },
+    "Delete from favorites?" : {
+
     },
     "Destination" : {
       "localizations" : {
@@ -729,6 +736,7 @@
 
     },
     "Remove from favorites?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {

@@ -47,7 +47,7 @@ struct BeaconHomeView: View {
                 }
                 
                 // MARK: Favorites View
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: favoritesManager.favorites.isEmpty ? 0 : 16) {
                     Text("Favorites")
                         .font(.title2)
                         .bold()
@@ -57,8 +57,8 @@ struct BeaconHomeView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     } else {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 16) {
+                        ScrollView(.vertical) {
+                            VStack(alignment: .leading, spacing: 8) {
                                 ForEach(favoritesManager.favorites, id: \.bid) { poi in
                                     FavoriteCardView(
                                         poi: poi,
@@ -76,6 +76,7 @@ struct BeaconHomeView: View {
                             }
                             .padding(.top, 6)
                         }
+                        .frame(maxHeight: 200)
                     }
                 }
 

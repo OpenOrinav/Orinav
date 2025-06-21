@@ -15,7 +15,7 @@ struct BeaconNavigationContainerView: View {
         Group {
             if let navView = navigationView {
                 navView
-                    .ignoresSafeArea(.all)
+                    .ignoresSafeArea(.container, edges: .all)
                     .fullScreenCover(isPresented: $isInExploreMode) {
                         BeaconExploreView()
                     }
@@ -28,12 +28,18 @@ struct BeaconNavigationContainerView: View {
         }
         .onAppear {
             if let route = globalUIState.routeInNavigation {
-                navigationView = globalState.navigationProvider.startNavigation(with: route)
+                Task { @MainActor in
+                    let view = await globalState.navigationProvider.startNavigation(with: route)
+                    navigationView = view
+                }
             }
         }
         .onChange(of: globalUIState.routeInNavigation?.bid) {
             if let route = globalUIState.routeInNavigation {
-                navigationView = globalState.navigationProvider.startNavigation(with: route)
+                Task { @MainActor in
+                    let view = await globalState.navigationProvider.startNavigation(with: route)
+                    navigationView = view
+                }
             } else {
                 navigationView = nil
             }

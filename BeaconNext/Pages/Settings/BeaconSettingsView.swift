@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct BeaconSettingsView: View {
+    @ObservedObject private var settings = SettingsManager.shared
+    @State private var showRestartAlert = false
 
     var languageCode: String {
         Locale.current.language.languageCode?.identifier ?? "Unknown"
@@ -11,45 +13,28 @@ struct BeaconSettingsView: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            
-            HStack {
-                Image(systemName: "globe")
-                    .foregroundColor(.blue)
-                    .font(.system(size: 30))
-                
-                Text("Current Language:")
-                    .font(.headline)
-                
-                Text(localizedLanguageName)
-                    .font(.body)
-                    .foregroundColor(.gray)
+        Form {
+            Section(header: Text("Navigation")) {
+                Picker("Map Provider", selection: $settings.mapProvider) {
+                    ForEach(MapProvider.allCases, id: \.self) { provider in
+                        Text(provider.rawValue.capitalized).tag(provider)
+                    }
+                }
             }
-            
-            HStack {
-                Button ("success") {
-                    HapticsManager.NotificationHaptic(for: .success)
-                }
-                .padding()
-                
-                Button ("warning") {
-                    HapticsManager.NotificationHaptic(for: .warning)
-                }
-                .padding()
-                
-                Button ("error") {
-                    HapticsManager.NotificationHaptic(for: .error)
-                }
-                .padding()
-            }
-            .padding()
-            
-            Spacer()
-            
         }
-        .padding()
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)
+        .onChange(of: settings.mapProvider) {
+            showRestartAlert = true
+        }
+        .alert("Restart Required",
+               isPresented: $showRestartAlert) {
+            Button("Restart Now") {
+                exit(0)
+            }
+        } message: {
+            Text("Beacon needs to restart to apply this change.")
+        }
     }
 }
 

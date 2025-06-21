@@ -192,6 +192,9 @@
         }
       }
     },
+    "Beacon needs to restart to apply this change." : {
+
+    },
     "Cancel" : {
       "localizations" : {
         "ar" : {
@@ -274,6 +277,7 @@
       }
     },
     "Current Language:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -473,9 +477,6 @@
         }
       }
     },
-    "error" : {
-
-    },
     "Explore" : {
       "localizations" : {
         "ar" : {
@@ -618,6 +619,9 @@
         }
       }
     },
+    "Map Provider" : {
+
+    },
     "My Location" : {
       "localizations" : {
         "ar" : {
@@ -649,6 +653,9 @@
           }
         }
       }
+    },
+    "Navigation" : {
+
     },
     "New to Beacon?" : {
       "localizations" : {
@@ -755,6 +762,12 @@
     "Removes this POI from your favorites" : {
 
     },
+    "Restart Now" : {
+
+    },
+    "Restart Required" : {
+
+    },
     "Route: %@ estimated" : {
       "localizations" : {
         "ar" : {
@@ -858,15 +871,8 @@
         }
       }
     },
-    "Start walk navigation, takes %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Start walk navigation, takes %1$@ %2$@"
-          }
-        }
-      }
+    "Start walking navigation" : {
+
     },
     "Starting location" : {
       "localizations" : {
@@ -883,9 +889,6 @@
           }
         }
       }
-    },
-    "success" : {
-
     },
     "Swap start and destination" : {
       "localizations" : {
@@ -952,17 +955,7 @@
         }
       }
     },
-    "Walk · %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Walk · %1$@ %2$@"
-          }
-        }
-      }
-    },
-    "warning" : {
+    "Walk" : {
 
     },
     "Welcome to Beacon" : {

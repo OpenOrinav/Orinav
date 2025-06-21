@@ -1,36 +1,6 @@
 import SwiftUI
 import UIKit
 
-struct BeaconIconConnector: View {
-    let topImage: Image
-    let topColor: Color
-    let bottomImage: Image
-    let bottomColor: Color
-    
-    var body: some View {
-        VStack(spacing: 6) {
-            topImage
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
-                .foregroundColor(topColor)
-                .accessibilityHidden(true)
-            VStack(spacing: 2) {
-                Circle().frame(width: 2, height: 2).foregroundStyle(.secondary)
-                Circle().frame(width: 2, height: 2).foregroundStyle(.secondary)
-                Circle().frame(width: 2, height: 2).foregroundStyle(.secondary)
-            }
-            bottomImage
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
-                .foregroundColor(bottomColor)
-                .accessibilityHidden(true)
-        }
-        .accessibilityHidden(true)
-    }
-}
-
 struct BeaconRouteSelectionView: View {
     @State private var isShowingSearchForFrom = false
     @State private var isShowingSearchForDestination = false
@@ -190,5 +160,35 @@ struct BeaconRouteSelectionView: View {
                 searchLoading = false
             }
         }
+    }
+}
+
+struct BeaconIconConnector: View {
+    let topImage: Image
+    let topColor: Color
+    let bottomImage: Image
+    let bottomColor: Color
+    
+    var body: some View {
+        VStack(spacing: 6) {
+            topImage
+                .resizable()
+                .scaledToFit()
+                .frame(width: 24, height: 24)
+                .foregroundColor(topColor)
+                .accessibilityHidden(true)
+            VStack(spacing: 2) {
+                Circle().frame(width: 2, height: 2).foregroundStyle(.secondary)
+                Circle().frame(width: 2, height: 2).foregroundStyle(.secondary)
+                Circle().frame(width: 2, height: 2).foregroundStyle(.secondary)
+            }
+            bottomImage
+                .resizable()
+                .scaledToFit()
+                .frame(width: 24, height: 24)
+                .foregroundColor(bottomColor)
+                .accessibilityHidden(true)
+        }
+        .accessibilityHidden(true)
     }
 }

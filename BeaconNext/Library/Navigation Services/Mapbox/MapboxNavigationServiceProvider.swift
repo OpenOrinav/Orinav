@@ -5,19 +5,15 @@ import MapboxDirections
 import MapboxSearch
 import Combine
 
-class MapboxNavigationServiceProvider: BeaconNavigationProvider {
+class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewControllerDelegate {
     var delegate: (any BeaconNavigationProviderDelegate)?
     let mnp: MapboxNavigationProvider
     
     var routes: NavigationRoutes?
     var controller: NavigationViewController?
     
-    var sessionSink: AnyCancellable?
-    var locationSink: AnyCancellable?
-    
     init() {
         mnp = MapboxNavigationProvider(coreConfig: .init(credentials: .init(), locationSource: .live))
-        observeNavigation()
     }
     
     func planRoutes(
@@ -59,20 +55,26 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider {
         }
     }
     
-    func observeNavigation() {
-        sessionSink = mnp.mapboxNavigation.tripSession().session.sink { status in
-            if status.state == .idle {
-                self.clearState()
-                self.delegate?.onEndNavigation()
-            }
-        }
-        locationSink = mnp.mapboxNavigation.navigation().locationMatching.sink { state in
-            self.delegate?.onReceiveRoadAngle(state.enhancedLocation.course)
-        }
+    func navigationViewControllerDidDismiss(
+        _ navigationViewController: NavigationViewController,
+        byCanceling canceled: Bool
+    ) {
+        self.clearState()
+        self.delegate?.onEndNavigation()
+    }
+    
+    func navigationViewController(
+        _ navigationViewController: NavigationViewController,
+        didUpdate progress: RouteProgress,
+        with location: CLLocation,
+        rawLocation: CLLocation
+    ) {
+        self.delegate?.onReceiveRoadAngle(location.course)
     }
 
     func clearState() {
         routes = nil
+        mnp.mapboxNavigation.tripSession().setToIdle()
     }
     
     func startNavigation(with: any BeaconWalkRoute) async -> AnyView { // DEBUG
@@ -83,13 +85,14 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider {
         mnp.mapboxNavigation.tripSession().startActiveGuidance(with: routes!, startLegIndex: 0)
         
         controller = NavigationViewController(
-            navigationRoutes: self.routes!,
+            navigationRoutes: routes!,
             navigationOptions: NavigationOptions(
-                mapboxNavigation: self.mnp.mapboxNavigation,
-                voiceController: self.mnp.routeVoiceController,
-                eventsManager: self.mnp.eventsManager()
+                mapboxNavigation: mnp.mapboxNavigation,
+                voiceController: mnp.routeVoiceController,
+                eventsManager: mnp.eventsManager()
             )
         )
+        controller!.delegate = self
         controller!.modalPresentationStyle = .fullScreen
         return AnyView(MapboxNavigationContainerView(controller: controller!))
     }

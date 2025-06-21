@@ -5,7 +5,6 @@ struct BeaconPOIView: View {
     @EnvironmentObject var globalState: BeaconMappingCoordinator
     @EnvironmentObject var globalUIState: BeaconGlobalUIState
     
-    @State private var poiTime: Int? = nil
     @State private var isFavorited: Bool = false
     
     var body: some View {
@@ -56,14 +55,14 @@ struct BeaconPOIView: View {
                     globalUIState.currentPage = .routes
                 }
             } label: {
-                Text("Walk · \(poiTime == nil ? "..." : String(poiTime!)) \(poiTime == 1 ? "minute" : "minutes")")
+                Text("Walk")
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
             }
             .buttonStyle(.borderedProminent)
             .tint(.blue)
             .disabled(globalUIState.poi == nil)
-            .accessibilityLabel("Start walk navigation, takes \(poiTime == nil ? "..." : String(poiTime!)) \(poiTime == 1 ? "minute" : "minutes")")
+            .accessibilityLabel("Start walking navigation")
             
             VStack(alignment: .leading, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
@@ -90,7 +89,6 @@ struct BeaconPOIView: View {
             )
         }
         .onAppear {
-            findPOITime()
             if let poi = globalUIState.poi {
                 isFavorited = FavoritesManager.shared.favorites.contains { $0.bid == poi.bid }
             }
@@ -101,19 +99,5 @@ struct BeaconPOIView: View {
         .frame(maxHeight: .infinity, alignment: .top)
         .padding()
         .background(.ultraThickMaterial)
-    }
-    
-    func findPOITime() {
-        Task {
-            let results = await globalState.navigationProvider
-                .planRoutes(
-                    from: nil,
-                    to: globalUIState.poi!,
-                    location: globalState.locationProvider.currentLocation!
-                )
-            await MainActor.run {
-                poiTime = results.first?.bTimeMinutes
-            }
-        }
     }
 }

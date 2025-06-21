@@ -4,19 +4,19 @@ struct BeaconIntroView: View {
     @State var currentPage = 0
     @Binding var isPresented: Bool
     
-    private let pages: [LocalizedStringKey] = [
-        "intro_page1_title",
-        "intro_page2_title",
-        "intro_page3_title",
-        "intro_page4_title",
-        "intro_page5_title"
+    private let pages = [
+        String(localized: "Welcome to Beacon"),
+        String(localized: "Navigate effortlessly"),
+        String(localized: "Explore the world"),
+        String(localized: "Stay informed"),
+        String(localized: "Let's start from here")
     ]
-    private let contents: [LocalizedStringKey] = [
-        "intro_page1_content",
-        "intro_page2_content",
-        "intro_page3_content",
-        "intro_page4_content",
-        "intro_page5_content"
+    private let contents = [
+        String(localized: "Beacon is a new navigation app designed for individuals with visual impairments. It provides intuitive navigation features to help you get around safely."),
+        String(localized: "To get started navigating, simply search for places or addresses. While navigating, you can shake your device to hear instructions. You can also raise your device for environment awareness, such as learning about obstacles and traffic lights."),
+        String(localized: "Enter the Explore tab to hear nearby places as you go. You can also raise your device for the same environment awareness feature."),
+        String(localized: "Beacon is not a medical device. Beacon should not be used as a sole means of navigation and does not replace service animals, mobility aids, or professional medical or safety advice. You remain responsible for your own safety."),
+        String(localized: "You can always return to this introduction by tapping the tutorial card on the home page.")
     ]
     
     var body: some View {

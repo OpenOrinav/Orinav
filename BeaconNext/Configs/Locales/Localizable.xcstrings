@@ -23,6 +23,26 @@
         }
       }
     },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@. %2$@"
+          }
+        }
+      }
+    },
     "A set of notes to help you get started" : {
       "localizations" : {
         "ar" : {
@@ -270,6 +290,9 @@
         }
       }
     },
+    "Done" : {
+
+    },
     "Double tap to select a starting point" : {
       "localizations" : {
         "ar" : {
@@ -514,6 +537,9 @@
         }
       }
     },
+    "Next" : {
+
+    },
     "No favorites yet" : {
       "localizations" : {
         "ar" : {
@@ -545,6 +571,9 @@
           }
         }
       }
+    },
+    "Previous" : {
+
     },
     "Remove from Favorites" : {
 

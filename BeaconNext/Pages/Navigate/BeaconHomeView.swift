@@ -6,6 +6,7 @@ struct BeaconHomeView: View {
     @EnvironmentObject var globalUIState: BeaconGlobalUIState
     
     @State private var isShowingSearch = false
+    @State private var isShowingIntro = false
     
     @ObservedObject var favoritesManager = FavoritesManager.shared
     
@@ -101,7 +102,9 @@ struct BeaconHomeView: View {
                             title: "New to Beacon?",
                             text: "Start a tutorial to learn about how easy Beacon is.",
                             color: .blue
-                        )
+                        ) {
+                            isShowingIntro = true
+                        }
                     }
                 }
             }
@@ -124,6 +127,15 @@ struct BeaconHomeView: View {
         .fullScreenCover(isPresented: createBinding(.navigation)) {
             BeaconNavigationContainerView()
                 .ignoresSafeArea(edges: .all)
+        }
+        .sheet(isPresented: $isShowingIntro) {
+            BeaconIntroView(isPresented: $isShowingIntro)
+                .presentationDetents([.medium])
+        }
+        .onAppear {
+            if !SettingsManager.shared.shownIntro {
+                isShowingIntro = true
+            }
         }
         .navigationTitle("Beacon")
         .navigationBarTitleDisplayMode(.large)

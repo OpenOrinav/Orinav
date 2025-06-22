@@ -533,6 +533,9 @@
         }
       }
     },
+    "Haptics" : {
+
+    },
     "Language Setting" : {
       "extractionState" : "manual",
       "localizations" : {

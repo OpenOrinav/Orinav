@@ -28,23 +28,26 @@ struct BeaconSettingsView: View {
             
             HStack {
                 Button ("success") {
-                    HapticsManager.NotificationHaptic(for: .success)
+                    UIKitHapticsManager.NotificationHaptic(for: .success)
                 }
                 .padding()
                 
                 Button ("warning") {
-                    HapticsManager.NotificationHaptic(for: .warning)
+                    UIKitHapticsManager.NotificationHaptic(for: .warning)
                 }
                 .padding()
                 
                 Button ("error") {
-                    HapticsManager.NotificationHaptic(for: .error)
+                    UIKitHapticsManager.NotificationHaptic(for: .error)
                 }
                 .padding()
             }
             .padding()
             
-            Spacer()
+            Button ("Haptics") {
+                CoreHapticsManager.shared.playPattern(for: 50, currentHeading: 90)
+            }
+            
             
         }
         .padding()

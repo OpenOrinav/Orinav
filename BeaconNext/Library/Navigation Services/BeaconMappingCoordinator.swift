@@ -30,7 +30,7 @@ class BeaconMappingCoordinator: ObservableObject {
         
         searchProvider = QMapSearchProvider()
         locationProvider = QMapLocationProvider()
-        locationDelegate = StandardLocationDelegate()
+        locationDelegate = StandardLocationDelegate.shared
         navigationProvider = QMapNavigationServiceProvider()
         navigationDelegate = StandardNavigationDelegate(globalUIState: globalUIState, locationDelegate: locationDelegate)
         

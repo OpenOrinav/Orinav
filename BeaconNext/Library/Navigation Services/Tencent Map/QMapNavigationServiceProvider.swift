@@ -68,7 +68,11 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
     
     func walkNavManager(_ manager: TNKWalkNavManager, didUpdate location: TNKLocation) {
         delegate?.onReceiveRoadAngle(location.matchedCourse)
+        if let heading = StandardLocationDelegate.shared.currentHeading {
+            delegate?.onReceiveHaptics(location.matchedCourse, heading: heading)
+        }
     }
+    
     
     func walkNavManager(_ manager: TNKWalkNavManager, update navigationData: TNKWalkNavigationData) {
         delegate?.onReceiveNavigationStatus(navigationData)

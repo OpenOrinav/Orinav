@@ -67,4 +67,8 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
             self.status = status
         }
     }
+    
+    func onReceiveHaptics(_ angle: CLLocationDirection, heading: CLLocationDirection) {
+        CoreHapticsManager.shared.playPattern(for: angle, currentHeading: heading)
+    }
 }

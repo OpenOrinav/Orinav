@@ -4,6 +4,7 @@ struct PromotionCardView: View {
     let title: LocalizedStringResource
     let text: LocalizedStringResource
     let color: Color
+    var onTap: () -> Void = {}
 
     @GestureState private var isPressed = false
 
@@ -34,5 +35,13 @@ struct PromotionCardView: View {
                     state = true
                 }
         )
+        .simultaneousGesture(
+            TapGesture().onEnded {
+                onTap()
+            }
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title) \(text)")
+        .accessibilityAddTraits(.isButton)
     }
 }

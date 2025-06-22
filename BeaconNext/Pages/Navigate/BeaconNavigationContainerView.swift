@@ -7,21 +7,42 @@ struct BeaconNavigationContainerView: View {
 
     @StateObject private var motionManager = DeviceMotionManager()
     @State private var isInExploreMode = false
+    @State private var navigationView: AnyView?
     
     @Environment(\.presentationMode) private var presentationMode
 
     var body: some View {
-        if let route = globalUIState.routeInNavigation {
-            globalState.navigationProvider.startNavigation(with: route)
-                .ignoresSafeArea(.all)
-                .fullScreenCover(isPresented: $isInExploreMode) {
-                    BeaconExploreView()
-                }
-                .onReceive(motionManager.$isPhoneRaised) { raised in
-                    withAnimation {
-                        isInExploreMode = raised
+        Group {
+            if let navView = navigationView {
+                navView
+                    .ignoresSafeArea(.container, edges: .all)
+                    .fullScreenCover(isPresented: $isInExploreMode) {
+                        BeaconExploreView()
                     }
+                    .onReceive(motionManager.$isPhoneRaised) { raised in
+                        withAnimation {
+                            isInExploreMode = raised
+                        }
+                    }
+            }
+        }
+        .onAppear {
+            if let route = globalUIState.routeInNavigation {
+                Task { @MainActor in
+                    let view = await globalState.navigationProvider.startNavigation(with: route)
+                    navigationView = view
                 }
+            }
+        }
+        .onChange(of: globalUIState.routeInNavigation?.bid) {
+            if let route = globalUIState.routeInNavigation {
+                Task { @MainActor in
+                    let view = await globalState.navigationProvider.startNavigation(with: route)
+                    navigationView = view
+                }
+            } else {
+                navigationView = nil
+            }
         }
     }
 }

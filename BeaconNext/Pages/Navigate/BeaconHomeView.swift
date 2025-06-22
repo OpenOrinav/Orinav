@@ -6,6 +6,7 @@ struct BeaconHomeView: View {
     @EnvironmentObject var globalUIState: BeaconGlobalUIState
     
     @State private var isShowingSearch = false
+    @State private var isShowingIntro = false
     
     @ObservedObject var favoritesManager = FavoritesManager.shared
     
@@ -17,12 +18,19 @@ struct BeaconHomeView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "location.fill")
                                 .accessibilityHidden(true)
-                            Text(globalState.locationDelegate.currentLocation?.bName ?? "Loading...") // Current Location
-                                .font(.headline)
+                            if let name = globalState.locationDelegate.currentLocation?.bName {
+                                Text(name) // Current Location
+                                    .font(.headline)
+                            } else {
+                                Text("Loading...")
+                                    .font(.headline)
+                            }
                         }
                         .frame(maxWidth: .infinity)
                         .accessibilityElement(children: .combine)
-                        .accessibilityLabel("Current Location: \(globalState.locationDelegate.currentLocation?.bName ?? "Loading...")")
+                        .accessibilityLabel(
+                            globalState.locationDelegate.currentLocation?.bName == nil ? "Current Location: Loading..." : "Current Location: \(globalState.locationDelegate.currentLocation!.bName!)"
+                        )
 
                         Button(action: {
                             isShowingSearch = true
@@ -47,7 +55,7 @@ struct BeaconHomeView: View {
                 }
                 
                 // MARK: Favorites View
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: favoritesManager.favorites.isEmpty ? 0 : 16) {
                     Text("Favorites")
                         .font(.title2)
                         .bold()
@@ -57,8 +65,8 @@ struct BeaconHomeView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     } else {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 16) {
+                        ScrollView(.vertical) {
+                            VStack(alignment: .leading, spacing: 8) {
                                 ForEach(favoritesManager.favorites, id: \.bid) { poi in
                                     FavoriteCardView(
                                         poi: poi,
@@ -76,6 +84,7 @@ struct BeaconHomeView: View {
                             }
                             .padding(.top, 6)
                         }
+                        .frame(maxHeight: 200)
                     }
                 }
 
@@ -100,7 +109,9 @@ struct BeaconHomeView: View {
                             title: "New to Beacon?",
                             text: "Start a tutorial to learn about how easy Beacon is.",
                             color: .blue
-                        )
+                        ) {
+                            isShowingIntro = true
+                        }
                     }
                 }
             }
@@ -123,6 +134,15 @@ struct BeaconHomeView: View {
         .fullScreenCover(isPresented: createBinding(.navigation)) {
             BeaconNavigationContainerView()
                 .ignoresSafeArea(edges: .all)
+        }
+        .sheet(isPresented: $isShowingIntro) {
+            BeaconIntroView(isPresented: $isShowingIntro)
+                .presentationDetents([.medium])
+        }
+        .onAppear {
+            if !SettingsManager.shared.shownIntro {
+                isShowingIntro = true
+            }
         }
         .navigationTitle("Beacon")
         .navigationBarTitleDisplayMode(.large)

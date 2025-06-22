@@ -1,36 +1,6 @@
 import SwiftUI
 import UIKit
 
-struct BeaconIconConnector: View {
-    let topImage: Image
-    let topColor: Color
-    let bottomImage: Image
-    let bottomColor: Color
-    
-    var body: some View {
-        VStack(spacing: 6) {
-            topImage
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
-                .foregroundColor(topColor)
-                .accessibilityHidden(true)
-            VStack(spacing: 2) {
-                Circle().frame(width: 2, height: 2).foregroundStyle(.secondary)
-                Circle().frame(width: 2, height: 2).foregroundStyle(.secondary)
-                Circle().frame(width: 2, height: 2).foregroundStyle(.secondary)
-            }
-            bottomImage
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
-                .foregroundColor(bottomColor)
-                .accessibilityHidden(true)
-        }
-        .accessibilityHidden(true)
-    }
-}
-
 struct BeaconRouteSelectionView: View {
     @State private var isShowingSearchForFrom = false
     @State private var isShowingSearchForDestination = false
@@ -75,16 +45,18 @@ struct BeaconRouteSelectionView: View {
                         Button {
                             isShowingSearchForFrom = true
                         } label: {
-                            Text(globalUIState.routesFrom?.bName ?? "My Location")
+                            Text(globalUIState.routesFrom?.bName ?? String(localized: "My Location"))
                                 .font(.body)
                                 .foregroundColor(.primary)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .onChange(of: globalUIState.routesFrom?.bid) {
                             handleSearch()
                         }
                         .accessibilityLabel("Starting location")
-                        .accessibilityValue(globalUIState.routesFrom?.bName ?? "My Location")
+                        .accessibilityValue(globalUIState.routesFrom?.bName ?? String(localized: "My Location"))
                         .accessibilityHint("Double tap to select a starting point")
                         
                         Divider()
@@ -94,16 +66,18 @@ struct BeaconRouteSelectionView: View {
                         Button {
                             isShowingSearchForDestination = true
                         } label: {
-                            Text(globalUIState.routesDestination?.bName ?? "My Location")
+                            Text(globalUIState.routesDestination?.bName ?? String(localized: "My Location"))
                                 .font(.body)
                                 .foregroundColor(.primary)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .onChange(of: globalUIState.routesDestination?.bid) {
                             handleSearch()
                         }
                         .accessibilityLabel("Destination")
-                        .accessibilityValue(globalUIState.routesDestination?.bName ?? "My Location")
+                        .accessibilityValue(globalUIState.routesDestination?.bName ?? String(localized: "My Location"))
                         .accessibilityHint("Double tap to select destination")
                     }
                     Button {
@@ -186,5 +160,35 @@ struct BeaconRouteSelectionView: View {
                 searchLoading = false
             }
         }
+    }
+}
+
+struct BeaconIconConnector: View {
+    let topImage: Image
+    let topColor: Color
+    let bottomImage: Image
+    let bottomColor: Color
+    
+    var body: some View {
+        VStack(spacing: 6) {
+            topImage
+                .resizable()
+                .scaledToFit()
+                .frame(width: 24, height: 24)
+                .foregroundColor(topColor)
+                .accessibilityHidden(true)
+            VStack(spacing: 2) {
+                Circle().frame(width: 2, height: 2).foregroundStyle(.secondary)
+                Circle().frame(width: 2, height: 2).foregroundStyle(.secondary)
+                Circle().frame(width: 2, height: 2).foregroundStyle(.secondary)
+            }
+            bottomImage
+                .resizable()
+                .scaledToFit()
+                .frame(width: 24, height: 24)
+                .foregroundColor(bottomColor)
+                .accessibilityHidden(true)
+        }
+        .accessibilityHidden(true)
     }
 }

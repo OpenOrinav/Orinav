@@ -14,8 +14,14 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
     
     // = Allow ending navigation
     func onEndNavigation() {
+        // Reset state
+        lastDirection = nil
+        lastFacingAngle = nil
+        hasSpokenRightDirection = false
+        
         DispatchQueue.main.async {
             self.globalUIState.currentPage = nil
+            BeaconTTSService.shared.speak("Navigation ended")
         }
     }
     

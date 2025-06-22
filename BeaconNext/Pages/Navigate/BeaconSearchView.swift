@@ -80,8 +80,7 @@ struct BeaconSearchView: View {
                             Text(poi.wrappedValue.bName)
                                 .font(.headline)
                             if globalState.locationProvider.currentLocation != nil,
-                               let coord = poi.wrappedValue.bCoordinate,
-                               let dist = globalState.locationProvider.currentLocation?.distance(to: coord) {
+                               let dist = globalState.locationProvider.currentLocation?.distance(to: poi.wrappedValue.bCoordinate) {
                                 Text("\(BeaconUIUtils.formattedDistance(dist)) · \(poi.wrappedValue.bAddress)")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)

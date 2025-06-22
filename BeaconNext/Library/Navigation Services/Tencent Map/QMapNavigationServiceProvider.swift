@@ -3,24 +3,18 @@ import TencentNavKit
 import TNKAudioPlayer
 
 class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDelegate, TNKWalkNavViewDelegate, TNKWalkNavDataSource {
-    
     let navManager: TNKWalkNavManager
-    var realNavView: TNKWalkNavView
+    var realNavView: TNKWalkNavView?
     
     var delegate: BeaconNavigationProviderDelegate?
 
     override init() {
         navManager = TNKWalkNavManager.sharedInstance()
-        realNavView = TNKWalkNavView(frame: UIScreen.main.bounds)
-        
-        super.init()
-        
         navManager.audioPlayer = TNKAudioPlayer.shared()
+        super.init()
+
         navManager.register(self)
         navManager.navDataSource = self
-        realNavView.showUIElements = true
-        realNavView.delegate = self
-        navManager.register(realNavView)
     }
     
     func planRoutes(
@@ -28,6 +22,13 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
         to: (any BeaconPOI)?,
         location: BeaconLocation
     ) async -> [any BeaconWalkRoute] {
+        if realNavView == nil {
+            realNavView = TNKWalkNavView(frame: UIScreen.main.bounds)
+            realNavView!.showUIElements = true
+            realNavView!.delegate = self
+            navManager.register(realNavView!)
+        }
+        
         let origin = TNKSearchNavPoint()
         origin.coordinate = from?.bCoordinate ?? location.bCoordinate
         origin.title = from?.bName
@@ -60,10 +61,7 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
     
     func clearState() {
         navManager.stopNav()
-        realNavView = TNKWalkNavView(frame: UIScreen.main.bounds)
-        realNavView.showUIElements = true
-        realNavView.delegate = self
-        navManager.register(realNavView)
+        realNavView = nil
     }
     
     func walkNavManager(_ manager: TNKWalkNavManager, didUpdate location: TNKLocation) {
@@ -78,12 +76,13 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
         delegate?.onReceiveNavigationStatus(navigationData)
     }
     
-    func startNavigation(with: any BeaconWalkRoute) -> AnyView {
+    func startNavigation(with: any BeaconWalkRoute) async -> AnyView {
         navManager.startNav(withRouteID: with.bid)
-        return AnyView(QMapNavigationView(navManager: self, navView: realNavView))
+        return AnyView(QMapNavigationView(navManager: self, navView: realNavView!))
     }
     
     func navViewCloseButtonClicked(_ navView: TNKBaseNavView) {
+        clearState()
         delegate?.onEndNavigation()
     }
 }
@@ -120,7 +119,7 @@ extension TNKSearchNavPoint: BeaconPOI {
         return .others
     }
     
-    var bCoordinate: CLLocationCoordinate2D? {
+    var bCoordinate: CLLocationCoordinate2D {
         return coordinate
     }
 }
@@ -144,6 +143,10 @@ extension TNKWalkRoute: BeaconWalkRoute {
     
     var bTimeMinutes: Int {
         return Int(self.totalTime)
+    }
+    
+    var bDescription: String {
+        return self.recommendReason
     }
 }
 

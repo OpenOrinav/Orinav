@@ -1,7 +1,17 @@
 import QMapKit
 import TencentNavKit
 import Combine
+import CoreLocation
 
+private extension CLLocationCoordinate2D {
+    var isInChinaMainland: Bool {
+        let lat = self.latitude
+        let lon = self.longitude
+        return (lat >= 18.197700914 && lat <= 53.4588044297) && (lon >= 73.6753792663 && lon <= 135.026311477)
+    }
+}
+
+@MainActor
 class BeaconMappingCoordinator: ObservableObject {
     var searchProvider: BeaconSearchProvider
     
@@ -27,11 +37,30 @@ class BeaconMappingCoordinator: ObservableObject {
         QMapServices.shared().apiKey = apiKey
         TNKNavServices.shared().key = apiKey
         QMSSearchServices.shared().apiKey = apiKey
+
+        switch SettingsManager.shared.mapProvider {
+        case .location:
+            // Quickly use time zone to determine the location
+            if TimeZone.current.identifier == "Asia/Shanghai" {
+                locationProvider = QMapLocationProvider()
+                searchProvider = QMapSearchProvider()
+                navigationProvider = QMapNavigationServiceProvider()
+            } else {
+                locationProvider = MapboxLocationProvider()
+                searchProvider = MapboxSearchProvider()
+                navigationProvider = MapboxNavigationServiceProvider()
+            }
+        case .tencent:
+            locationProvider = QMapLocationProvider()
+            searchProvider = QMapSearchProvider()
+            navigationProvider = QMapNavigationServiceProvider()
+        case .mapbox:
+            locationProvider = MapboxLocationProvider()
+            searchProvider = MapboxSearchProvider()
+            navigationProvider = MapboxNavigationServiceProvider()
+        }
         
-        searchProvider = QMapSearchProvider()
-        locationProvider = QMapLocationProvider()
-        locationDelegate = StandardLocationDelegate.shared
-        navigationProvider = QMapNavigationServiceProvider()
+        locationDelegate = StandardLocationDelegate()
         navigationDelegate = StandardNavigationDelegate(globalUIState: globalUIState, locationDelegate: locationDelegate)
         
         providerReinit()

@@ -1,55 +1,46 @@
 import MapboxSearch
 
+@MainActor
 class MapboxSearchProvider: BeaconSearchProvider {
-    private let accessToken: String
-    
-    init() {
-        guard let accessToken = Bundle.main.object(forInfoDictionaryKey: "MBXAccessToken") as? String else {
-            fatalError("Missing MBXAccessToken in Info.plist")
-        }
-        self.accessToken = accessToken
-    }
+    let searcher = SearchEngine(apiType: .searchBox)
     
     func searchByPOI(poi: String, center: CLLocationCoordinate2D?) async -> [any BeaconPOI] {
-        let placeAutocomplete = PlaceAutocomplete(accessToken: accessToken)
-        do {
-            let suggestions = try await withCheckedThrowingContinuation { continuation in
-                placeAutocomplete.suggestions(for: poi) { result in
-                    switch result {
-                    case .success(let suggestions):
-                        continuation.resume(returning: suggestions)
-                    case .failure(let error):
-                        continuation.resume(throwing: error)
-                    }
+        return await withCheckedContinuation { continuation in
+            searcher.forward(query: poi, options: SearchOptions(limit: 10)) { result in
+                switch result {
+                case .success(let suggestions):
+                    let wrappedResults = suggestions.map { WrappedMapboxSearchResult(searchResult: $0) }
+                    continuation.resume(returning: wrappedResults)
+                case .failure(let error):
+                    print("MapboxSearchProvider error: \(error)")
+                    continuation.resume(returning: [])
                 }
             }
-            return suggestions
-        } catch {
-            print("MapboxSearchProvider error: \(error)")
-            return []
         }
     }
 }
 
-extension PlaceAutocomplete.Suggestion: BeaconPOI, @retroactive Equatable {
+struct WrappedMapboxSearchResult: BeaconPOI {
+    var searchResult: any SearchResult
+    
     var bid: String {
-        return mapboxId!
+        return searchResult.mapboxId!
     }
     
     var bName: String {
-        return name
+        return searchResult.name
     }
     
     var bAddress: String {
-        return description ?? ""
+        return searchResult.address?.formattedAddress(style: .full) ?? ""
     }
     
-    var bCoordinate: CLLocationCoordinate2D? {
-        return coordinate
+    var bCoordinate: CLLocationCoordinate2D {
+        return searchResult.coordinate
     }
     
     var bCategory: BeaconPOICategory {
-        guard let canonicalId = categories.first?.lowercased() else {
+        guard let canonicalId = searchResult.categories?.first?.lowercased() else {
             return .others
         }
         switch canonicalId {

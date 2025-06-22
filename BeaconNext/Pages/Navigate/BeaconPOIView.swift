@@ -5,7 +5,6 @@ struct BeaconPOIView: View {
     @EnvironmentObject var globalState: BeaconMappingCoordinator
     @EnvironmentObject var globalUIState: BeaconGlobalUIState
     
-    @State private var poiTime: Int? = nil
     @State private var isFavorited: Bool = false
     
     var body: some View {
@@ -34,7 +33,7 @@ struct BeaconPOIView: View {
                             .foregroundColor(isFavorited ? .yellow : .secondary)
                     }
                     .accessibilityLabel(isFavorited ? "Remove from Favorites" : "Add to Favorites")
-                    .accessibilityHint(isFavorited ? "Removes this POI from your favorites" : "Adds this POI to your favorites")
+                    .accessibilityHint(isFavorited ? "Removes this place from your favorites" : "Adds this place to your favorites")
                 }
                 
                 Button {
@@ -46,7 +45,7 @@ struct BeaconPOIView: View {
                         .foregroundColor(.secondary)
                 }
                 .accessibilityLabel("Close")
-                .accessibilityHint("Dismisses the POI sheet")
+                .accessibilityHint("Dismisses the place sheet")
             }
             
             Button {
@@ -56,14 +55,14 @@ struct BeaconPOIView: View {
                     globalUIState.currentPage = .routes
                 }
             } label: {
-                Text("Walk · \(poiTime == nil ? "..." : String(poiTime!)) \(poiTime == 1 ? "minute" : "minutes")")
+                Text("Walk")
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
             }
             .buttonStyle(.borderedProminent)
             .tint(.blue)
             .disabled(globalUIState.poi == nil)
-            .accessibilityLabel("Start walk navigation, takes \(poiTime == nil ? "..." : String(poiTime!)) \(poiTime == 1 ? "minute" : "minutes")")
+            .accessibilityLabel("Start walking navigation")
             
             VStack(alignment: .leading, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
@@ -78,7 +77,7 @@ struct BeaconPOIView: View {
                     Text("Category")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text(globalUIState.poi!.bCategory.rawValue)
+                    Text(globalUIState.poi!.bCategory.localizedName)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -90,7 +89,6 @@ struct BeaconPOIView: View {
             )
         }
         .onAppear {
-            findPOITime()
             if let poi = globalUIState.poi {
                 isFavorited = FavoritesManager.shared.favorites.contains { $0.bid == poi.bid }
             }
@@ -101,19 +99,5 @@ struct BeaconPOIView: View {
         .frame(maxHeight: .infinity, alignment: .top)
         .padding()
         .background(.ultraThickMaterial)
-    }
-    
-    func findPOITime() {
-        Task {
-            let results = await globalState.navigationProvider
-                .planRoutes(
-                    from: nil,
-                    to: globalUIState.poi!,
-                    location: globalState.locationProvider.currentLocation!
-                )
-            await MainActor.run {
-                poiTime = results.first?.bTimeMinutes
-            }
-        }
     }
 }

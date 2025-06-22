@@ -70,6 +70,9 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
         rawLocation: CLLocation
     ) {
         self.delegate?.onReceiveRoadAngle(location.course)
+        if let heading = StandardLocationDelegate.shared.currentHeading {
+            delegate?.onReceiveHaptics(location.course, heading: heading)
+        }
     }
 
     func clearState() {

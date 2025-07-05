@@ -60,7 +60,7 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
         byCanceling canceled: Bool
     ) {
         self.clearState()
-        self.delegate?.onEndNavigation()
+        self.delegate?.didEndNavigation()
     }
     
     func navigationViewController(
@@ -69,10 +69,7 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
         with location: CLLocation,
         rawLocation: CLLocation
     ) {
-        self.delegate?.onReceiveRoadAngle(location.course)
-        if let heading = StandardLocationDelegate.shared.currentHeading {
-            delegate?.onReceiveHaptics(location.course, heading: heading)
-        }
+        self.delegate?.didReceiveRoadAngle(location.course)
     }
 
     func clearState() {

@@ -687,6 +687,9 @@
         }
       }
     },
+    "Haptics Test" : {
+
+    },
     "Health Services" : {
       "localizations" : {
         "ar" : {

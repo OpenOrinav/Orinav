@@ -6,11 +6,9 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
     @Published var currentLocation: BeaconLocation?
     @Published var currentHeading: CLLocationDirection?
     
-    static let shared = StandardLocationDelegate()
-    
     private var currentDeviationAngle: Double = 0
     
-    private init() {
+    init() {
         startShakeDetection()
     }
     
@@ -97,7 +95,7 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
             lastFacingAngle = nil
 
             if !hasSpokenRightDirection {
-                CoreHapticsManager.shared.stop()
+                NavigationHapticsManager.shared.stop()
                 BeaconTTSService.shared.speak("You are at the right direction")
                 hasSpokenRightDirection = true
             }

@@ -13,7 +13,7 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
     }
     
     // = Allow ending navigation
-    func onEndNavigation() {
+    func didEndNavigation() {
         // Reset state
         lastDirection = nil
         lastFacingAngle = nil
@@ -63,18 +63,18 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
         return "\(hourLabels[hour]) o'clock"
     }
     
-    func onReceiveRoadAngle(_ angle: CLLocationDirection) {
+    func didReceiveRoadAngle(_ angle: CLLocationDirection) {
         speakAngularDeviation(from: angle)
     }
     
     // = Publish navigation data
-    func onReceiveNavigationStatus(_ status: any BeaconNavigationStatus) {
+    func didReceiveNavigationStatus(_ status: any BeaconNavigationStatus) {
         DispatchQueue.main.async {
             self.status = status
         }
     }
     
     func onReceiveHaptics(_ angle: CLLocationDirection, heading: CLLocationDirection) {
-        CoreHapticsManager.shared.playPattern(for: angle, currentHeading: heading)
+        NavigationHapticsManager.shared.playPattern(for: angle, currentHeading: heading)
     }
 }

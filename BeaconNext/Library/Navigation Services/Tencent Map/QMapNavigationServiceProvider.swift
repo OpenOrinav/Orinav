@@ -65,15 +65,12 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
     }
     
     func walkNavManager(_ manager: TNKWalkNavManager, didUpdate location: TNKLocation) {
-        delegate?.onReceiveRoadAngle(location.matchedCourse)
-        if let heading = StandardLocationDelegate.shared.currentHeading {
-            delegate?.onReceiveHaptics(location.matchedCourse, heading: heading)
-        }
+        delegate?.didReceiveRoadAngle(location.matchedCourse)
     }
     
     
     func walkNavManager(_ manager: TNKWalkNavManager, update navigationData: TNKWalkNavigationData) {
-        delegate?.onReceiveNavigationStatus(navigationData)
+        delegate?.didReceiveNavigationStatus(navigationData)
     }
     
     func startNavigation(with: any BeaconWalkRoute) async -> AnyView {
@@ -83,7 +80,7 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
     
     func navViewCloseButtonClicked(_ navView: TNKBaseNavView) {
         clearState()
-        delegate?.onEndNavigation()
+        delegate?.didEndNavigation()
     }
 }
 

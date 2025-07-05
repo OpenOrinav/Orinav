@@ -15,9 +15,7 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
     // = Allow ending navigation
     func didEndNavigation() {
         // Reset state
-        lastDirection = nil
-        lastFacingAngle = nil
-        hasSpokenRightDirection = false
+        AngleDeviationFeature.shared.reset()
         
         DispatchQueue.main.async {
             self.globalUIState.currentPage = nil
@@ -26,45 +24,10 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
     }
     
     // = Speak when the user deviates significantly from a correct heading
-    var lastDirection: String? = nil
-    var lastFacingAngle: CLLocationDirection? = nil
-    var hasSpokenRightDirection: Bool = false
-    
-    func speakAngularDeviation(from correctHeading: CLLocationDirection) {
-        guard let currentHeading = locationDelegate.currentHeading else { return }
-        
-        let signedDiff = (currentHeading - correctHeading + 540).truncatingRemainder(dividingBy: 360) - 180
-        
-        if abs(signedDiff) >= 20 {
-            let currentDirection = oClockRepresentation(from: signedDiff)
-            
-            if currentDirection != lastDirection || (lastFacingAngle != nil && abs(currentHeading - lastFacingAngle!) > 5) {
-                BeaconTTSService.shared.speak("Head \(currentDirection)")
-                lastDirection = currentDirection
-                lastFacingAngle = currentHeading
-            }
-            hasSpokenRightDirection = false
-        } else {
-            lastDirection = nil
-            lastFacingAngle = nil
-            
-            if !hasSpokenRightDirection {
-                BeaconTTSService.shared.speak("You are at the right direction")
-                hasSpokenRightDirection = true
-            }
-        }
-    }
-    
-    func oClockRepresentation(from angle: Double) -> String {
-        let normalized = angle >= 0 ? angle : 360 + angle
-        let adjusted = (normalized + 15).truncatingRemainder(dividingBy: 360)
-        let hour = Int(adjusted / 30)
-        let hourLabels = [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-        return "\(hourLabels[hour]) o'clock"
-    }
-    
     func didReceiveRoadAngle(_ angle: CLLocationDirection) {
-        speakAngularDeviation(from: angle)
+        guard let heading = locationDelegate.currentHeading else { return }
+        AngleDeviationFeature.shared.speak(from: angle, currentHeading: heading)
+        AngleDeviationFeature.shared.playHaptics(from: angle, currentHeading: heading)
     }
     
     // = Publish navigation data
@@ -72,9 +35,5 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
         DispatchQueue.main.async {
             self.status = status
         }
-    }
-    
-    func onReceiveHaptics(_ angle: CLLocationDirection, heading: CLLocationDirection) {
-        NavigationHapticsManager.shared.playPattern(for: angle, currentHeading: heading)
     }
 }

@@ -73,19 +73,30 @@ class AngleDeviationFeature {
 
     func playHaptics(from angle: CLLocationDirection, currentHeading: CLLocationDirection) {
         stop()
-        
+        guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
+
         let signedDiff = (currentHeading - angle + 540).truncatingRemainder(dividingBy: 360) - 180
         let absAngle = abs(signedDiff)
 
+        // Determine interval, intensity, and sharpness based on deviation
         let interval: TimeInterval
+        let intensity: Float
+        let sharpness: Float
 
-        if absAngle >= 50 {
-            interval = 0.2
+        if absAngle <= AngleDeviationFeature.correctHeadingLimit {
+            // Light feedback every second when within acceptable limit
+            interval = 1.0
+            intensity = 0.3
+            sharpness = 0.1
         } else {
-            let normalized = absAngle / 50.0
-            interval = 1.5 - normalized * (1.5 - 0.2)
+            // Increase feedback frequency and strength with larger deviation
+            let normalized = min(absAngle, 180.0) / 180.0
+            interval = 0.8 - normalized * 0.7   // from 2s down to 0.1s
+            intensity = Float(0.5 + normalized * 0.5)  // from 0.5 up to 1.0
+            sharpness = Float(0.5 + normalized * 0.5)  // from 0.5 up to 1.0
         }
 
+        // Build transient haptic events for a 2-second window
         var events: [CHHapticEvent] = []
         let totalDuration: TimeInterval = 2.0
         var currentTime: TimeInterval = 0
@@ -94,8 +105,8 @@ class AngleDeviationFeature {
             let event = CHHapticEvent(
                 eventType: .hapticTransient,
                 parameters: [
-                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 1.0),
-                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 1.0)
+                    CHHapticEventParameter(parameterID: .hapticIntensity, value: intensity),
+                    CHHapticEventParameter(parameterID: .hapticSharpness, value: sharpness),
                 ],
                 relativeTime: currentTime
             )
@@ -103,6 +114,7 @@ class AngleDeviationFeature {
             currentTime += interval
         }
 
+        // Play the pattern
         do {
             let pattern = try CHHapticPattern(events: events, parameters: [])
             player = try engine?.makeAdvancedPlayer(with: pattern)

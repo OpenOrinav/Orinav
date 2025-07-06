@@ -61,7 +61,7 @@ struct BeaconNavigationView: View {
                     }
 
                     HStack(spacing: 8) {
-                        Image(systemName: "face.smiling.inverse")
+                        Image(systemName: "person.fill")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
@@ -125,6 +125,7 @@ struct BeaconNavigationView: View {
                 .clipShape(.rect(cornerRadius: 9999))
                 
                 Button(action: {
+                    globalState.navigationProvider.clearState()
                     globalState.navigationDelegate.shouldEndNavigation()
                 }) {
                     Text("End Navigation")

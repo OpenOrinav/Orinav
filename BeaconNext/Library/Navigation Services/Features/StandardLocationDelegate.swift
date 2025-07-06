@@ -48,9 +48,7 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
     // = Speak the user's facing direction whenever it changes
     func speakFacingDirection() {
         guard let degrees = currentHeading else { return }
-        let directions = ["North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"]
-        let index = Int((degrees + 22.5) / 45) & 7
-        let dir = directions[index]
+        let dir = name(forDegrees: degrees)
         
         if dir == lastSpokenDirection || isFirstWord {
             return
@@ -59,6 +57,12 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
             (text: dir, language: "en-US")
         ])
         lastSpokenDirection = dir
+    }
+    
+    func name(forDegrees degrees: Double) -> String {
+        let directions = ["North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"]
+        let index = Int((degrees + 22.5) / 45) & 7
+        return directions[index]
     }
     
     

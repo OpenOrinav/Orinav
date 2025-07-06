@@ -2,7 +2,7 @@ import SwiftUI
 import CoreLocation
 
 class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableObject {
-    @Published var status: BeaconNavigationStatus?
+    @Published var correctHeading: CLLocationDirection?
     
     let globalUIState: BeaconGlobalUIState
     let locationDelegate: StandardLocationDelegate
@@ -13,7 +13,7 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
     }
     
     // = Allow ending navigation
-    func didEndNavigation() {
+    func shouldEndNavigation() {
         // Reset state
         AngleDeviationFeature.shared.reset()
         
@@ -25,6 +25,9 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
     
     // = Speak when the user deviates significantly from a correct heading
     func didReceiveRoadAngle(_ angle: CLLocationDirection) {
+        DispatchQueue.main.async {
+            self.correctHeading = angle
+        }
         guard let heading = locationDelegate.currentHeading else { return }
         AngleDeviationFeature.shared.speak(from: angle, currentHeading: heading)
         AngleDeviationFeature.shared.playHaptics(from: angle, currentHeading: heading)
@@ -33,7 +36,7 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
     // = Publish navigation data
     func didReceiveNavigationStatus(_ status: any BeaconNavigationStatus) {
         DispatchQueue.main.async {
-            self.status = status
+            self.globalUIState.navigationStatus = status
         }
     }
 }

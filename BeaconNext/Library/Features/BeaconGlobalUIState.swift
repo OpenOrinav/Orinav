@@ -8,6 +8,7 @@ class BeaconGlobalUIState: ObservableObject {
 
     // Navigation page
     @Published var routeInNavigation: (any BeaconWalkRoute)?
+    @Published var navigationStatus: (any BeaconNavigationStatus)? // Current navigation status, if any
 
     // Routes page
     @Published var routesFrom: (any BeaconPOI)? // If nil, use current location; otherwise, use the selected POI

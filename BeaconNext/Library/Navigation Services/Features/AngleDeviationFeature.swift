@@ -4,6 +4,8 @@ import UIKit
 import CoreHaptics
 
 class AngleDeviationFeature {
+    static let correctHeadingLimit: Double = 20
+    
     private var engine: CHHapticEngine?
     private var player: CHHapticAdvancedPatternPlayer?
     
@@ -12,7 +14,7 @@ class AngleDeviationFeature {
     init() { prepareEngine() }
     
     // Language
-    var lastDirection: String? = nil
+    var lastDirection: Int? = nil
     var lastFacingAngle: CLLocationDirection? = nil
     var hasSpokenRightDirection: Bool = false
     
@@ -25,11 +27,11 @@ class AngleDeviationFeature {
     func speak(from correctHeading: CLLocationDirection, currentHeading: CLLocationDirection) {
         let signedDiff = (currentHeading - correctHeading + 540).truncatingRemainder(dividingBy: 360) - 180
         
-        if abs(signedDiff) >= 20 {
-            let currentDirection = oClockRepresentation(from: signedDiff)
+        if abs(signedDiff) >= AngleDeviationFeature.correctHeadingLimit {
+            let currentDirection = AngleDeviationFeature.oClockRepresentation(from: signedDiff)
             
             if currentDirection != lastDirection || (lastFacingAngle != nil && abs(currentHeading - lastFacingAngle!) > 5) {
-                BeaconTTSService.shared.speak("Turn \(currentDirection)")
+                BeaconTTSService.shared.speak("Turn \(String(currentDirection)) o' clock")
                 lastDirection = currentDirection
                 lastFacingAngle = currentHeading
             }
@@ -48,12 +50,12 @@ class AngleDeviationFeature {
         }
     }
     
-    func oClockRepresentation(from angle: Double) -> String {
+    static func oClockRepresentation(from angle: Double) -> Int {
         let normalized = angle >= 0 ? angle : 360 + angle
         let adjusted = (normalized + 15).truncatingRemainder(dividingBy: 360)
         let hour = Int(adjusted / 30)
         let hourLabels = [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-        return "\(hourLabels[hour]) o'clock"
+        return hourLabels[hour]
     }
 
     

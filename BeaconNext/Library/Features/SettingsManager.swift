@@ -10,6 +10,12 @@ class SettingsManager: ObservableObject {
             UserDefaults.standard.set(mapProvider.rawValue, forKey: "mapProvider")
         }
     }
+    
+    @Published var accessibleMap: Bool {
+        didSet {
+            UserDefaults.standard.set(accessibleMap, forKey: "accessibleMap")
+        }
+    }
 
     @Published var shownIntro: Bool {
         didSet {
@@ -24,6 +30,12 @@ class SettingsManager: ObservableObject {
             mapProvider = provider
         } else {
             mapProvider = .location
+        }
+        // Load accessibleMap flag
+        if UserDefaults.standard.object(forKey: "accessibleMap") != nil {
+            accessibleMap = UserDefaults.standard.bool(forKey: "accessibleMap")
+        } else {
+            accessibleMap = true
         }
         // Load shownIntro flag
         if UserDefaults.standard.object(forKey: shownIntroKey) != nil {

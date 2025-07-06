@@ -4,6 +4,8 @@ import TencentNavKit
 struct BeaconNavigationContainerView: View {
     @EnvironmentObject private var globalState: BeaconMappingCoordinator
     @EnvironmentObject private var globalUIState: BeaconGlobalUIState
+    
+    @Environment(\.safeAreaInsets) private var safeAreaInsets
 
     @StateObject private var motionManager = DeviceMotionManager()
     @State private var isInExploreMode = false
@@ -13,7 +15,21 @@ struct BeaconNavigationContainerView: View {
 
     var body: some View {
         Group {
-            if let navView = navigationView {
+            if SettingsManager.shared.accessibleMap {
+                BeaconNavigationView()
+                    .fullScreenCover(isPresented: $isInExploreMode) {
+                        BeaconExploreView()
+                    }
+                    .onReceive(motionManager.$isPhoneRaised) { raised in
+                        withAnimation {
+                            isInExploreMode = raised
+                        }
+                    }
+                    .presentationBackground {
+                        Color(.secondarySystemBackground)
+                    }
+                    .padding(safeAreaInsets)
+            } else if let navView = navigationView {
                 navView
                     .ignoresSafeArea(.container, edges: .all)
                     .fullScreenCover(isPresented: $isInExploreMode) {

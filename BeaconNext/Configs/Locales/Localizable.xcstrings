@@ -1,6 +1,54 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%.0f %@" : {
+      "comment" : "Distance in meters",
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$.0f %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$.0f %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$.0f %2$@"
+          }
+        }
+      }
+    },
+    "%.1f %@" : {
+      "comment" : "Distance in kilometers",
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$.1f %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$.1f %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$.1f %2$@"
+          }
+        }
+      }
+    },
     "%@ · %@" : {
       "localizations" : {
         "ar" : {
@@ -45,6 +93,76 @@
         }
       }
     },
+    "%@ onto %@" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ إلى %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ onto %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@进入%2$@"
+          }
+        }
+      }
+    },
+    "%d %@" : {
+      "comment" : "Time remaining in minutes",
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$d %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$d %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$d %2$@"
+          }
+        }
+      }
+    },
+    "%d %@ %d %@" : {
+      "comment" : "Time remaining in hours and minutes",
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$d %2$@ %3$d %4$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$d %2$@ %3$d %4$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$d %2$@ %3$d %4$@"
+          }
+        }
+      }
+    },
     "A set of notes to help you get started" : {
       "localizations" : {
         "ar" : {
@@ -57,6 +175,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "一份帮助您开始的参考笔记"
+          }
+        }
+      }
+    },
+    "Accessible Map" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الخريطة الميسّرة"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无障碍地图"
           }
         }
       }
@@ -139,6 +273,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "确认要取消收藏 \"%@\" 吗?"
+          }
+        }
+      }
+    },
+    "Arrival" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الوصول"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "到达时间"
+          }
+        }
+      }
+    },
+    "Arrive at your destination" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لقد وصلت إلى وجهتك"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "到达目的地"
           }
         }
       }
@@ -271,6 +437,22 @@
         }
       }
     },
+    "Continue straight" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تابع السير مباشرة"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直行"
+          }
+        }
+      }
+    },
     "Cultural" : {
       "localizations" : {
         "ar" : {
@@ -283,6 +465,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "文化"
+          }
+        }
+      }
+    },
+    "Current heading" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الاتجاه الحالي"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前方向"
+          }
+        }
+      }
+    },
+    "Current location" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الموقع الحالي"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前位置"
           }
         }
       }
@@ -431,6 +645,38 @@
         }
       }
     },
+    "Distance" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المسافة"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "距离"
+          }
+        }
+      }
+    },
+    "Distance remaining" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المسافة المتبقية"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "剩余距离"
+          }
+        }
+      }
+    },
     "Done" : {
       "localizations" : {
         "ar" : {
@@ -511,6 +757,22 @@
         }
       }
     },
+    "End Navigation" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إنهاء التنقّل"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "结束导航"
+          }
+        }
+      }
+    },
     "Enter the Explore tab to hear nearby places as you go. You can also raise your device for the same environment awareness feature." : {
       "localizations" : {
         "ar" : {
@@ -539,6 +801,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "娱乐"
+          }
+        }
+      }
+    },
+    "Estimated arrival time" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "وقت الوصول المقدّر"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "预计到达时间"
           }
         }
       }
@@ -687,8 +965,21 @@
         }
       }
     },
-    "Haptics Test" : {
-
+    "Heading aligned" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الاتجاه مضبوط"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已面向正确方向"
+          }
+        }
+      }
     },
     "Health Services" : {
       "localizations" : {
@@ -702,6 +993,56 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "健康服务"
+          }
+        }
+      }
+    },
+    "hr" : {
+      "comment" : "Hour unit abbreviation",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "س"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "时"
+          }
+        }
+      }
+    },
+    "In %@" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "بعد %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 后"
+          }
+        }
+      }
+    },
+    "km" : {
+      "comment" : "Kilometer unit",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "كم"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "公里"
           }
         }
       }
@@ -809,6 +1150,39 @@
         }
       }
     },
+    "m" : {
+      "comment" : "Meter unit",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "م"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "米"
+          }
+        }
+      }
+    },
+    "Make a U-turn" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "قم بالالتفاف"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "调头"
+          }
+        }
+      }
+    },
     "Map Provider" : {
       "localizations" : {
         "ar" : {
@@ -837,6 +1211,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mapbox (全球)"
+          }
+        }
+      }
+    },
+    "min" : {
+      "comment" : "Minute unit abbreviation",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "د"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分"
           }
         }
       }
@@ -1140,7 +1531,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "路线：%@（预计）"
+            "value" : "路线: 预计 %@"
           }
         }
       }
@@ -1328,6 +1719,22 @@
         }
       }
     },
+    "Stop" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "توقّف"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止"
+          }
+        }
+      }
+    },
     "Swap start and destination" : {
       "localizations" : {
         "ar" : {
@@ -1376,6 +1783,38 @@
         }
       }
     },
+    "Time" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الوقت"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "剩余"
+          }
+        }
+      }
+    },
+    "Time remaining" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الوقت المتبقي"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "剩余时间"
+          }
+        }
+      }
+    },
     "To get started navigating, simply search for places or addresses. While navigating, you can shake your device to hear instructions. You can also raise your device for environment awareness, such as learning about obstacles and traffic lights." : {
       "localizations" : {
         "ar" : {
@@ -1404,6 +1843,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "交通"
+          }
+        }
+      }
+    },
+    "Turn %lld o'clock to align" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اتجه نحو الساعة %lld لضبط الاتجاه"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "面向 %lld 点方向"
+          }
+        }
+      }
+    },
+    "Turn left" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "انعطف يسارًا"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左转"
+          }
+        }
+      }
+    },
+    "Turn right" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "انعطف يمينًا"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右转"
+          }
+        }
+      }
+    },
+    "Turn slightly left" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "انعطف قليلًا إلى اليسار"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向左前方"
+          }
+        }
+      }
+    },
+    "Turn slightly right" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "انعطف قليلًا إلى اليمين"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向右前方"
           }
         }
       }

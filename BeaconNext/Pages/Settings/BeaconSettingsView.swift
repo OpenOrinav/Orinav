@@ -3,14 +3,6 @@ import SwiftUI
 struct BeaconSettingsView: View {
     @ObservedObject private var settings = SettingsManager.shared
     @State private var showRestartAlert = false
-
-    var languageCode: String {
-        Locale.current.language.languageCode?.identifier ?? "Unknown"
-    }
-    
-    var localizedLanguageName: String {
-        Locale.current.localizedString(forIdentifier: languageCode) ?? languageCode
-    }
     
     var body: some View {
         Form {
@@ -20,6 +12,8 @@ struct BeaconSettingsView: View {
                         Text(provider.localizedName).tag(provider)
                     }
                 }
+                
+                Toggle("Accessible Map", isOn: $settings.accessibleMap)
             }
         }
         .navigationTitle("Settings")

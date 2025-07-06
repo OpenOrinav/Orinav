@@ -80,7 +80,7 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
     
     func navViewCloseButtonClicked(_ navView: TNKBaseNavView) {
         clearState()
-        delegate?.didEndNavigation()
+        delegate?.shouldEndNavigation()
     }
 }
 
@@ -148,7 +148,7 @@ extension TNKWalkRoute: BeaconWalkRoute {
 }
 
 extension TNKWalkNavigationData: BeaconNavigationStatus {
-    var bNextRoad: String {
+    var bNextRoad: String? {
         return nextRoadName
     }
     
@@ -168,7 +168,20 @@ extension TNKWalkNavigationData: BeaconNavigationStatus {
         return Int(currentSpeed)
     }
     
+    var bTimeRemainingSeconds: Int {
+        return Int(totalTimeLeft * 60)
+    }
+    
     var bTurnType: BeaconTurnType {
-        return .left // FIXME investigate the real turn types
+        switch intersectionType {
+        case 1: return .straight
+        case 2: return .left
+        case 3: return .right
+        case 4: return .slightLeft // Guess
+        case 5: return .slightRight // Guess
+            // There doesn't appear to be a U-turn type
+        case 60: return .stop
+        default: return .straight
+        }
     }
 }

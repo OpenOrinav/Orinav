@@ -15,9 +15,24 @@ struct BeaconNextApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(globalState)
-                .environmentObject(globalUIState)
+            GeometryReader { geo in
+                ContentView()
+                    .environmentObject(globalState)
+                    .environmentObject(globalUIState)
+                    .environment(\.safeAreaInsets, geo.safeAreaInsets)
+            }
         }
+    }
+}
+
+// Pass safe area insets downwards
+struct SafeAreaInsetsKey: EnvironmentKey {
+    static let defaultValue: EdgeInsets = EdgeInsets()
+}
+
+extension EnvironmentValues {
+    var safeAreaInsets: EdgeInsets {
+        get { self[SafeAreaInsetsKey.self] }
+        set { self[SafeAreaInsetsKey.self] = newValue }
     }
 }

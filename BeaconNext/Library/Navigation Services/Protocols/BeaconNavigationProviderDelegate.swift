@@ -1,7 +1,7 @@
 import CoreLocation
 
 protocol BeaconNavigationProviderDelegate {
-    func didEndNavigation()
+    func shouldEndNavigation()
     func didReceiveRoadAngle(_ angle: CLLocationDirection)
     func didReceiveNavigationStatus(_ status: BeaconNavigationStatus)
 }

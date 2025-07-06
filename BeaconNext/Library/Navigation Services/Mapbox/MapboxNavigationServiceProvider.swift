@@ -60,7 +60,7 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
         byCanceling canceled: Bool
     ) {
         self.clearState()
-        self.delegate?.didEndNavigation()
+        self.delegate?.shouldEndNavigation()
     }
     
     func navigationViewController(
@@ -69,6 +69,7 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
         with location: CLLocation,
         rawLocation: CLLocation
     ) {
+        // TODO self.delegate?.didReceiveNavigationStatus(progress)
         self.delegate?.didReceiveRoadAngle(location.course)
     }
 

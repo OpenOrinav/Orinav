@@ -29,18 +29,6 @@ class CameraViewController: UIViewController, ARSessionDelegate {
         arConfig = ARWorldTrackingConfiguration()
         arConfig.frameSemantics = .sceneDepth
         arSession.run(arConfig)
-        
-        // Add a dummy AVCaptureVideoPreviewLayer replacement if needed:
-        let previewLayer = ARSKView(frame: view.bounds)
-        view.addSubview(previewLayer)
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        // Ensure the preview layer fills the view
-        if let previewLayer = view.subviews.first(where: { $0 is ARSKView }) {
-            previewLayer.frame = view.bounds
-        }
     }
 
     func session(_ session: ARSession, didUpdate frame: ARFrame) {

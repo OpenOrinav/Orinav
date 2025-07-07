@@ -8,6 +8,7 @@ enum MessageType: Int {
     case angleDeviation = 4
     case navigation = 5
     case navigationImportant = 6
+    case explore = 7
 }
 
 @MainActor

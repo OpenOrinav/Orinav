@@ -65,6 +65,7 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
     
     // = Speak location upon shaking (if not in navigation)
     func didShake() {
+        if BeaconExploreView.inExplore { return } // Don't conflict with Explore mode shake
         if globalUIState.routeInNavigation == nil {
             self.speakAddress(force: true)
         }

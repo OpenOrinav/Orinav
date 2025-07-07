@@ -74,6 +74,8 @@ final class AngleDeviationFeature {
     }
 
     func playHaptics(from angle: CLLocationDirection, currentHeading: CLLocationDirection) {
+        if BeaconExploreView.inExplore { return } // Don't interfere with Explore haptics
+        
         stop()
         guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
 

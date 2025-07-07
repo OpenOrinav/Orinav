@@ -15,6 +15,10 @@ struct BeaconSettingsView: View {
                 
                 Toggle("Accessible Map", isOn: $settings.accessibleMap)
             }
+            
+            Section(header: Text("Explore")) {
+                Toggle("Show Camera View", isOn: $settings.showCamera)
+            }
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)

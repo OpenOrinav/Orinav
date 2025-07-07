@@ -18,7 +18,7 @@ public enum BeaconTurnType: String, CaseIterable, Codable {
     case stop = "stop"
     case straight = "straight"
     
-    var localizedName: LocalizedStringKey {
+    var localizedName: LocalizedStringResource {
         switch self {
         case .left: return "Turn left"
         case .right: return "Turn right"

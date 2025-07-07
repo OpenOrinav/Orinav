@@ -6,6 +6,7 @@ class SoundEffectsManager {
     
     private var successSound: AVAudioPlayer?
     private var success2Sound: AVAudioPlayer?
+    private var exploreSound: AVAudioPlayer?
 
     private let heavyGen = UIImpactFeedbackGenerator(style: .heavy)
     
@@ -18,6 +19,11 @@ class SoundEffectsManager {
         if let url2 = Bundle.main.url(forResource: "success-2", withExtension: "mp3") {
             success2Sound = try? AVAudioPlayer(contentsOf: url2)
             success2Sound?.prepareToPlay()
+        }
+        
+        if let exploreUrl = Bundle.main.url(forResource: "explore", withExtension: "mp3") {
+            exploreSound = try? AVAudioPlayer(contentsOf: exploreUrl)
+            exploreSound?.prepareToPlay()
         }
         
         heavyGen.prepare()
@@ -44,5 +50,9 @@ class SoundEffectsManager {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
             self.heavyGen.impactOccurred()
         }
+    }
+    
+    func playExplore() {
+        exploreSound?.play()
     }
 }

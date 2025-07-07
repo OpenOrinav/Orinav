@@ -1,8 +1,10 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var selection: Int = 0
+    
     var body: some View {
-        TabView {
+        TabView(selection: $selection) {
             NavigationView {
                 BeaconHomeView()
             }
@@ -10,14 +12,18 @@ struct ContentView: View {
                 Image(systemName: "map")
                 Text("Navigate")
             }
+            .tag(0)
 
             NavigationView {
-                BeaconExploreView()
+                if selection == 1 {
+                    BeaconExploreView()
+                }
             }
             .tabItem {
                 Image(systemName: "magnifyingglass")
                 Text("Explore")
             }
+            .tag(1)
 
             NavigationView {
                 BeaconSettingsView()
@@ -26,6 +32,7 @@ struct ContentView: View {
                 Image(systemName: "gear")
                 Text("Settings")
             }
+            .tag(2)
         }
     }
 }

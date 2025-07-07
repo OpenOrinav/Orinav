@@ -16,6 +16,12 @@ class SettingsManager: ObservableObject {
             UserDefaults.standard.set(accessibleMap, forKey: "accessibleMap")
         }
     }
+    
+    @Published var showCamera: Bool {
+        didSet {
+            UserDefaults.standard.set(showCamera, forKey: "showCamera")
+        }
+    }
 
     @Published var shownIntro: Bool {
         didSet {
@@ -37,6 +43,12 @@ class SettingsManager: ObservableObject {
         } else {
             accessibleMap = true
         }
+        // Load showCamera flag
+        if UserDefaults.standard.object(forKey: "showCamera") != nil {
+            showCamera = UserDefaults.standard.bool(forKey: "showCamera")
+        } else {
+            showCamera = false
+        }
         // Load shownIntro flag
         if UserDefaults.standard.object(forKey: shownIntroKey) != nil {
             shownIntro = UserDefaults.standard.bool(forKey: shownIntroKey)
@@ -51,7 +63,7 @@ public enum MapProvider: String, CaseIterable {
     case tencent = "Tencent Map (China only)"
     case mapbox = "Mapbox (Global)"
     
-    var localizedName: LocalizedStringKey {
+    var localizedName: LocalizedStringResource {
         switch self {
         case .location: return "Automatic"
         case .tencent: return "Tencent Map (China only)"

@@ -8,7 +8,7 @@ final class ShakeInformFeature {
         if data.bTurnType == .stop || data.bNextRoad == nil {
             message = "Arrive at your destination"
         } else {
-            message = "\(data.bTurnType.localizedName) onto \(data.bNextRoad!)"
+            message = "\(String(localized: data.bTurnType.localizedName)) onto \(data.bNextRoad!)"
         }
         
         if abs(angleDiff) > AngleDeviationFeature.correctHeadingLimit {

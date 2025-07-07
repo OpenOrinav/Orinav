@@ -1328,6 +1328,9 @@
         }
       }
     },
+    "No camera feed" : {
+
+    },
     "No favorites yet" : {
       "localizations" : {
         "ar" : {
@@ -1359,6 +1362,9 @@
           }
         }
       }
+    },
+    "Obstacle detection active" : {
+
     },
     "Office" : {
       "localizations" : {
@@ -1622,6 +1628,9 @@
           }
         }
       }
+    },
+    "Show Camera View" : {
+
     },
     "Sports & Fitness" : {
       "localizations" : {

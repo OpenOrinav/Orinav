@@ -6,18 +6,21 @@ struct BeaconNavigationContainerView: View {
     @EnvironmentObject private var globalUIState: BeaconGlobalUIState
     
     @Environment(\.safeAreaInsets) private var safeAreaInsets
-
+    
     @State private var isInExploreMode = false
     @State private var navigationView: AnyView?
     
     @Environment(\.presentationMode) private var presentationMode
-
+    
     var body: some View {
         Group {
             if SettingsManager.shared.accessibleMap {
                 BeaconNavigationView()
                     .fullScreenCover(isPresented: $isInExploreMode) {
                         BeaconExploreView()
+                            .presentationBackground {
+                                Color(.systemBackground)
+                            }
                     }
                     .onReceive(DeviceMotionManager.shared.$isPhoneRaised) { raised in
                         withAnimation {

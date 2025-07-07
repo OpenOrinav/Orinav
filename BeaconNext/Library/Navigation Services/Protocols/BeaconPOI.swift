@@ -120,7 +120,7 @@ public enum BeaconPOICategory: String, CaseIterable, Codable {
     case cultural          = "Cultural"
     case others            = "Others"
     
-    var localizedName: LocalizedStringKey {
+    var localizedName: LocalizedStringResource {
         switch self {
         case .foodAndDrink:
             return "Food & Drink"

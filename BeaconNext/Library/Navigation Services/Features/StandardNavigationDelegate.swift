@@ -44,6 +44,7 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, DeviceMotion
     
     // = Speak navigation information when user shakes device
     func didShake() {
+        if BeaconExploreView.inExplore { return } // Don't conflict with Explore mode shake
         if globalUIState.routeInNavigation == nil { return }
         guard let data = globalUIState.navigationStatus else { return }
         ShakeInformFeature.shared.speak(data, angleDiff: ((locationDelegate.currentHeading ?? 0) - (correctHeading ?? 0) + 540).truncatingRemainder(dividingBy: 360) - 180)

@@ -15,17 +15,18 @@ final class ApproachingNextStepFeature {
         }
         lastSpokenDistance = data.bDistanceToNextSegmentMeters
         
+        let turnName = String(localized: data.bTurnType.localizedName)
         if data.bDistanceToNextSegmentMeters <= 2 {
             Task { @MainActor in
-                BeaconTTSService.shared.speak("Now, \(data.bTurnType.localizedName)", type: .navigationImportant)
+                BeaconTTSService.shared.speak("Now, \(turnName)", type: .navigationImportant)
             }
         } else if data.bDistanceToNextSegmentMeters <= 20 && data.bDistanceToNextSegmentMeters % 5 == 0 {
             Task { @MainActor in
-                BeaconTTSService.shared.speak("In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters))), \(data.bTurnType.localizedName)", type: .navigation)
+                BeaconTTSService.shared.speak("In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters))), \(turnName)", type: .navigation)
             }
         } else if data.bDistanceToNextSegmentMeters % 10 == 0 {
             Task { @MainActor in
-                BeaconTTSService.shared.speak("In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters))), \(data.bTurnType.localizedName)", type: .navigationAuxilary)
+                BeaconTTSService.shared.speak("In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters))), \(turnName)", type: .navigationAuxilary)
             }
         }
     }

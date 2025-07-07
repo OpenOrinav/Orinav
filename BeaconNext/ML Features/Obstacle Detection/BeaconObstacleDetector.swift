@@ -65,6 +65,9 @@ class BeaconObstacleDetector: ObservableObject {
     @Published var message: String = "Waiting for result..."
     @Published var image: CGImage? = nil
     @Published var originalImage: CGImage? = nil
+    @Published var keyDistance: Float? = nil
+    
+    var previousMessage: String? = nil
     
     /// Main entry: run segmentation + disparity + obstacle masking
     func detect(_ inputImage: CGImage, depth: CVPixelBuffer, frame: Int) {
@@ -78,6 +81,12 @@ class BeaconObstacleDetector: ObservableObject {
             DispatchQueue.main.async {
                 self.image = image
                 self.message = message
+                
+                if self.previousMessage != message {
+                    self.previousMessage = message
+                    BeaconTTSService.shared.interruptSpeaking()
+                    BeaconTTSService.shared.speak(message, type: .explore)
+                }
             }
         }
     }
@@ -206,6 +215,9 @@ class BeaconObstacleDetector: ObservableObject {
         
         var valid = [Bool](repeating: false, count: segPixels) // If true, this pixel is obstacle
         var zoneTotals = [Int](repeating: 0, count: 6)
+        
+        var averageDepth = Float(0)
+        var surveyedPixels = 0
         for i in 0..<segPixels {
             let root = Int(finalLabels[i])
             // If this pixel is not in an ignored class and its maximum depth is below the threshold
@@ -215,26 +227,39 @@ class BeaconObstacleDetector: ObservableObject {
                 // Determine which zone this pixel belongs to and add to the zone totals
                 let x = i % segWidth
                 let y = i / segWidth
-                let topZoneHeight = Int(Float(segHeight) * 0.3 * (Float(segHeight) / Float(rotatedImage.height)))
+                let topZoneStart = Int(Float(segHeight) * 0.2 * (Float(segHeight) / Float(rotatedImage.height)))
+                let topZoneEnd = topZoneStart + Int(Float(segHeight) * 0.1 * (Float(segHeight) / Float(rotatedImage.height)))
                 let bottomZoneStart = segHeight - Int(Float(segHeight) * 0.4 * (Float(segHeight) / Float(rotatedImage.height)))
                 let leftWidth = Int(Float(segWidth) * 0.2)
                 let midEnd = segWidth - leftWidth
                 var zone = -1
-                if y < topZoneHeight {
+                if y >= topZoneStart && y < topZoneEnd {
                     if x < leftWidth {
                         zone = 0
+                        averageDepth += resizedDepth[i]
+                        surveyedPixels += 1
                     } else if x < midEnd {
                         zone = 1
+                        averageDepth += resizedDepth[i]
+                        surveyedPixels += 1
                     } else {
                         zone = 2
+                        averageDepth += resizedDepth[i]
+                        surveyedPixels += 1
                     }
                 } else if y >= bottomZoneStart {
                     if x < leftWidth {
                         zone = 3
+                        averageDepth += resizedDepth[i]
+                        surveyedPixels += 1
                     } else if x < midEnd {
                         zone = 4
+                        averageDepth += resizedDepth[i]
+                        surveyedPixels += 1
                     } else {
                         zone = 5
+                        averageDepth += resizedDepth[i]
+                        surveyedPixels += 1
                     }
                 }
                 if zone >= 0 {
@@ -244,6 +269,9 @@ class BeaconObstacleDetector: ObservableObject {
                 }
             }
         }
+        
+        averageDepth /= Float(surveyedPixels)
+        keyDistance = averageDepth
         
         // 3.1 Compute obstacle percentage per zone
         let topZoneHeight = Int(Float(segHeight) * 0.3 * (Float(segHeight) / Float(rotatedImage.height)))

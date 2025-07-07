@@ -16,6 +16,7 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
     func didEndNavigation() {
         // Reset state
         AngleDeviationFeature.shared.reset()
+        ApproachingNextStepFeature.shared.reset()
         
         DispatchQueue.main.async {
             self.globalUIState.currentPage = nil
@@ -38,5 +39,6 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
         DispatchQueue.main.async {
             self.globalUIState.navigationStatus = status
         }
+        ApproachingNextStepFeature.shared.notify(status)
     }
 }

@@ -2,20 +2,34 @@ import SwiftUI
 import CoreLocation
 
 struct BeaconUIUtils {
-    static func formattedDistance(_ distance: CLLocationDistance) -> String {
-        switch distance {
-        case 0..<10:
-            let meters = Int(distance.rounded())
-            return "\(meters)m"
-        case 10..<100:
-            let rounded10 = Int((distance / 10).rounded() * 10)
-            return "\(rounded10)m"
-        case 100..<1000:
-            let rounded100 = Int((distance / 100).rounded() * 100)
-            return "\(rounded100)m"
-        default:
-            let km = (distance / 1000.0 * 10).rounded() / 10
-            return "\(km)km"
+    static func formattedDistance(_ meters: CLLocationDistance) -> String {
+        if meters >= 1000 {
+            let kmValue = meters / 1000.0
+            let unit = NSLocalizedString("km", comment: "Kilometer unit")
+            return String(format: "%.1f %@", kmValue, unit)
+        } else {
+            let unit = NSLocalizedString("m", comment: "Meter unit")
+            return String(format: "%lld %@", Int(meters), unit)
+        }
+    }
+    
+    static func formattedArrivalTime(_ secondsRemaining: Int) -> String {
+        let arrivalDate = Date().addingTimeInterval(TimeInterval(secondsRemaining))
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: arrivalDate)
+    }
+    
+    static func formattedTimeRemaining(_ secondsRemaining: Int) -> String {
+        let hours = secondsRemaining / 3600
+        let minutes = (secondsRemaining % 3600) / 60
+        let hrUnit = NSLocalizedString("hr", comment: "Hour unit abbreviation")
+        let minUnit = NSLocalizedString("min", comment: "Minute unit abbreviation")
+        
+        if hours > 0 {
+            return String(format: "%d %@ %d %@", hours, hrUnit, minutes, minUnit)
+        } else {
+            return String(format: "%d %@", minutes, minUnit)
         }
     }
 }

@@ -3,7 +3,7 @@ import SwiftUI
 import UIKit
 import CoreHaptics
 
-class AngleDeviationFeature {
+final class AngleDeviationFeature {
     static let correctHeadingLimit: Double = 20
     
     private var engine: CHHapticEngine?
@@ -11,7 +11,7 @@ class AngleDeviationFeature {
     
     static let shared = AngleDeviationFeature()
 
-    init() { prepareEngine() }
+    private init() { prepareEngine() }
     
     // Language
     var lastDirection: Int? = nil

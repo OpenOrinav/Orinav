@@ -10,7 +10,7 @@ struct BeaconNavigationView: View {
             VStack(alignment: .leading, spacing: 24) {
                 VStack(alignment: .leading, spacing: 8) {
                     Group {
-                        Text("In \(formattedDistance(data.bDistanceToNextSegmentMeters))")
+                        Text("In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters)))")
                             .font(.headline)
                             .foregroundStyle(.secondary)
                         
@@ -85,11 +85,11 @@ struct BeaconNavigationView: View {
                 HStack(spacing: 16) {
                     // Arrival Time
                     VStack {
-                        Text(formattedArrivalTime(data.bTimeRemainingSeconds))
+                        Text(BeaconUIUtils.formattedArrivalTime(data.bTimeRemainingSeconds))
                             .font(.title2)
                             .bold()
                             .accessibilityLabel("Estimated arrival time")
-                            .accessibilityValue(formattedArrivalTime(data.bTimeRemainingSeconds))
+                            .accessibilityValue(BeaconUIUtils.formattedArrivalTime(data.bTimeRemainingSeconds))
                         Text("Arrival")
                             .font(.subheadline)
                             .accessibilityHidden(true)
@@ -97,11 +97,11 @@ struct BeaconNavigationView: View {
                     
                     // Time Remaining
                     VStack {
-                        Text(formattedTimeRemaining(data.bTimeRemainingSeconds))
+                        Text(BeaconUIUtils.formattedTimeRemaining(data.bTimeRemainingSeconds))
                             .font(.title2)
                             .bold()
                             .accessibilityLabel("Time remaining")
-                            .accessibilityValue(formattedTimeRemaining(data.bTimeRemainingSeconds))
+                            .accessibilityValue(BeaconUIUtils.formattedTimeRemaining(data.bTimeRemainingSeconds))
                         Text("Time")
                             .font(.subheadline)
                             .accessibilityHidden(true)
@@ -109,11 +109,11 @@ struct BeaconNavigationView: View {
                     
                     // Distance Remaining
                     VStack {
-                        Text(formattedDistance(data.bTotalDistanceRemainingMeters))
+                        Text(BeaconUIUtils.formattedDistance(Double(data.bTotalDistanceRemainingMeters)))
                             .font(.title2)
                             .bold()
                             .accessibilityLabel("Distance remaining")
-                            .accessibilityValue(formattedDistance(data.bTotalDistanceRemainingMeters))
+                            .accessibilityValue(BeaconUIUtils.formattedDistance(Double(data.bTotalDistanceRemainingMeters)))
                         Text("Distance")
                             .font(.subheadline)
                             .accessibilityHidden(true)
@@ -137,38 +137,6 @@ struct BeaconNavigationView: View {
                 .tint(.red)
             }
             .padding()
-        }
-    }
-    
-    // Utilities
-    private func formattedDistance(_ meters: Int) -> String {
-        if meters >= 1000 {
-            let kmValue = Double(meters) / 1000.0
-            let unit = NSLocalizedString("km", comment: "Kilometer unit")
-            return String(format: "%.1f %@", kmValue, unit)
-        } else {
-            let unit = NSLocalizedString("m", comment: "Meter unit")
-            return String(format: "%lld %@", meters, unit)
-        }
-    }
-    
-    private func formattedArrivalTime(_ secondsRemaining: Int) -> String {
-        let arrivalDate = Date().addingTimeInterval(TimeInterval(secondsRemaining))
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter.string(from: arrivalDate)
-    }
-    
-    private func formattedTimeRemaining(_ secondsRemaining: Int) -> String {
-        let hours = secondsRemaining / 3600
-        let minutes = (secondsRemaining % 3600) / 60
-        let hrUnit = NSLocalizedString("hr", comment: "Hour unit abbreviation")
-        let minUnit = NSLocalizedString("min", comment: "Minute unit abbreviation")
-        
-        if hours > 0 {
-            return String(format: "%d %@ %d %@", hours, hrUnit, minutes, minUnit)
-        } else {
-            return String(format: "%d %@", minutes, minUnit)
         }
     }
 }

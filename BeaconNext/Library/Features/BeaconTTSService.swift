@@ -4,9 +4,10 @@ import Foundation
 enum MessageType: Int {
     case currentHeading = 1
     case currentLocation = 2
-    case angleDeviation = 3
-    case navigation = 4
-    case navigationImportant = 5
+    case navigationAuxilary = 3
+    case angleDeviation = 4
+    case navigation = 5
+    case navigationImportant = 6
 }
 
 @MainActor

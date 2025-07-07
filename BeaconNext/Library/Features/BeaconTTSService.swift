@@ -21,11 +21,21 @@ final class BeaconTTSService: NSObject, AVSpeechSynthesizerDelegate {
         synthesizer.delegate = self
     }
     
-    public func speak(_ text: String, type: MessageType, language: String = "en-US") {
-        guard type.rawValue >= currentPriority.rawValue else { return }
+    public func stopSpeaking() {
+        if synthesizer.isSpeaking {
+            synthesizer.stopSpeaking(at: .word)
+        }
+    }
+    
+    public func interruptSpeaking() {
         if synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)
         }
+    }
+    
+    public func speak(_ text: String, type: MessageType, language: String = "en-US") {
+        guard type.rawValue >= currentPriority.rawValue else { return }
+        interruptSpeaking()
         currentPriority = type
         
         // Play a sound for navigationImportant
@@ -48,9 +58,7 @@ final class BeaconTTSService: NSObject, AVSpeechSynthesizerDelegate {
 
     public func speak(_ segments: [(text: String, language: String)], type: MessageType) {
         guard type.rawValue >= currentPriority.rawValue else { return }
-        if synthesizer.isSpeaking {
-            synthesizer.stopSpeaking(at: .immediate)
-        }
+        interruptSpeaking()
         currentPriority = type
 
         // Play a sound for navigationImportant

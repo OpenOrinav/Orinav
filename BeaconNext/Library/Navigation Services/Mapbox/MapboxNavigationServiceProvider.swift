@@ -13,7 +13,13 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
     var controller: NavigationViewController?
     
     init() {
-        mnp = MapboxNavigationProvider(coreConfig: .init(credentials: .init(), locationSource: .live))
+        mnp = MapboxNavigationProvider(
+            coreConfig: .init(
+                credentials: .init(),
+                locationSource: .live,
+                ttsConfig: .custom(speechSynthesizer: BeaconMapboxSpeechSynthesizer())
+            )
+        )
     }
     
     func planRoutes(
@@ -72,7 +78,7 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
         // TODO self.delegate?.didReceiveNavigationStatus(progress)
         self.delegate?.didReceiveRoadAngle(location.course)
     }
-
+    
     func clearState() {
         routes = nil
         mnp.mapboxNavigation.tripSession().setToIdle()
@@ -110,6 +116,72 @@ struct MapboxNavigationContainerView: UIViewControllerRepresentable {
     }
 }
 
+// Custom speech controller
+class BeaconMapboxSpeechSynthesizer: SpeechSynthesizing {
+    // Whether the synthesizer is currently speaking navigation instructions
+    var isSpeaking: Bool {
+        return BeaconTTSService.shared.currentPriority == .navigation || BeaconTTSService.shared.currentPriority == .navigationImportant || BeaconTTSService.shared.currentPriority == .navigationAuxilary
+    }
+    
+    private let _voiceInstructions: PassthroughSubject<VoiceInstructionEvent, Never> = .init()
+    public var voiceInstructions: AnyPublisher<VoiceInstructionEvent, Never> {
+        _voiceInstructions.eraseToAnyPublisher()
+    }
+    
+    // MARK: Speech Configuration
+    
+    public var muted: Bool = false {
+        didSet {
+            if isSpeaking {
+                BeaconTTSService.shared.interruptSpeaking()
+            }
+        }
+    }
+    
+    public var volume: VolumeMode {
+        get {
+            .system
+        }
+        set {
+        }
+    }
+    
+    public var locale: Locale? = Locale.autoupdatingCurrent
+    public var managesAudioSession = true
+    
+    public func prepareIncomingSpokenInstructions(
+        _ instructions: [SpokenInstruction],
+        locale: Locale?
+    ) {
+    }
+    
+    public func speak(
+        _ instruction: SpokenInstruction,
+        during legProgress: RouteLegProgress,
+        locale: Locale?
+    ) {
+        guard let locale = locale ?? self.locale else { return }
+        let localeCode = [locale.language.languageCode!.identifier, locale.region?.identifier ?? ""].compactMap { $0 }.joined(separator: "-")
+        DispatchQueue.main.async {
+            BeaconTTSService.shared.speak(instruction.text, type: .navigation, language: localeCode)
+        }
+    }
+    
+    public func stopSpeaking() {
+        if isSpeaking {
+            BeaconTTSService.shared.stopSpeaking()
+        }
+    }
+    
+    public func interruptSpeaking() {
+        if isSpeaking {
+            BeaconTTSService.shared.interruptSpeaking()
+        }
+    }
+}
+
+
+// Mapbox API wrappers
 class BeaconLocationPOIWrapper: BeaconPOI {
     let location: BeaconLocation
     

@@ -72,8 +72,6 @@ struct BeaconHomeView: View {
                                         poi: poi,
                                         onDelete: {
                                             favoritesManager.removeFavorite(id: poi.bid)
-                                            BeaconTTSService.shared.speak(poi.bName, language: "zh-CN")
-                                            BeaconTTSService.shared.speak("deleted from favorites")
                                         },
                                         onTap: {
                                             globalUIState.poi = poi

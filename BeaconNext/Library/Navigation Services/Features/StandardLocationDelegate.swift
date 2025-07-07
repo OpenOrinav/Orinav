@@ -6,9 +6,10 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
     @Published var currentLocation: BeaconLocation?
     @Published var currentHeading: CLLocationDirection?
     
-    private var currentDeviationAngle: Double = 0
+    let globalUIState: BeaconGlobalUIState
     
-    init() {
+    init(globalUIState: BeaconGlobalUIState) {
+        self.globalUIState = globalUIState
         startShakeDetection()
     }
     
@@ -36,10 +37,12 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
         guard let currentAddress = currentLocation?.bName else { return }
         
         if force || currentAddress != lastSpokenAddress {
-            BeaconTTSService.shared.speak([
-                (text: "You are currently at", language: "en-US"),
-                (text: currentAddress, language: "zh-CN")
-            ])
+            DispatchQueue.main.async {
+                BeaconTTSService.shared.speak([
+                    (text: "You are currently at", language: "en-US"),
+                    (text: currentAddress, language: "zh-CN")
+                ], type: .currentLocation)
+            }
             lastSpokenAddress = currentAddress
             isFirstWord = false
         }
@@ -50,12 +53,14 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
         guard let degrees = currentHeading else { return }
         let dir = name(forDegrees: degrees)
         
-        if dir == lastSpokenDirection || isFirstWord {
+        if dir == lastSpokenDirection || isFirstWord || globalUIState.routeInNavigation != nil {
             return
         }
-        BeaconTTSService.shared.speak([
-            (text: dir, language: "en-US")
-        ])
+        DispatchQueue.main.async {
+            BeaconTTSService.shared.speak([
+                (text: dir, language: "en-US")
+            ], type: .currentHeading)
+        }
         lastSpokenDirection = dir
     }
     

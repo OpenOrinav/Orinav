@@ -12,14 +12,14 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
         self.locationDelegate = locationDelegate
     }
     
-    // = Allow ending navigation
-    func shouldEndNavigation() {
+    // = Allow ending navigation UI state AFTER ending navigation
+    func didEndNavigation() {
         // Reset state
         AngleDeviationFeature.shared.reset()
         
         DispatchQueue.main.async {
             self.globalUIState.currentPage = nil
-            BeaconTTSService.shared.speak("Navigation ended")
+            BeaconTTSService.shared.speak("Navigation ended", type: .navigation)
         }
     }
     

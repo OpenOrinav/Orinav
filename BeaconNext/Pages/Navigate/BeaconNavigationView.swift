@@ -126,7 +126,7 @@ struct BeaconNavigationView: View {
                 
                 Button(action: {
                     globalState.navigationProvider.clearState()
-                    globalState.navigationDelegate.shouldEndNavigation()
+                    globalState.navigationDelegate.didEndNavigation()
                 }) {
                     Text("End Navigation")
                         .bold()

@@ -60,7 +60,7 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
         byCanceling canceled: Bool
     ) {
         self.clearState()
-        self.delegate?.shouldEndNavigation()
+        self.delegate?.didEndNavigation()
     }
     
     func navigationViewController(

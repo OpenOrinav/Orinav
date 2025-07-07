@@ -60,7 +60,7 @@ class BeaconMappingCoordinator: ObservableObject {
             navigationProvider = MapboxNavigationServiceProvider()
         }
         
-        locationDelegate = StandardLocationDelegate()
+        locationDelegate = StandardLocationDelegate(globalUIState: globalUIState)
         navigationDelegate = StandardNavigationDelegate(globalUIState: globalUIState, locationDelegate: locationDelegate)
         
         providerReinit()

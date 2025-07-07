@@ -31,7 +31,9 @@ class AngleDeviationFeature {
             let currentDirection = AngleDeviationFeature.oClockRepresentation(from: signedDiff)
             
             if currentDirection != lastDirection || (lastFacingAngle != nil && abs(currentHeading - lastFacingAngle!) > 5) {
-                BeaconTTSService.shared.speak("Turn \(String(currentDirection)) o' clock")
+                DispatchQueue.main.async {
+                    BeaconTTSService.shared.speak("Turn \(String(currentDirection)) o' clock", type: .angleDeviation)
+                }
                 lastDirection = currentDirection
                 lastFacingAngle = currentHeading
             }
@@ -43,7 +45,7 @@ class AngleDeviationFeature {
             if !hasSpokenRightDirection {
                 SoundEffectsManager.shared.playSuccess()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    BeaconTTSService.shared.speak("Aligned")
+                    BeaconTTSService.shared.speak("Aligned", type: .angleDeviation)
                 }
                 hasSpokenRightDirection = true
             }
@@ -86,8 +88,8 @@ class AngleDeviationFeature {
         if absAngle <= AngleDeviationFeature.correctHeadingLimit {
             // Light feedback every second when within acceptable limit
             interval = 1.0
-            intensity = 0.3
-            sharpness = 0.1
+            intensity = 0.5
+            sharpness = 0.3
         } else {
             // Increase feedback frequency and strength with larger deviation
             let normalized = min(absAngle, 180.0) / 180.0

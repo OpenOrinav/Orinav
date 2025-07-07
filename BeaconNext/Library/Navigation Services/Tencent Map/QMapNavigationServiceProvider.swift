@@ -1,6 +1,5 @@
 import SwiftUI
 import TencentNavKit
-import TNKAudioPlayer
 
 class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDelegate, TNKWalkNavViewDelegate, TNKWalkNavDataSource {
     let navManager: TNKWalkNavManager
@@ -10,7 +9,7 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
 
     override init() {
         navManager = TNKWalkNavManager.sharedInstance()
-        navManager.audioPlayer = TNKAudioPlayer.shared()
+        navManager.audioPlayer = nil
         super.init()
 
         navManager.register(self)
@@ -73,6 +72,14 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
         delegate?.didReceiveNavigationStatus(navigationData)
     }
     
+    func walkNavManager(_ manager: TNKWalkNavManager, naviTTS: TNKNavTTS) -> Int32 {
+        if BeaconTTSService.shared.currentPriority == .navigation || BeaconTTSService.shared.currentPriority == .navigationImportant {
+            return 0 // Still playing another message
+        }
+        BeaconTTSService.shared.speak(naviTTS.ttsString, type: naviTTS.voiceType.rawValue == 1 ? .navigationImportant : .navigation, language: "zh-CN")
+        return 1
+    }
+    
     func startNavigation(with: any BeaconWalkRoute) async -> AnyView {
         navManager.startNav(withRouteID: with.bid)
         return AnyView(QMapNavigationView(navManager: self, navView: realNavView!))
@@ -80,7 +87,7 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
     
     func navViewCloseButtonClicked(_ navView: TNKBaseNavView) {
         clearState()
-        delegate?.shouldEndNavigation()
+        delegate?.didEndNavigation()
     }
 }
 

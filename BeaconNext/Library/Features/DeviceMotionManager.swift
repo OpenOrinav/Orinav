@@ -2,12 +2,17 @@ import Foundation
 import CoreMotion
 import CoreLocation
 import Combine
+import UIKit
 
-class DeviceMotionManager: ObservableObject {
+final class DeviceMotionManager: ObservableObject {
+    static let shared = DeviceMotionManager()
+    
     private let motionManager = CMMotionManager()
+    var delegates: [DeviceMotionDelegate] = []
+
     @Published var isPhoneRaised = false
 
-    init() {
+    private init() {
         startMonitoring()
     }
 
@@ -22,13 +27,23 @@ class DeviceMotionManager: ObservableObject {
             
             if pitch > 55 && abs(roll) < 45 {
                 self.isPhoneRaised = true
+                self.delegates.forEach { $0.didRaise() }
             } else {
                 self.isPhoneRaised = false
+                self.delegates.forEach { $0.didLower() }
             }
         }
     }
 
     func stopMonitoring() {
         motionManager.stopDeviceMotionUpdates()
+    }
+}
+
+extension UIWindow {
+    open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            DeviceMotionManager.shared.delegates.forEach { $0.didShake() }
+        }
     }
 }

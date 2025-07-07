@@ -2,7 +2,7 @@ import Foundation
 import CoreLocation
 import CoreMotion
 
-class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate {
+class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate, DeviceMotionDelegate {
     @Published var currentLocation: BeaconLocation?
     @Published var currentHeading: CLLocationDirection?
     
@@ -10,7 +10,6 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
     
     init(globalUIState: BeaconGlobalUIState) {
         self.globalUIState = globalUIState
-        startShakeDetection()
     }
     
     func didUpdateLocation(_ location: BeaconLocation) {
@@ -64,46 +63,16 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
         lastSpokenDirection = dir
     }
     
+    // = Speak location upon shaking (if not in navigation)
+    func didShake() {
+        if globalUIState.routeInNavigation == nil {
+            self.speakAddress(force: true)
+        }
+    }
+    
     func name(forDegrees degrees: Double) -> String {
         let directions = ["North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"]
         let index = Int((degrees + 22.5) / 45) & 7
         return directions[index]
-    }
-    
-    
-    private var motionManager = CMMotionManager()
-    private var lastShakeTime: Date? = nil
-    private var lastAccel: CMAcceleration?
-    
-    private func startShakeDetection() {
-        guard motionManager.isAccelerometerAvailable else { return }
-        
-        motionManager.accelerometerUpdateInterval = 0.1
-        motionManager.startAccelerometerUpdates(to: .main) { data, error in
-            guard let data = data else { return }
-            
-            let accel = data.acceleration
-            
-            if let last = self.lastAccel {
-                let deltaX = abs(accel.x - last.x)
-                let deltaY = abs(accel.y - last.y)
-                let deltaZ = abs(accel.z - last.z)
-                
-                let shakeThreshold = 0.6 // Sensitivity
-                let cooldown: TimeInterval = 3.0
-                
-                if deltaX > shakeThreshold || deltaY > shakeThreshold || deltaZ > shakeThreshold {
-                    let now = Date()
-                    if let last = self.lastShakeTime, now.timeIntervalSince(last) < cooldown {
-                        return
-                    }
-                    
-                    self.lastShakeTime = now
-                    self.speakAddress(force: true)
-                }
-            }
-            
-            self.lastAccel = accel
-        }
     }
 }

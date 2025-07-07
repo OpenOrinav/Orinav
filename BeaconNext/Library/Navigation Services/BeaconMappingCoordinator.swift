@@ -63,6 +63,9 @@ class BeaconMappingCoordinator: ObservableObject {
         locationDelegate = StandardLocationDelegate(globalUIState: globalUIState)
         navigationDelegate = StandardNavigationDelegate(globalUIState: globalUIState, locationDelegate: locationDelegate)
         
+        DeviceMotionManager.shared.delegates.append(locationDelegate)
+        DeviceMotionManager.shared.delegates.append(navigationDelegate)
+        
         providerReinit()
     }
     

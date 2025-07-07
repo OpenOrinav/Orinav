@@ -1,7 +1,7 @@
 import SwiftUI
 import CoreLocation
 
-class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableObject {
+class StandardNavigationDelegate: BeaconNavigationProviderDelegate, DeviceMotionDelegate, ObservableObject {
     @Published var correctHeading: CLLocationDirection?
     
     let globalUIState: BeaconGlobalUIState
@@ -40,5 +40,11 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, ObservableOb
             self.globalUIState.navigationStatus = status
         }
         ApproachingNextStepFeature.shared.notify(status)
+    }
+    
+    // = Speak navigation information when user shakes device
+    func didShake() {
+        guard let data = globalUIState.navigationStatus else { return }
+        ShakeInformFeature.shared.speak(data, angleDiff: ((locationDelegate.currentHeading ?? 0) - (correctHeading ?? 0) + 540).truncatingRemainder(dividingBy: 360) - 180)
     }
 }

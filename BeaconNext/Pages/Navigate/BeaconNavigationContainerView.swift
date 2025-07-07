@@ -7,7 +7,6 @@ struct BeaconNavigationContainerView: View {
     
     @Environment(\.safeAreaInsets) private var safeAreaInsets
 
-    @StateObject private var motionManager = DeviceMotionManager()
     @State private var isInExploreMode = false
     @State private var navigationView: AnyView?
     
@@ -20,7 +19,7 @@ struct BeaconNavigationContainerView: View {
                     .fullScreenCover(isPresented: $isInExploreMode) {
                         BeaconExploreView()
                     }
-                    .onReceive(motionManager.$isPhoneRaised) { raised in
+                    .onReceive(DeviceMotionManager.shared.$isPhoneRaised) { raised in
                         withAnimation {
                             isInExploreMode = raised
                         }
@@ -35,7 +34,7 @@ struct BeaconNavigationContainerView: View {
                     .fullScreenCover(isPresented: $isInExploreMode) {
                         BeaconExploreView()
                     }
-                    .onReceive(motionManager.$isPhoneRaised) { raised in
+                    .onReceive(DeviceMotionManager.shared.$isPhoneRaised) { raised in
                         withAnimation {
                             isInExploreMode = raised
                         }

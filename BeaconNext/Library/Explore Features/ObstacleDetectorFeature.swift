@@ -1,7 +1,7 @@
 import Combine
 import UIKit
 
-class ObstacleDetectorFeature: ObservableObject, DeviceMotionDelegate {
+class ObstacleDetectorFeature: ObservableObject {
     var frameHandler: FrameHandler
     
     @Published var message: String? = nil
@@ -27,16 +27,18 @@ class ObstacleDetectorFeature: ObservableObject, DeviceMotionDelegate {
         
         depthCancellable = frameHandler.$minDepth.sink { [weak self] distance in
             guard let distance = distance else { return }
-            if distance <= 1 {
+            if distance <= 0.5 {
                 self?.style = .heavy
-            } else if distance <= 2 {
+            } else if distance <= 1 {
                 self?.style = .medium
-            } else {
+            } else if distance <= 2 {
                 self?.style = .light
+            } else {
+                self?.style = .soft // No haptics
             }
             
             if distance >= 2 {
-                self?.delay = 10
+                self?.delay = 2
             } else {
                 let minInterval: TimeInterval = 0.1
                 let maxInterval: TimeInterval = 1.0
@@ -47,36 +49,42 @@ class ObstacleDetectorFeature: ObservableObject, DeviceMotionDelegate {
         }
     }
     
-    func didShake() {
-        // TODO
-    }
-    
     private func startHaptics() {
         // Cancel any existing haptic loop
         hapticTask?.cancel()
         // Launch a repeating haptic loop
         hapticTask = Task { @MainActor in
+            var lastTime = Date()
+            
             while !Task.isCancelled {
                 if !BeaconExploreView.inExplore {
                     return
                 }
                 
-                // Play haptic
+                // If elapsed time is less than delay, skip this iteration
+                let currentTime = Date()
+                let elapsedTime = currentTime.timeIntervalSince(lastTime)
+                if elapsedTime < delay {
+                    try? await Task.sleep(nanoseconds: UInt64(100_000_000))
+                    continue
+                }
+                lastTime = currentTime
+                
+                // Play haptic and sound
                 switch self.style {
                 case .heavy:
+                    SoundEffectsManager.shared.playTapHigh()
                     heavyGen.impactOccurred()
                 case .medium:
+                    SoundEffectsManager.shared.playTapMid()
                     mediumGen.impactOccurred()
                 case .light:
+                    SoundEffectsManager.shared.playTapLow()
                     lightGen.impactOccurred()
                 default:
                     break
                 }
-                
-                // Wait
-                // Ensure delay is a valid, finite, non-negative value
-                let clampedDelay = delay.isFinite && delay >= 0 ? delay : 10
-                try? await Task.sleep(nanoseconds: UInt64(clampedDelay * 1_000_000_000))
+                try? await Task.sleep(nanoseconds: UInt64(100_000_000))
             }
         }
     }

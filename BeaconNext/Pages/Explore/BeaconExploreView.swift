@@ -27,6 +27,7 @@ struct BeaconExploreView: View {
                         .foregroundStyle(frameHandler.frame == nil ? .yellow : .green)
                         .accessibilityHidden(true)
                     Text(frameHandler.frame == nil ? "No camera feed" : "Explore is active")
+                    Text(String(frameHandler.minDepth ?? -1))
                 }
                 
                 Slider(
@@ -44,13 +45,11 @@ struct BeaconExploreView: View {
         .onAppear {
             BeaconExploreView.inExplore = true
             frameHandler.checkPermissionAndStart()
-            DeviceMotionManager.shared.delegates.append(obstacleDetector)
             SoundEffectsManager.shared.playExplore()
         }
         .onDisappear {
             BeaconExploreView.inExplore = false
             frameHandler.stop()
-            DeviceMotionManager.shared.delegates.removeAll { $0 is ObstacleDetectorFeature }
             SoundEffectsManager.shared.playExplore()
         }
     }

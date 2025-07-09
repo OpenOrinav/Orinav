@@ -7,6 +7,9 @@ class SoundEffectsManager {
     private var successSound: AVAudioPlayer?
     private var success2Sound: AVAudioPlayer?
     private var exploreSound: AVAudioPlayer?
+    private var tapLowSound: AVAudioPlayer?
+    private var tapMidSound: AVAudioPlayer?
+    private var tapHighSound: AVAudioPlayer?
 
     private let heavyGen = UIImpactFeedbackGenerator(style: .heavy)
     
@@ -24,6 +27,21 @@ class SoundEffectsManager {
         if let exploreUrl = Bundle.main.url(forResource: "explore", withExtension: "mp3") {
             exploreSound = try? AVAudioPlayer(contentsOf: exploreUrl)
             exploreSound?.prepareToPlay()
+        }
+        
+        if let tapLowUrl = Bundle.main.url(forResource: "tap-low", withExtension: "mp3") {
+            tapLowSound = try? AVAudioPlayer(contentsOf: tapLowUrl)
+            tapLowSound?.prepareToPlay()
+        }
+        
+        if let tapMidUrl = Bundle.main.url(forResource: "tap-mid", withExtension: "mp3") {
+            tapMidSound = try? AVAudioPlayer(contentsOf: tapMidUrl)
+            tapMidSound?.prepareToPlay()
+        }
+        
+        if let tapHighUrl = Bundle.main.url(forResource: "tap-high", withExtension: "mp3") {
+            tapHighSound = try? AVAudioPlayer(contentsOf: tapHighUrl)
+            tapHighSound?.prepareToPlay()
         }
         
         heavyGen.prepare()
@@ -54,5 +72,17 @@ class SoundEffectsManager {
     
     func playExplore() {
         exploreSound?.play()
+    }
+    
+    func playTapLow() {
+        tapLowSound?.play()
+    }
+    
+    func playTapMid() {
+        tapMidSound?.play()
+    }
+    
+    func playTapHigh() {
+        tapHighSound?.play()
     }
 }

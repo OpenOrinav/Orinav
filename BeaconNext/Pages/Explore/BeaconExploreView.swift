@@ -3,13 +3,25 @@ import SwiftUI
 struct BeaconExploreView: View {
     private(set) static var inExplore = false
     
-    @StateObject private var frameHandler: FrameHandler
-    private var obstacleDetector: ObstacleDetectorFeature
+    var fromNavigation: Bool
+    @StateObject private var frameHandler: FrameHandler = FrameHandler()
+    @ObservedObject private var settings = SettingsManager.shared
     
-    init() {
-        let f = FrameHandler()
-        _frameHandler = StateObject(wrappedValue: f)
-        obstacleDetector = ObstacleDetectorFeature(frameHandler: f)
+    @State private var features: [Any] = []
+    
+    init(fromNavigation: Bool) {
+        self.fromNavigation = fromNavigation
+        if fromNavigation && settings.autoSwitching {
+            // Enforce a default set of features while in navigation
+            // TODO: I want to automatically enable traffic lights when close to an intersection. Should be doable with navigation data.
+            settings.enabledObstacleDetection = true
+            settings.enabledTrafficLights = false
+            settings.enabledObjRecog = false
+        }
+        
+        if settings.enabledObstacleDetection {
+            features.append(ObstacleDetectorFeature(frameHandler: frameHandler))
+        }
     }
     
     var body: some View {
@@ -19,38 +31,90 @@ struct BeaconExploreView: View {
                     .font(.largeTitle)
                     .bold()
                 
-                HStack(spacing: 8) {
-                    Image(systemName: frameHandler.frame == nil ? "questionmark.circle.fill" : "checkmark.circle.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(frameHandler.frame == nil ? .yellow : .green)
-                        .accessibilityHidden(true)
-                    Text(frameHandler.frame == nil ? "No camera feed" : "Explore is active")
-                    Text(String(frameHandler.minDepth ?? -1))
+                // MARK: - Feature items
+                let featureItems: [(icon: String, name: LocalizedStringResource, binding: Binding<Bool>)] = [
+                    (
+                        icon: "wallet.pass.fill",
+                        name: "Obstacles",
+                        binding: settings.$enabledObstacleDetection
+                    ),
+                    (
+                        icon: "light.beacon.min.fill",
+                        name: "Traffic Lights",
+                        binding: Binding<Bool>(
+                            get: { settings.enabledTrafficLights },
+                            set: { newValue in
+                                settings.enabledTrafficLights = newValue
+                                if newValue { settings.enabledObjRecog = false }
+                            }
+                        )
+                    ),
+                    (
+                        icon: "lightbulb.fill",
+                        name: "Object Recognition",
+                        binding: Binding<Bool>(
+                            get: { settings.enabledObjRecog },
+                            set: { newValue in
+                                settings.enabledObjRecog = newValue
+                                if newValue { settings.enabledTrafficLights = false }
+                            }
+                        )
+                    )
+                ]
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 16) {
+                        ForEach(featureItems, id: \.icon) { item in
+                            FeatureBlock(
+                                icon: item.icon,
+                                name: item.name,
+                                active: item.binding
+                            )
+                            .frame(width: 256, height: 128)
+                        }
+                    }
                 }
                 
-                Slider(
-                    value: Binding(
-                        get: { SettingsManager.shared.obstacleRegionSize },
-                        set: { SettingsManager.shared.obstacleRegionSize = $0 }
-                    ),
-                    in: 10...100
-                )
-                .accessibilityLabel("Obstacle region size")
+                if settings.enabledObstacleDetection {
+                    Slider(
+                        value: Binding(
+                            get: { settings.obstacleRegionSize },
+                            set: { settings.obstacleRegionSize = $0 }
+                        ),
+                        in: 10...100
+                    )
+                    .accessibilityLabel("Obstacle region size")
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
         }
+        .frame(maxHeight: .infinity)
+        .background(Color(.secondarySystemBackground))
         .onAppear {
             BeaconExploreView.inExplore = true
-            frameHandler.checkPermissionAndStart()
             SoundEffectsManager.shared.playExplore()
+        }
+        .onChange(of: settings.enabledObstacleDetection) {
+            if settings.enabledObstacleDetection {
+                features.append(ObstacleDetectorFeature(frameHandler: frameHandler))
+            } else {
+                features.removeAll { if $0 is ObstacleDetectorFeature { ($0 as! ObstacleDetectorFeature).disable(); return true }; return false }
+            }
+            updateCamera()
         }
         .onDisappear {
             BeaconExploreView.inExplore = false
-            frameHandler.stop()
             SoundEffectsManager.shared.playExplore()
+        }
+    }
+    
+    func updateCamera() {
+        let requireCamera = settings.enabledObstacleDetection || settings.enabledTrafficLights || settings.enabledObjRecog
+        if requireCamera && !frameHandler.running {
+            frameHandler.requestPermissionAndStart()
+        } else {
+            frameHandler.stop()
         }
     }
 }

@@ -229,6 +229,9 @@
         }
       }
     },
+    "Automatically Switch Features" : {
+
+    },
     "Beacon" : {
       "localizations" : {
         "ar" : {
@@ -501,6 +504,9 @@
         }
       }
     },
+    "Disabled" : {
+
+    },
     "Dismisses the place sheet" : {
       "localizations" : {
         "ar" : {
@@ -661,6 +667,9 @@
         }
       }
     },
+    "Enabled" : {
+
+    },
     "End Navigation" : {
       "localizations" : {
         "ar" : {
@@ -742,6 +751,7 @@
       }
     },
     "Explore is active" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1243,6 +1253,7 @@
       }
     },
     "No camera feed" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1284,6 +1295,9 @@
         }
       }
     },
+    "Object Recognition" : {
+
+    },
     "Obstacle region size" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1293,6 +1307,9 @@
           }
         }
       }
+    },
+    "Obstacles" : {
+
     },
     "Office" : {
       "localizations" : {
@@ -1784,6 +1801,9 @@
           }
         }
       }
+    },
+    "Traffic Lights" : {
+
     },
     "Transportation" : {
       "localizations" : {

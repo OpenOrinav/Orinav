@@ -15,6 +15,12 @@ class FrameHandler: NSObject, ObservableObject {
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private let context = CIContext()
     
+    var running: Bool {
+        get {
+            return captureSession.isRunning
+        }
+    }
+    
     var latestDepthData: AVDepthData?
     var lastDepth: Float?
     private var depthDataOutput = AVCaptureDepthDataOutput()

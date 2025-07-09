@@ -1,11 +1,8 @@
 import Combine
 import UIKit
 
-class ObstacleDetectorFeature: ObservableObject {
+class ObstacleDetectorFeature {
     var frameHandler: FrameHandler
-    
-    @Published var message: String? = nil
-    var previousMessage: String? = nil
     
     var delay: Double = 1.5
     var style: UIImpactFeedbackGenerator.FeedbackStyle = .light
@@ -53,10 +50,11 @@ class ObstacleDetectorFeature: ObservableObject {
         // Cancel any existing haptic loop
         hapticTask?.cancel()
         // Launch a repeating haptic loop
-        hapticTask = Task { @MainActor in
+        hapticTask = Task { @MainActor [weak self] in
             var lastTime = Date()
             
             while !Task.isCancelled {
+                guard let self = self else { return }
                 if !BeaconExploreView.inExplore {
                     return
                 }
@@ -89,8 +87,10 @@ class ObstacleDetectorFeature: ObservableObject {
         }
     }
     
-    deinit {
+    func disable() {
         depthCancellable?.cancel()
         hapticTask?.cancel()
+        depthCancellable = nil
+        hapticTask = nil
     }
 }

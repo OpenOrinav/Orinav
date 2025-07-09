@@ -17,9 +17,9 @@ struct BeaconNavigationContainerView: View {
             if SettingsManager.shared.accessibleMap {
                 BeaconNavigationView()
                     .fullScreenCover(isPresented: $isInExploreMode) {
-                        BeaconExploreView()
+                        BeaconExploreView(fromNavigation: true)
                             .presentationBackground {
-                                Color(.systemBackground)
+                                Color(.secondarySystemBackground)
                             }
                     }
                     .onReceive(DeviceMotionManager.shared.$isPhoneRaised) { raised in
@@ -35,7 +35,7 @@ struct BeaconNavigationContainerView: View {
                 navView
                     .ignoresSafeArea(.container, edges: .all)
                     .fullScreenCover(isPresented: $isInExploreMode) {
-                        BeaconExploreView()
+                        BeaconExploreView(fromNavigation: true)
                     }
                     .onReceive(DeviceMotionManager.shared.$isPhoneRaised) { raised in
                         withAnimation {

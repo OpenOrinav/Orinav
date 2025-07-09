@@ -19,6 +19,7 @@ struct BeaconSettingsView: View {
             Section(header: Text("Explore")) {
                 Toggle("Speak Location", isOn: $settings.sayLocation)
                 Toggle("Speak Direction", isOn: $settings.sayDirection)
+                Toggle("Automatically Switch Features", isOn: $settings.autoSwitching)
             }
         }
         .navigationTitle("Settings")

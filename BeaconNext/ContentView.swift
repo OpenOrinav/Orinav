@@ -16,7 +16,7 @@ struct ContentView: View {
 
             NavigationView {
                 if selection == 1 {
-                    BeaconExploreView()
+                    BeaconExploreView(fromNavigation: false)
                 }
             }
             .tabItem {

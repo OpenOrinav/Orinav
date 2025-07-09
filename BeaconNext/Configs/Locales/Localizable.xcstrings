@@ -938,6 +938,9 @@
         }
       }
     },
+    "Identify Objects" : {
+
+    },
     "In %@" : {
       "localizations" : {
         "ar" : {
@@ -1294,9 +1297,6 @@
           }
         }
       }
-    },
-    "Object Recognition" : {
-
     },
     "Obstacle region size" : {
       "localizations" : {

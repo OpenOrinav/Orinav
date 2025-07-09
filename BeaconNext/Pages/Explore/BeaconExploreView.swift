@@ -18,10 +18,6 @@ struct BeaconExploreView: View {
             settings.enabledTrafficLights = false
             settings.enabledObjRecog = false
         }
-        
-        if settings.enabledObstacleDetection {
-            features.append(ObstacleDetectorFeature(frameHandler: frameHandler))
-        }
     }
     
     var body: some View {
@@ -51,7 +47,7 @@ struct BeaconExploreView: View {
                     ),
                     (
                         icon: "lightbulb.fill",
-                        name: "Object Recognition",
+                        name: "Identify Objects",
                         binding: Binding<Bool>(
                             get: { settings.enabledObjRecog },
                             set: { newValue in
@@ -62,16 +58,15 @@ struct BeaconExploreView: View {
                     )
                 ]
                 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 16) {
-                        ForEach(featureItems, id: \.icon) { item in
-                            FeatureBlock(
-                                icon: item.icon,
-                                name: item.name,
-                                active: item.binding
-                            )
-                            .frame(width: 256, height: 128)
-                        }
+                
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                    ForEach(featureItems, id: \.icon) { item in
+                        FeatureBlock(
+                            icon: item.icon,
+                            name: item.name,
+                            active: item.binding
+                        )
+                        .frame(height: 128)
                     }
                 }
                 
@@ -94,12 +89,28 @@ struct BeaconExploreView: View {
         .onAppear {
             BeaconExploreView.inExplore = true
             SoundEffectsManager.shared.playExplore()
+            
+            if settings.enabledObstacleDetection {
+                features.append(ObstacleDetectorFeature(frameHandler: frameHandler))
+            }
+            if settings.enabledObjRecog {
+                features.append(ObjectRecognitionFeature(frameHandler: frameHandler) as Any)
+            }
+            updateCamera()
         }
         .onChange(of: settings.enabledObstacleDetection) {
             if settings.enabledObstacleDetection {
                 features.append(ObstacleDetectorFeature(frameHandler: frameHandler))
             } else {
                 features.removeAll { if $0 is ObstacleDetectorFeature { ($0 as! ObstacleDetectorFeature).disable(); return true }; return false }
+            }
+            updateCamera()
+        }
+        .onChange(of: settings.enabledObjRecog) {
+            if settings.enabledObjRecog {
+                features.append(ObjectRecognitionFeature(frameHandler: frameHandler) as Any)
+            } else {
+                features.removeAll { if $0 is ObjectRecognitionFeature { ($0 as! ObjectRecognitionFeature).disable(); return true }; return false }
             }
             updateCamera()
         }

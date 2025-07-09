@@ -17,7 +17,8 @@ struct BeaconSettingsView: View {
             }
             
             Section(header: Text("Explore")) {
-                Toggle("Show Camera View", isOn: $settings.showCamera)
+                Toggle("Speak Location", isOn: $settings.sayLocation)
+                Toggle("Speak Direction", isOn: $settings.sayDirection)
             }
         }
         .navigationTitle("Settings")

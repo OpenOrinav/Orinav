@@ -1,54 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%.0f %@" : {
-      "comment" : "Distance in meters",
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$.0f %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$.0f %2$@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$.0f %2$@"
-          }
-        }
-      }
-    },
-    "%.1f %@" : {
-      "comment" : "Distance in kilometers",
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$.1f %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$.1f %2$@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$.1f %2$@"
-          }
-        }
-      }
-    },
     "%@ · %@" : {
       "localizations" : {
         "ar" : {
@@ -111,54 +63,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@进入%2$@"
-          }
-        }
-      }
-    },
-    "%d %@" : {
-      "comment" : "Time remaining in minutes",
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$d %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$d %2$@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$d %2$@"
-          }
-        }
-      }
-    },
-    "%d %@ %d %@" : {
-      "comment" : "Time remaining in hours and minutes",
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$d %2$@ %3$d %4$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$d %2$@ %3$d %4$@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$d %2$@ %3$d %4$@"
           }
         }
       }
@@ -837,6 +741,16 @@
         }
       }
     },
+    "Explore is active" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "探索已经启用"
+          }
+        }
+      }
+    },
     "Explore the world" : {
       "localizations" : {
         "ar" : {
@@ -1329,7 +1243,14 @@
       }
     },
     "No camera feed" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未启用摄像头"
+          }
+        }
+      }
     },
     "No favorites yet" : {
       "localizations" : {
@@ -1363,8 +1284,15 @@
         }
       }
     },
-    "Obstacle detection active" : {
-
+    "Obstacle region size" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "障碍物检测区域大小"
+          }
+        }
+      }
     },
     "Office" : {
       "localizations" : {
@@ -1629,8 +1557,25 @@
         }
       }
     },
-    "Show Camera View" : {
-
+    "Speak Direction" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "说出方向"
+          }
+        }
+      }
+    },
+    "Speak Location" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "说出地点"
+          }
+        }
+      }
     },
     "Sports & Fitness" : {
       "localizations" : {

@@ -15,14 +15,18 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
     func didUpdateLocation(_ location: BeaconLocation) {
         DispatchQueue.main.async {
             self.currentLocation = location
-            self.speakAddress()
+            if SettingsManager.shared.sayLocation {
+                self.speakAddress()
+            }
         }
     }
     
     func didUpdateHeading(_ heading: CLLocationDirection) {
         DispatchQueue.main.async {
             self.currentHeading = heading
-            self.speakFacingDirection()
+            if SettingsManager.shared.sayDirection {
+                self.speakFacingDirection()
+            }
         }
     }
     

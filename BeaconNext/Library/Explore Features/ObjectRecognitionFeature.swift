@@ -5,7 +5,7 @@ class ObjectRecognitionFeature {
     private let visionModel: VNCoreMLModel
     
     private var detectionTask: Task<Void, Never>?
-    private var previousObjects: String?
+    private var previousObjects: [String] = []
     
     init?(frameHandler: FrameHandler) {
         self.frameHandler = frameHandler
@@ -33,11 +33,11 @@ class ObjectRecognitionFeature {
                         }
                         // Sort and take top three objects largest in view
                         let sortedObjects = detectedObjects.sorted { $0.value > $1.value }
-                        let string = sortedObjects.prefix(3).map { $0.key }.joined(separator: ", ")
+                        let string = sortedObjects.prefix(3).map { $0.key }
                         if string != self.previousObjects {
                             self.previousObjects = string
                             DispatchQueue.main.async {
-                                BeaconTTSService.shared.speak(string, type: .explore)
+                                BeaconTTSService.shared.speak(string.map { NSLocalizedString($0, comment: "") }.joined(separator: ","), type: .explore)
                             }
                         }
                     }

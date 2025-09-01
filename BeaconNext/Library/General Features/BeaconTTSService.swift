@@ -34,7 +34,7 @@ final class BeaconTTSService: NSObject, AVSpeechSynthesizerDelegate {
         }
     }
     
-    public func speak(_ text: String, type: MessageType, language: String = "en-US") {
+    public func speak(_ text: String, type: MessageType, language: String? = nil) {
         guard type.rawValue >= currentPriority.rawValue else { return }
         interruptSpeaking()
         currentPriority = type
@@ -55,33 +55,6 @@ final class BeaconTTSService: NSObject, AVSpeechSynthesizerDelegate {
         utterance.voice = AVSpeechSynthesisVoice(language: language)
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate
         synthesizer.speak(utterance)
-    }
-
-    public func speak(_ segments: [(text: String, language: String)], type: MessageType) {
-        guard type.rawValue >= currentPriority.rawValue else { return }
-        interruptSpeaking()
-        currentPriority = type
-
-        // Play a sound for navigationImportant
-        if type == .navigationImportant {
-            SoundEffectsManager.shared.playSuccess2()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                for segment in segments {
-                    let utterance = AVSpeechUtterance(string: segment.text)
-                    utterance.voice = AVSpeechSynthesisVoice(language: segment.language)
-                    utterance.rate = AVSpeechUtteranceDefaultSpeechRate
-                    self.synthesizer.speak(utterance)
-                }
-            }
-            return
-        }
-        
-        for segment in segments {
-            let utterance = AVSpeechUtterance(string: segment.text)
-            utterance.voice = AVSpeechSynthesisVoice(language: segment.language)
-            utterance.rate = AVSpeechUtteranceDefaultSpeechRate
-            synthesizer.speak(utterance)
-        }
     }
     
     nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {

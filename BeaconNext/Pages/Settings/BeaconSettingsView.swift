@@ -12,15 +12,27 @@ struct BeaconSettingsView: View {
                         Text(provider.localizedName).tag(provider)
                     }
                 }
-                
-                Toggle("Accessible Map", isOn: $settings.accessibleMap)
             }
             
-            Section(header: Text("Explore")) {
-                Toggle("Speak Location", isOn: $settings.sayLocation)
-                Toggle("Speak Direction", isOn: $settings.sayDirection)
-                Toggle("Automatically Switch Features", isOn: $settings.autoSwitching)
-            }
+            Section(footer: Text("When turned on, the map interface will be accessible to VoiceOver.")
+                .font(.caption)
+                .foregroundStyle(.secondary)) {
+                    Toggle("Accessible Map", isOn: $settings.accessibleMap)
+                }
+            
+            Section(header: Text("Explore"), footer:
+                        Text("When turned on, you will hear spoken updates about your location and direction.")
+                .font(.caption)
+                .foregroundStyle(.secondary)) {
+                    Toggle("Speak Location", isOn: $settings.sayLocation)
+                    Toggle("Speak Direction", isOn: $settings.sayDirection)
+                }
+            
+            Section(footer: Text("When turned on, Explore features will switch automatically based on your movement and location.")
+                .font(.caption)
+                .foregroundStyle(.secondary)) {
+                    Toggle("Automatically Switch Features", isOn: $settings.autoSwitching)
+                }
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)

@@ -18,15 +18,15 @@ final class ApproachingNextStepFeature {
         let turnName = String(localized: data.bTurnType.localizedName)
         if data.bDistanceToNextSegmentMeters <= 2 {
             Task { @MainActor in
-                BeaconTTSService.shared.speak("Now, \(turnName)", type: .navigationImportant)
+                BeaconTTSService.shared.speak(String(localized: "Now, \(turnName)"), type: .navigationImportant)
             }
         } else if data.bDistanceToNextSegmentMeters <= 20 && data.bDistanceToNextSegmentMeters % 5 == 0 {
             Task { @MainActor in
-                BeaconTTSService.shared.speak("In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters))), \(turnName)", type: .navigation)
+                BeaconTTSService.shared.speak(String(localized: "In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters))), \(turnName)"), type: .navigation)
             }
         } else if data.bDistanceToNextSegmentMeters % 10 == 0 {
             Task { @MainActor in
-                BeaconTTSService.shared.speak("In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters))), \(turnName)", type: .navigationAuxilary)
+                BeaconTTSService.shared.speak(String(localized: "In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters))), \(turnName)"), type: .navigationAuxilary)
             }
         }
     }

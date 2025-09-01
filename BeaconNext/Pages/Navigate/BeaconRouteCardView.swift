@@ -9,7 +9,7 @@ struct BeaconRouteCardView: View {
     private var timeText: String {
         let minutes = route.bTimeMinutes
         let hours = minutes / 60
-        return "\(hours > 0 ? "\(hours) hr " : "")\(minutes % 60) min"
+        return "\(hours > 0 ? "\(hours) \(String(localized: "hr")) " : "")\(minutes % 60) \(String(localized: "min"))"
     }
 
     private var distanceText: String {

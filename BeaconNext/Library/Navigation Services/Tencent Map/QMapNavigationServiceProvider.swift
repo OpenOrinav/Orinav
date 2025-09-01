@@ -76,7 +76,7 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
         if BeaconTTSService.shared.currentPriority == .navigation || BeaconTTSService.shared.currentPriority == .navigationImportant {
             return 0 // Still playing another message
         }
-        BeaconTTSService.shared.speak(naviTTS.ttsString, type: naviTTS.voiceType.rawValue == 1 ? .navigationImportant : .navigation, language: "zh-CN")
+        BeaconTTSService.shared.speak(naviTTS.ttsString, type: naviTTS.voiceType.rawValue == 1 ? .navigationImportant : .navigation, language: "zh-CN") // Tencent Map always speaks in Chinese
         return 1
     }
     

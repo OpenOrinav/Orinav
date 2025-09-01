@@ -41,10 +41,7 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
         
         if force || currentAddress != lastSpokenAddress {
             DispatchQueue.main.async {
-                BeaconTTSService.shared.speak([
-                    (text: "You are currently at", language: "en-US"),
-                    (text: currentAddress, language: "zh-CN")
-                ], type: .currentLocation)
+                BeaconTTSService.shared.speak(String(localized: "At \(currentAddress)"), type: .currentLocation)
             }
             lastSpokenAddress = currentAddress
             isFirstWord = false
@@ -60,9 +57,7 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
             return
         }
         DispatchQueue.main.async {
-            BeaconTTSService.shared.speak([
-                (text: dir, language: "en-US")
-            ], type: .currentHeading)
+            BeaconTTSService.shared.speak(dir, type: .currentHeading)
         }
         lastSpokenDirection = dir
     }
@@ -76,7 +71,16 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
     }
     
     func name(forDegrees degrees: Double) -> String {
-        let directions = ["North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"]
+        let directions = [
+            String(localized: "North"),
+            String(localized: "Northeast"),
+            String(localized: "East"),
+            String(localized: "Southeast"),
+            String(localized: "South"),
+            String(localized: "Southwest"),
+            String(localized: "West"),
+            String(localized: "Northwest")
+        ]
         let index = Int((degrees + 22.5) / 45) & 7
         return directions[index]
     }

@@ -20,7 +20,7 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, DeviceMotion
         
         DispatchQueue.main.async {
             self.globalUIState.currentPage = nil
-            BeaconTTSService.shared.speak("Navigation ended", type: .navigation)
+            BeaconTTSService.shared.speak(String(localized: "Navigation ended"), type: .navigation)
         }
     }
     

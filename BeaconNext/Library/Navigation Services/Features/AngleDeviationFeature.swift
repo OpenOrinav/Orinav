@@ -32,7 +32,7 @@ final class AngleDeviationFeature {
             
             if currentDirection != lastDirection || (lastFacingAngle != nil && abs(currentHeading - lastFacingAngle!) > 5) {
                 DispatchQueue.main.async {
-                    BeaconTTSService.shared.speak("Turn \(String(currentDirection)) o' clock", type: .angleDeviation)
+                    BeaconTTSService.shared.speak(String(localized: "Turn \(String(currentDirection)) o' clock"), type: .angleDeviation)
                 }
                 lastDirection = currentDirection
                 lastFacingAngle = currentHeading
@@ -45,7 +45,7 @@ final class AngleDeviationFeature {
             if !hasSpokenRightDirection {
                 SoundEffectsManager.shared.playSuccess()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    BeaconTTSService.shared.speak("Aligned", type: .angleDeviation)
+                    BeaconTTSService.shared.speak(String(localized: "Aligned"), type: .angleDeviation)
                 }
                 hasSpokenRightDirection = true
             }

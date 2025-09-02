@@ -1,0 +1,107 @@
+[
+  {
+    "metadataOutputVersion" : "3.0",
+    "userDefinedMetadata" : {
+      "batch" : "1",
+      "docs" : "https:\/\/docs.ultralytics.com",
+      "com.github.apple.coremltools.version" : "8.2",
+      "imgsz" : "[224, 224]",
+      "names" : "{0: ' ', 1: '侧向绿灯', 2: '掉头绿灯', 3: '箭头绿灯', 4: '红灯CN', 5: '绿灯CN', 6: '绿灯USA', 7: '自行车绿灯', 8: '读秒USA', 9: '读秒绿灯', 10: '车行绿灯', 11: '车行绿灯读秒'}",
+      "channels" : "3",
+      "stride" : "1",
+      "args" : "{'batch': 1, 'half': False, 'int8': True, 'nms': False}",
+      "date" : "2025-07-31T13:54:34.639114",
+      "com.github.apple.coremltools.source_dialect" : "TorchScript",
+      "com.apple.coreml.model.preview.type" : "imageClassifier",
+      "com.github.apple.coremltools.source" : "torch==2.6.0",
+      "task" : "classify"
+    },
+    "classLabels" : [
+      " ",
+      "侧向绿灯",
+      "掉头绿灯",
+      "箭头绿灯",
+      "红灯CN",
+      "绿灯CN",
+      "绿灯USA",
+      "自行车绿灯",
+      "读秒USA",
+      "读秒绿灯",
+      "车行绿灯",
+      "车行绿灯读秒"
+    ],
+    "availability" : {
+      "macOS" : "13.0",
+      "tvOS" : "16.0",
+      "visionOS" : "1.0",
+      "watchOS" : "9.0",
+      "iOS" : "16.0",
+      "macCatalyst" : "16.0"
+    },
+    "inputSchema" : [
+      {
+        "height" : "224",
+        "colorspace" : "RGB",
+        "isOptional" : "0",
+        "width" : "224",
+        "isColor" : "1",
+        "formattedType" : "Image (Color 224 × 224)",
+        "hasSizeFlexibility" : "0",
+        "type" : "Image",
+        "shortDescription" : "",
+        "name" : "image"
+      }
+    ],
+    "outputSchema" : [
+      {
+        "isOptional" : "0",
+        "formattedType" : "String",
+        "type" : "String",
+        "name" : "classLabel",
+        "shortDescription" : ""
+      },
+      {
+        "isOptional" : "0",
+        "keyType" : "String",
+        "formattedType" : "Dictionary (String → Double)",
+        "type" : "Dictionary",
+        "name" : "classLabel_probs",
+        "shortDescription" : ""
+      }
+    ],
+    "modelParameters" : [
+
+    ],
+    "storagePrecision" : "Mixed (Float16, Palettized (8 bits))",
+    "method" : "predict",
+    "version" : "8.3.133",
+    "isUpdatable" : "0",
+    "specificationVersion" : 7,
+    "stateSchema" : [
+
+    ],
+    "computePrecision" : "Mixed (Float16, Float32, Int32)",
+    "mlProgramOperationTypeHistogram" : {
+      "Concat" : 7,
+      "Ios16.cast" : 2,
+      "Ios16.mul" : 2,
+      "Ios16.constexprLutToDense" : 40,
+      "Ios16.reduceMean" : 1,
+      "Ios16.add" : 9,
+      "Ios16.conv" : 39,
+      "Ios16.softmax" : 2,
+      "Ios16.matmul" : 2,
+      "Ios16.linear" : 1,
+      "Split" : 6,
+      "Ios16.reshape" : 4,
+      "Ios16.silu" : 35
+    },
+    "shortDescription" : "Ultralytics YOLO11s-cls model trained on my_dataset_green\/train",
+    "license" : "AGPL-3.0 License (https:\/\/ultralytics.com\/license)",
+    "generatedClassName" : "yolo11s_cls_green_final0731_globle",
+    "author" : "Ultralytics",
+    "modelType" : {
+      "name" : "MLModelType_mlProgram"
+    }
+  }
+]

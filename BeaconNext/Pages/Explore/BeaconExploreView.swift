@@ -96,6 +96,9 @@ struct BeaconExploreView: View {
             if settings.enabledObjRecog {
                 features.append(ObjectRecognitionFeature(frameHandler: frameHandler) as Any)
             }
+            if settings.enabledTrafficLights {
+                features.append(TrafficLightsFeature(frameHandler: frameHandler) as Any)
+            }
             updateCamera()
         }
         .onChange(of: settings.enabledObstacleDetection) {
@@ -111,6 +114,14 @@ struct BeaconExploreView: View {
                 features.append(ObjectRecognitionFeature(frameHandler: frameHandler) as Any)
             } else {
                 features.removeAll { if $0 is ObjectRecognitionFeature { ($0 as! ObjectRecognitionFeature).disable(); return true }; return false }
+            }
+            updateCamera()
+        }
+        .onChange(of: settings.enabledTrafficLights) {
+            if settings.enabledTrafficLights {
+                features.append(TrafficLightsFeature(frameHandler: frameHandler) as Any)
+            } else {
+                features.removeAll { if $0 is TrafficLightsFeature { ($0 as! TrafficLightsFeature).disable(); return true }; return false }
             }
             updateCamera()
         }

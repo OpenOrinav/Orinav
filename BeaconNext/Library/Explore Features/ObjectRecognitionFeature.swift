@@ -9,7 +9,7 @@ class ObjectRecognitionFeature {
     
     init?(frameHandler: FrameHandler) {
         self.frameHandler = frameHandler
-        guard let model = try? VNCoreMLModel(for: yolo11m().model) else {
+        guard let model = try? VNCoreMLModel(for: yolo11n().model) else {
             return nil
         }
         self.visionModel = model

@@ -31,16 +31,18 @@ class ObjectRecognitionFeature {
                         if let topLabel = obj.labels.first {
                             detectedObjects[topLabel.identifier] = obj.boundingBox.width * obj.boundingBox.height
                         }
-                        // Sort and take top three objects largest in view
-                        let sortedObjects = detectedObjects.sorted { $0.value > $1.value }
-                        let string = sortedObjects.prefix(3).map { $0.key }
-                        if string != self.previousObjects {
-                            self.previousObjects = string
-                            DispatchQueue.main.async {
-                                BeaconTTSService.shared.speak(string.map { NSLocalizedString($0, comment: "") }.joined(separator: ","), type: .explore)
-                            }
+                    }
+                    
+                    // Sort and take top three objects largest in view
+                    let sortedObjects = detectedObjects.sorted { $0.value > $1.value }
+                    let string = sortedObjects.prefix(3).map { $0.key }
+                    if string != self.previousObjects {
+                        self.previousObjects = string
+                        DispatchQueue.main.async {
+                            BeaconTTSService.shared.speak(string.map { NSLocalizedString($0, comment: "") }.joined(separator: ","), type: .explore)
                         }
                     }
+
                 }
                 
                 guard let frame = frameHandler.frame else { continue }

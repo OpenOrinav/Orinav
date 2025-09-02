@@ -27,6 +27,12 @@ struct BeaconExploreView: View {
                     .font(.largeTitle)
                     .bold()
                 
+                if let frame = frameHandler.frame {
+                    Image(uiImage: UIImage(cgImage: frame))
+                        .resizable()
+                        .scaledToFit()
+                }
+                
                 // MARK: - Feature items
                 let featureItems: [(icon: String, name: LocalizedStringResource, binding: Binding<Bool>)] = [
                     (

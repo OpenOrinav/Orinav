@@ -45,7 +45,7 @@ final class BeaconTTSService: NSObject, AVSpeechSynthesizerDelegate {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 let utterance = AVSpeechUtterance(string: text)
                 utterance.voice = AVSpeechSynthesisVoice(language: language)
-                utterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                utterance.rate = Float(SettingsManager.shared.speechRate)
                 self.synthesizer.speak(utterance)
             }
             return
@@ -53,7 +53,7 @@ final class BeaconTTSService: NSObject, AVSpeechSynthesizerDelegate {
         
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: language)
-        utterance.rate = AVSpeechUtteranceDefaultSpeechRate
+        utterance.rate = Float(SettingsManager.shared.speechRate)
         synthesizer.speak(utterance)
     }
     

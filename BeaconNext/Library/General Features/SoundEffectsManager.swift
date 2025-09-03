@@ -10,6 +10,8 @@ class SoundEffectsManager {
     private var tapLowSound: AVAudioPlayer?
     private var tapMidSound: AVAudioPlayer?
     private var tapHighSound: AVAudioPlayer?
+    private var redSound: AVAudioPlayer?
+    private var greenSound: AVAudioPlayer?
 
     private let heavyGen = UIImpactFeedbackGenerator(style: .heavy)
     
@@ -42,6 +44,16 @@ class SoundEffectsManager {
         if let tapHighUrl = Bundle.main.url(forResource: "tap-high", withExtension: "mp3") {
             tapHighSound = try? AVAudioPlayer(contentsOf: tapHighUrl)
             tapHighSound?.prepareToPlay()
+        }
+        
+        if let redUrl = Bundle.main.url(forResource: "red", withExtension: "wav") {
+            redSound = try? AVAudioPlayer(contentsOf: redUrl)
+            redSound?.prepareToPlay()
+        }
+        
+        if let greenUrl = Bundle.main.url(forResource: "green", withExtension: "wav") {
+            greenSound = try? AVAudioPlayer(contentsOf: greenUrl)
+            greenSound?.prepareToPlay()
         }
         
         heavyGen.prepare()
@@ -84,5 +96,25 @@ class SoundEffectsManager {
     
     func playTapHigh() {
         tapHighSound?.play()
+    }
+    
+    func playGreen() {
+        greenSound?.play()
+        DispatchQueue.main.async {
+            self.heavyGen.impactOccurred()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.59) {
+            self.heavyGen.impactOccurred()
+        }
+    }
+    
+    func playRed() {
+        redSound?.play()
+        DispatchQueue.main.async {
+            self.heavyGen.impactOccurred()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.59) {
+            self.heavyGen.impactOccurred()
+        }
     }
 }

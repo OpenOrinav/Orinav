@@ -1,24 +1,39 @@
 import SwiftUI
+import AVFoundation
 
 struct BeaconSettingsView: View {
     @ObservedObject private var settings = SettingsManager.shared
     @State private var showRestartAlert = false
     
+    private var formattedSpeechRate: String {
+        // Show like "0.5x" with one decimal (or more if you prefer)
+        String(format: "%.2fx", settings.speechRate)
+    }
+    
     var body: some View {
         Form {
-            Section(header: Text("Navigation")) {
-                Picker("Map Provider", selection: $settings.mapProvider) {
-                    ForEach(MapProvider.allCases, id: \.self) { provider in
-                        Text(provider.localizedName).tag(provider)
-                    }
-                }
-            }
-            
-            Section(footer: Text("When turned on, the map interface will be accessible to VoiceOver.")
+            Section(header: Text("Navigation"), footer: Text("When turned on, the map interface will be accessible to VoiceOver.")
                 .font(.caption)
                 .foregroundStyle(.secondary)) {
+                    Picker("Map Provider", selection: $settings.mapProvider) {
+                        ForEach(MapProvider.allCases, id: \.self) { provider in
+                            Text(provider.localizedName).tag(provider)
+                        }
+                    }
                     Toggle("Accessible Map", isOn: $settings.accessibleMap)
                 }
+            
+            Section(header: Text("Speech Rate")) {
+                Slider(
+                    value: $settings.speechRate,
+                    in: Double(AVSpeechUtteranceMinimumSpeechRate)...Double(AVSpeechUtteranceMaximumSpeechRate),
+                    step: 0.05
+                ) {
+                    Text("Speech Rate")
+                }
+                .accessibilityLabel("Speech Rate")
+                .accessibilityValue("\(formattedSpeechRate)")
+            }
             
             Section(header: Text("Explore"), footer:
                         Text("When turned on, you will hear spoken updates about your location and direction.")

@@ -11,6 +11,7 @@ class FrameHandler: NSObject, ObservableObject {
     // MARK: - Basic Data
     private var permissionGranted = false
     private let captureSession = AVCaptureSession()
+    private var captureDevice: AVCaptureDevice? = nil
     private var captureSessionReady = false
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private let context = CIContext()
@@ -71,6 +72,7 @@ class FrameHandler: NSObject, ObservableObject {
         if self.captureSession.isRunning {
             self.captureSession.stopRunning()
         }
+        captureDevice = nil
     }
     
     deinit {
@@ -88,6 +90,7 @@ class FrameHandler: NSObject, ObservableObject {
                 ?? AVCaptureDevice.default(.builtInDualWideCamera,
                                            for: .video,
                                            position: .back) else { return }
+        captureDevice = videoDevice
         
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice),
               captureSession.canAddInput(videoDeviceInput) else { return }
@@ -128,6 +131,48 @@ class FrameHandler: NSObject, ObservableObject {
         
         captureSession.commitConfiguration()
         captureSessionReady = true
+    }
+    
+    func focus(x: Double, y: Double) { // x, y w.r.t. frame
+        guard let captureDevice = captureDevice else { return }
+        guard let frame = frame else { return }
+        
+        let focusPoint = CGPoint(x: y / Double(frame.height), y: 1.0 - x / Double(frame.width))
+        
+        do {
+            try captureDevice.lockForConfiguration()
+            
+            if captureDevice.isFocusModeSupported(.autoFocus) && captureDevice.isFocusPointOfInterestSupported {
+                captureDevice.focusPointOfInterest = focusPoint
+                captureDevice.focusMode = .autoFocus
+            }
+            
+            if captureDevice.isExposureModeSupported(.autoExpose) && captureDevice.isExposurePointOfInterestSupported {
+                captureDevice.exposurePointOfInterest = focusPoint
+                captureDevice.exposureMode = .autoExpose
+            }
+            
+            captureDevice.unlockForConfiguration()
+        } catch {
+            print("Could not lock device for configuration: \(error)")
+        }
+    }
+    
+    func cancelFocus() {
+        guard let captureDevice = captureDevice else { return }
+        do {
+            try captureDevice.lockForConfiguration()
+            if captureDevice.isFocusModeSupported(.autoFocus) && captureDevice.isFocusPointOfInterestSupported {
+                captureDevice.focusMode = .continuousAutoFocus
+            }
+            
+            if captureDevice.isExposureModeSupported(.autoExpose) && captureDevice.isExposurePointOfInterestSupported {
+                captureDevice.exposureMode = .continuousAutoExposure
+            }
+        } catch {
+            print("Could not lock device for configuration: \(error)")
+        }
+
     }
 }
 

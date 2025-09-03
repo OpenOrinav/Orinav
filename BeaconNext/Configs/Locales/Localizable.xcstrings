@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@"
+          }
+        }
+      }
+    },
     "%@ · %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1188,6 +1198,16 @@
         }
       }
     },
+    "Green" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "绿灯"
+          }
+        }
+      }
+    },
     "Grocery" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1872,6 +1892,16 @@
         }
       }
     },
+    "Red" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "红灯"
+          }
+        }
+      }
+    },
     "refrigerator" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2171,7 +2201,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "说出方向"
+            "value" : "播报方向"
           }
         }
       }
@@ -2181,7 +2211,17 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "说出地点"
+            "value" : "播报地点"
+          }
+        }
+      }
+    },
+    "Speech Rate" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "播报速度"
           }
         }
       }

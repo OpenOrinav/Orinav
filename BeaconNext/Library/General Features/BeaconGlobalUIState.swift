@@ -1,6 +1,6 @@
 import Foundation
 
-class BeaconGlobalUIState: ObservableObject {
+class BeaconGlobalUIState: ObservableObject {    
     @Published var currentPage: BeaconPage? = nil // The sub-page within the home page
     
     // POI viewing page

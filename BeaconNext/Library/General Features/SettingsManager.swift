@@ -1,3 +1,5 @@
+import AVFoundation
+import Foundation
 import SwiftUI
 
 class SettingsManager: ObservableObject {
@@ -12,6 +14,7 @@ class SettingsManager: ObservableObject {
     @AppStorage("accessibleMap")            var accessibleMap: Bool = true
     @AppStorage("sayLocation")              var sayLocation:   Bool = true
     @AppStorage("sayDirection")             var sayDirection:  Bool = true
+    @AppStorage("speechRate")               var speechRate: Double = Double(AVSpeechUtteranceDefaultSpeechRate)
     @AppStorage("obstacleRegionSize")       var obstacleRegionSize: Double = 30
     @AppStorage("autoSwitching")            var autoSwitching: Bool = true
     @AppStorage("enabledObjRecog")          var enabledObjRecog: Bool = false

@@ -14,13 +14,6 @@ struct BeaconExploreView: View {
     
     init(fromNavigation: Bool) {
         self.fromNavigation = fromNavigation
-        if fromNavigation && settings.autoSwitching {
-            // Automatically enable features based on navigation data
-            settings.enabledObstacleDetection = !(globalUIState.atIntersection ?? false)
-            settings.enabledTrafficLights = globalUIState.atIntersection ?? false
-
-            settings.enabledObjRecog = false
-        }
     }
     
     var body: some View {
@@ -100,6 +93,14 @@ struct BeaconExploreView: View {
         .onAppear {
             BeaconExploreView.inExplore = true
             SoundEffectsManager.shared.playExplore()
+            
+            // Automatically enable features based on navigation data
+            if fromNavigation && settings.autoSwitching {
+                settings.enabledObstacleDetection = !(globalUIState.atIntersection ?? false)
+                settings.enabledTrafficLights = globalUIState.atIntersection ?? false
+
+                settings.enabledObjRecog = false
+            }
             
             if settings.enabledObstacleDetection {
                 features.append(ObstacleDetectorFeature(frameHandler: frameHandler))

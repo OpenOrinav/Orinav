@@ -42,6 +42,13 @@ class StandardNavigationDelegate: BeaconNavigationProviderDelegate, DeviceMotion
         ApproachingNextStepFeature.shared.notify(status)
     }
     
+    // = Publish intersection status
+    func didUpdateIntersectionStatus(_ status: Bool) {
+        DispatchQueue.main.async {
+            self.globalUIState.atIntersection = status
+        }
+    }
+    
     // = Speak navigation information when user shakes device
     func didShake() {
         if BeaconExploreView.inExplore { return } // Don't conflict with Explore mode shake

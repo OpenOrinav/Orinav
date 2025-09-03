@@ -4,4 +4,5 @@ protocol BeaconNavigationProviderDelegate {
     func didEndNavigation()
     func didReceiveRoadAngle(_ angle: CLLocationDirection)
     func didReceiveNavigationStatus(_ status: BeaconNavigationStatus)
+    func didUpdateIntersectionStatus(_ status: Bool)
 }

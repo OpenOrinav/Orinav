@@ -6,12 +6,12 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
     var realNavView: TNKWalkNavView?
     
     var delegate: BeaconNavigationProviderDelegate?
-
+    
     override init() {
         navManager = TNKWalkNavManager.sharedInstance()
         navManager.audioPlayer = nil
         super.init()
-
+        
         navManager.register(self)
         navManager.navDataSource = self
     }
@@ -32,16 +32,16 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
         origin.coordinate = from?.bCoordinate ?? location.bCoordinate
         origin.title = from?.bName
         origin.poiID = from?.bid
-
+        
         let destination = TNKSearchNavPoint()
         destination.coordinate = to?.bCoordinate ?? location.bCoordinate
         destination.title = to?.bName
         destination.poiID = to?.bid
-
+        
         let request = TNKRouteRequest()
         request.origin = origin
         request.destination = destination
-
+        
         return await withCheckedContinuation { continuation in
             navManager.searchRoutes(with: request) { result, error in
                 DispatchQueue.main.async {
@@ -67,11 +67,6 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
         delegate?.didReceiveRoadAngle(location.matchedCourse)
     }
     
-    
-    func walkNavManager(_ manager: TNKWalkNavManager, update navigationData: TNKWalkNavigationData) {
-        delegate?.didReceiveNavigationStatus(navigationData)
-    }
-    
     func walkNavManager(_ manager: TNKWalkNavManager, naviTTS: TNKNavTTS) -> Int32 {
         if BeaconTTSService.shared.currentPriority == .navigation || BeaconTTSService.shared.currentPriority == .navigationImportant {
             return 0 // Still playing another message
@@ -88,6 +83,62 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
     func navViewCloseButtonClicked(_ navView: TNKBaseNavView) {
         clearState()
         delegate?.didEndNavigation()
+    }
+    
+    // Process navigation data updates
+    
+    // INTERSECTION PROCESSING
+    // State
+    var atIntersection = false
+    var minDistanceDuringIntersection: Double? = nil
+    var lastIntersectionUpdateAt = Date()
+    
+    // Tunables (meters)
+    let ENTER_THRESH: Double = 12.0   // when approaching a non-straight step
+    let EXIT_DELTA: Double = 10.0     // leave after distance increases ≥ this from the min
+    let EXIT_FAR: Double = 25.0       // or if type flips straight and we're clearly away
+    
+    
+    func walkNavManager(_ manager: TNKWalkNavManager, update navigationData: TNKWalkNavigationData) {
+        delegate?.didReceiveNavigationStatus(navigationData)
+        
+        // == Are we at an intersection?
+        let d = Double(navigationData.nextDistanceLeft)
+        let isTurn = navigationData.intersectionType != 1 // is not 1 (straight)
+        
+        if !atIntersection {
+            // ENTER: close to the upcoming turn
+            if isTurn && d <= ENTER_THRESH {
+                atIntersection = true
+                minDistanceDuringIntersection = d
+                lastIntersectionUpdateAt = Date()
+                delegate?.didUpdateIntersectionStatus(true)
+            }
+        } else {
+            // While AT: track the closest approach
+            if let m = minDistanceDuringIntersection {
+                minDistanceDuringIntersection = min(m, d)
+            } else {
+                minDistanceDuringIntersection = d
+            }
+            
+            let minD = minDistanceDuringIntersection ?? d
+            
+            // EXIT condition A: we've moved away from the closest point by ≥ EXIT_DELTA
+            let movedAway = (d - minD) >= EXIT_DELTA
+            
+            // EXIT condition B: provider flipped to straight AND we're clearly beyond the junction
+            let typeMovedOn = (!isTurn && d >= EXIT_FAR)
+            
+            // Timeout to avoid sticky states in weird GPS snaps
+            let timedOut = Date().timeIntervalSince(lastIntersectionUpdateAt) > 30
+            
+            if movedAway || typeMovedOn || timedOut {
+                atIntersection = false
+                minDistanceDuringIntersection = nil
+                delegate?.didUpdateIntersectionStatus(false)
+            }
+        }
     }
 }
 

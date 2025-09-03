@@ -4,18 +4,21 @@ struct BeaconExploreView: View {
     private(set) static var inExplore = false
     
     var fromNavigation: Bool
+    
     @StateObject private var frameHandler: FrameHandler = FrameHandler()
-    @ObservedObject private var settings = SettingsManager.shared
     
     @State private var features: [Any] = []
+    
+    @ObservedObject private var settings = SettingsManager.shared
+    @EnvironmentObject var globalUIState: BeaconGlobalUIState
     
     init(fromNavigation: Bool) {
         self.fromNavigation = fromNavigation
         if fromNavigation && settings.autoSwitching {
-            // Enforce a default set of features while in navigation
-            // TODO: I want to automatically enable traffic lights when close to an intersection. Should be doable with navigation data.
-            settings.enabledObstacleDetection = true
-            settings.enabledTrafficLights = false
+            // Automatically enable features based on navigation data
+            settings.enabledObstacleDetection = !(globalUIState.atIntersection ?? false)
+            settings.enabledTrafficLights = globalUIState.atIntersection ?? false
+
             settings.enabledObjRecog = false
         }
     }

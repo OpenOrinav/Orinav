@@ -48,6 +48,12 @@ struct BeaconSettingsView: View {
                 .foregroundStyle(.secondary)) {
                     Toggle("Automatically Switch Features", isOn: $settings.autoSwitching)
                 }
+            
+            // TODO: Comment when necessary
+            Section(header: Text("Debug")) {
+                Toggle("debugShowExploreCam", isOn: $settings.debugShowExploreCam)
+                Toggle("debugTraceGPS", isOn: $settings.debugTraceGPS)
+            }
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)

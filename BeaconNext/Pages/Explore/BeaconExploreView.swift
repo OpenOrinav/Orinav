@@ -23,7 +23,7 @@ struct BeaconExploreView: View {
                     .font(.largeTitle)
                     .bold()
                 
-                if let frame = frameHandler.frame {
+                if let frame = frameHandler.frame, SettingsManager.shared.debugTraceGPS {
                     Image(uiImage: UIImage(cgImage: frame))
                         .resizable()
                         .scaledToFit()

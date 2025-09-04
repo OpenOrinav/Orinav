@@ -772,6 +772,15 @@
         }
       }
     },
+    "Debug" : {
+
+    },
+    "debugShowExploreCam" : {
+
+    },
+    "debugTraceGPS" : {
+
+    },
     "Delete" : {
       "localizations" : {
         "zh-Hans" : {

@@ -13,6 +13,8 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
     }
     
     func didUpdateLocation(_ location: BeaconLocation) {
+        TraceLoggingFeature.shared.log(location.bCoordinate)
+        
         DispatchQueue.main.async {
             self.currentLocation = location
             if SettingsManager.shared.sayLocation {

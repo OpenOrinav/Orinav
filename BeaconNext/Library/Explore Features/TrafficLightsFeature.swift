@@ -197,6 +197,8 @@ class TrafficLightsFeature {
         detectionTask = Task { [weak self] in
             var emptyCycles = 0
             
+            self?.frameHandler.zoom(2)
+
             while !Task.isCancelled {
                 guard let self = self else { return }
                 guard let frame = self.frameHandler.frame else { continue }
@@ -216,7 +218,8 @@ class TrafficLightsFeature {
                 
                 try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
             }
-            
+
+            self?.frameHandler.zoom(1)
             self?.frameHandler.cancelFocus() // Defocus when task ends
         }
     }
@@ -261,6 +264,7 @@ class TrafficLightsFeature {
         soundTask?.cancel()
         detectionTask = nil
         soundTask = nil
+        self.frameHandler.zoom(1)
         self.frameHandler.cancelFocus()
     }
 }

@@ -133,6 +133,18 @@ class FrameHandler: NSObject, ObservableObject {
         captureSessionReady = true
     }
     
+    func zoom(_ factor: CGFloat) {
+        guard let captureDevice = captureDevice else { return }
+        do {
+            try captureDevice.lockForConfiguration()
+            let zoomFactor = max(1.0, min(factor, captureDevice.activeFormat.videoMaxZoomFactor))
+            captureDevice.videoZoomFactor = zoomFactor
+            captureDevice.unlockForConfiguration()
+        } catch {
+            print("Could not lock device for configuration: \(error)")
+        }
+    }
+    
     func focus(x: Double, y: Double) { // x, y w.r.t. frame
         guard let captureDevice = captureDevice else { return }
         guard let frame = frame else { return }
@@ -196,8 +208,6 @@ extension FrameHandler: AVCaptureVideoDataOutputSampleBufferDelegate {
             guard let self = self else { return }
             self.frame = cgImage
         }
-        
-        // RECEIVED IMAGE TOOD
     }
     
     private func imageFromSampleBuffer(sampleBuffer: CMSampleBuffer) -> CGImage? {

@@ -31,7 +31,7 @@ class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider, 
         self.locationManager.requestLevel = .name
         
         let cl = CLLocationManager()
-        if (cl.authorizationStatus == .notDetermined) {
+        if cl.authorizationStatus == .notDetermined {
             self.locationManager.requestWhenInUseAuthorization()
         }
         
@@ -46,11 +46,18 @@ class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider, 
         _ manager: TencentLBSLocationManager,
         didUpdate location: TencentLBSLocation
     ) {
-        currentLocation = location
+        currentLocation = location // FIXME: For some reason I am entirely confused over, locations no longer update since Sep 10, 2025. I did not change the code. This also breaks search, which relies on a central location. It may be related to updating to iOS 26.
         currentHeading = location.direction
         if let delegate = delegate {
             delegate.didUpdateLocation(location)
             delegate.didUpdateHeading(location.direction)
         }
+    }
+    
+    func tencentLBSLocationManager(
+        _ manager: TencentLBSLocationManager,
+        didFailWithError error: any Error
+    ) {
+        print(error)
     }
 }

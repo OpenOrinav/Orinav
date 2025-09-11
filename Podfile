@@ -1,6 +1,6 @@
 platform :ios, '18.0'
 target 'BeaconNext' do
-  pod 'TencentNavKit', '7.1.1'
+  pod 'TencentNavKit', '7.2.0'
   pod 'libwebp'
 end
 

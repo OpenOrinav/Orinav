@@ -38,6 +38,13 @@ class QMapSearchProvider: NSObject, BeaconSearchProvider, QMSSearchDelegate {
         continuation = nil
     }
     
+    func search(
+        with searchOption: QMSSearchOption,
+        didFailWithError error: any Error
+    ) {
+        print(error)
+    }
+    
     func resetSearch() {
         continuation = nil
     }

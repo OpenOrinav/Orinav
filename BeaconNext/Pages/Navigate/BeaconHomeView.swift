@@ -101,12 +101,12 @@ struct BeaconHomeView: View {
                         PromotionCardView(
                             title: "Latest Features",
                             text: "Android support, road orientation, and more!",
-                            color: .cyan
+                            color: .accentColor
                         )
                         PromotionCardView(
                             title: "New to Beacon?",
                             text: "Start a tutorial to learn about how easy Beacon is.",
-                            color: .blue
+                            color: .pink
                         ) {
                             isShowingIntro = true
                         }

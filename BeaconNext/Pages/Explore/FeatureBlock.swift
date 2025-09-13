@@ -27,7 +27,7 @@ struct FeatureBlock: View {
         }
         .padding()
         .foregroundColor(active.wrappedValue ? Color.white : Color.primary)
-        .background(active.wrappedValue ? Color.blue : Color(UIColor.systemBackground))
+        .background(active.wrappedValue ? Color.accent : Color(UIColor.systemBackground))
         .cornerRadius(24)
         .buttonStyle(PlainButtonStyle())
     }

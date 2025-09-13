@@ -36,9 +36,9 @@ struct BeaconRouteSelectionView: View {
                 HStack(spacing: 12) {
                     BeaconIconConnector(
                         topImage: Image(systemName: globalUIState.routesFrom == nil ? "location.circle.fill" : globalUIState.routesFrom!.bIcon),
-                        topColor: globalUIState.routesFrom == nil ? .blue : globalUIState.routesFrom!.bIconColor,
+                        topColor: globalUIState.routesFrom == nil ? .accent : globalUIState.routesFrom!.bIconColor,
                         bottomImage: Image(systemName: globalUIState.routesDestination == nil ? "location.circle.fill" : globalUIState.routesDestination!.bIcon),
-                        bottomColor: globalUIState.routesDestination == nil ? .blue : globalUIState.routesDestination!.bIconColor
+                        bottomColor: globalUIState.routesDestination == nil ? .accent : globalUIState.routesDestination!.bIconColor
                     )
                     VStack(spacing: 12) {
                         // From text

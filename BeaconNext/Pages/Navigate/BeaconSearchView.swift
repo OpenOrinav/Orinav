@@ -51,7 +51,7 @@ struct BeaconSearchView: View {
                 HStack(spacing: 16) {
                     Image(systemName: "location.circle.fill")
                         .font(.system(size: 36))
-                        .foregroundColor(.blue)
+                        .foregroundColor(.accent)
                         .frame(width: 36, height: 36)
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 4) {

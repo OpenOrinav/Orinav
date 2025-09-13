@@ -216,9 +216,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-BeaconNext/Pods-BeaconNext-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-BeaconNext/Pods-BeaconNext-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -373,7 +377,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4A0B27345F0FCB2D7D3BDB89 /* Pods-BeaconNext.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = icon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = BeaconNext/BeaconNext.entitlements;
@@ -383,6 +387,8 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BeaconNext/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Orinav;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Beacon uses your camera to provide Explore features.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Beacon uses your location to provide navigation features in the background.";
@@ -440,7 +446,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8DB3F1F963C3BFC8A2689AB4 /* Pods-BeaconNext.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = icon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = BeaconNext/BeaconNext.entitlements;
@@ -451,6 +457,8 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BeaconNext/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Orinav;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Beacon uses your camera to provide Explore features.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Beacon uses your location to provide navigation features in the background.";

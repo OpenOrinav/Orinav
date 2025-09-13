@@ -60,7 +60,7 @@ struct BeaconPOIView: View {
                     .padding(.vertical, 8)
             }
             .buttonStyle(.borderedProminent)
-            .tint(.blue)
+            .tint(.accent)
             .disabled(globalUIState.poi == nil)
             .accessibilityLabel("Start walking navigation")
             

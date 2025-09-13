@@ -1,62 +1,38 @@
 import SwiftUI
 
 struct BeaconIntroView: View {
-    @State var currentPage = 0
     @Binding var isPresented: Bool
     
-    private let pages = [
-        String(localized: "Welcome to Beacon"),
-        String(localized: "Navigate effortlessly"),
-        String(localized: "Explore the world"),
-        String(localized: "Stay informed"),
-        String(localized: "Let's start from here")
-    ]
-    private let contents = [
-        String(localized: "Beacon is a new navigation app designed for individuals with visual impairments. It provides intuitive navigation features to help you get around safely."),
-        String(localized: "To get started navigating, simply search for places or addresses. While navigating, you can shake your device to hear instructions. You can also raise your device for environment awareness, such as learning about obstacles and traffic lights."),
-        String(localized: "Enter the Explore tab to hear nearby places as you go. You can also raise your device for the same environment awareness feature."),
-        String(localized: "Beacon is not a medical device. Beacon should not be used as a sole means of navigation and does not replace service animals, mobility aids, or professional medical or safety advice. You remain responsible for your own safety."),
-        String(localized: "You can always return to this introduction by tapping the tutorial card on the home page.")
-    ]
+    // TODO: Rework
     
     var body: some View {
-        VStack {
-            TabView(selection: $currentPage) {
-                ForEach(pages.indices, id: \.self) { index in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(pages[index])
-                            .font(.title)
-                            .bold()
-                            .tag(index)
-                        Text(contents[index])
-                    }
-                    .padding()
-                    .accessibilityElement(children: .combine)
-                    .accessibilityAddTraits(.isStaticText)
-                }
-            }
-            .tabViewStyle(PageTabViewStyle())
-            .indexViewStyle(PageIndexViewStyle())
-            .frame(maxHeight: .infinity, alignment: .top)
-            
-            HStack {
-                Button("Previous") {
-                    if currentPage > 0 { currentPage -= 1 }
-                }
-                .disabled(currentPage == 0)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                // Title: "Welcome to Orinav"
                 
-                Spacer()
+                Text("Welcome to Orinav")
+                    .font(.title)
+                    .bold()
                 
-                Button(currentPage < pages.count - 1 ? "Next" : "Done") {
-                    if currentPage < pages.count - 1 {
-                        currentPage += 1
-                    } else {
-                        isPresented = false
-                        SettingsManager.shared.shownIntro = true
-                    }
+                
+                Text("Orinav is a new navigation app designed for individuals with visual impairments. It provides intuitive navigation features to help you get around safely.")
+                Text("To get started navigating, simply search for places or addresses. While navigating, you will hear instructions to orient yourself to the road. Shake to repeat instructions.")
+                Text("Enter the Explore tab to learn more about your environment, including recognizing traffic lights, objects, and obstacles. While navigating, raise your phone to enter Explore mode.")
+                Text("Keep your phone pointing straight forward. When using Explore, keep your phone upright, at chest level, and pointing straight ahead.")
+                Text("Orinav is not a medical device. Orinav should not be used as a sole means of navigation and does not replace service animals, mobility aids, orientation and mobility training, or professional medical and safety advice. You remain responsible for your own safety.")
+                Text("You can return to this introduction at any time from the home page.")
+                Text("By continuing, you indicate your agreement to Orinav's [Terms of Service](\("https://orinav.com/terms")) and [Privacy Policy](\("https://orinav.com/privacy")).") // Links separated to allow for localization
+                
+                Button("Agree and Continue") {
+                    isPresented = false
                 }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .frame(maxWidth: .infinity)
+                .clipShape(Capsule())
             }
-            .padding([.leading, .trailing])
+            .frame(maxWidth: .infinity)
+            .padding()
         }
     }
 }

@@ -67,7 +67,7 @@ struct BeaconSettingsView: View {
                 exit(0)
             }
         } message: {
-            Text("Beacon needs to restart to apply this change.")
+            Text("Orinav needs to restart to apply this change.")
         }
     }
 }

@@ -90,7 +90,7 @@ struct BeaconHomeView: View {
                 // MARK: Beacon Promotion?
                 VStack(alignment: .leading, spacing: 16) {
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("Welcome to Beacon")
+                        Text("Welcome to Orinav")
                             .font(.title2)
                             .bold()
                         Text("A set of notes to help you get started")
@@ -104,8 +104,8 @@ struct BeaconHomeView: View {
                             color: .accentColor
                         )
                         PromotionCardView(
-                            title: "New to Beacon?",
-                            text: "Start a tutorial to learn about how easy Beacon is.",
+                            title: "New to Orinav?",
+                            text: "Start a tutorial to learn about how easy Orinav is.",
                             color: .pink
                         ) {
                             isShowingIntro = true
@@ -135,14 +135,14 @@ struct BeaconHomeView: View {
         }
         .sheet(isPresented: $isShowingIntro) {
             BeaconIntroView(isPresented: $isShowingIntro)
-                .presentationDetents([.medium])
+                .presentationDetents([.large])
         }
         .onAppear {
             if !SettingsManager.shared.shownIntro {
                 isShowingIntro = true
             }
         }
-        .navigationTitle("Beacon")
+        .navigationTitle("Orinav")
         .navigationBarTitleDisplayMode(.large)
     }
     

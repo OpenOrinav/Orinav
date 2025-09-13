@@ -93,6 +93,16 @@
         }
       }
     },
+    "Agree and Continue" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同意并继续"
+          }
+        }
+      }
+    },
     "airplane" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -285,46 +295,6 @@
         }
       }
     },
-    "Beacon" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beacon"
-          }
-        }
-      }
-    },
-    "Beacon is a new navigation app designed for individuals with visual impairments. It provides intuitive navigation features to help you get around safely." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beacon 是一款为视障人士设计的新型导航应用。它提供直观的导航功能，帮助您安全出行。"
-          }
-        }
-      }
-    },
-    "Beacon is not a medical device. Beacon should not be used as a sole means of navigation and does not replace service animals, mobility aids, or professional medical or safety advice. You remain responsible for your own safety." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beacon 不是医疗设备。请勿将 Beacon 作为唯一的导航方式，它不能替代导盲犬、助行工具或专业的医疗与安全建议。您仍需对自身安全负责。"
-          }
-        }
-      }
-    },
-    "Beacon needs to restart to apply this change." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beacon 需要重启才能应用本更改。"
-          }
-        }
-      }
-    },
     "bear" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -508,6 +478,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "巴士"
+          }
+        }
+      }
+    },
+    "By continuing, you indicate your agreement to Orinav's [Terms of Service](%@) and [Privacy Policy](%@)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "By continuing, you indicate your agreement to Orinav's [Terms of Service](%1$@) and [Privacy Policy](%2$@)."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继续使用则代表您同意 Orinav 的 [服务条款](%1$@) 和 [隐私条款](%2$@)。"
           }
         }
       }
@@ -773,13 +759,34 @@
       }
     },
     "Debug" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Debug"
+          }
+        }
+      }
     },
     "debugShowExploreCam" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "debugShowExploreCam"
+          }
+        }
+      }
     },
     "debugTraceGPS" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "debugTraceGPS"
+          }
+        }
+      }
     },
     "Delete" : {
       "localizations" : {
@@ -915,16 +922,6 @@
         }
       }
     },
-    "Done" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "完成"
-          }
-        }
-      }
-    },
     "donut" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1029,12 +1026,12 @@
         }
       }
     },
-    "Enter the Explore tab to hear nearby places as you go. You can also raise your device for the same environment awareness feature." : {
+    "Enter the Explore tab to learn more about your environment, including recognizing traffic lights, objects, and obstacles. While navigating, raise your phone to enter Explore mode." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "进入“探索”页面，即可在行进途中听到附近地点的信息。您也可以抬起设备，以启用同样的环境感知功能。"
+            "value" : "进入 探索 页面，即可扫描环境，包括识别红绿灯、物体和障碍物。导航期间，抬起手机即可进入 探索 页面。"
           }
         }
       }
@@ -1065,16 +1062,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "探索"
-          }
-        }
-      }
-    },
-    "Explore the world" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "探索身边世界"
           }
         }
       }
@@ -1356,6 +1343,16 @@
         }
       }
     },
+    "Keep your phone pointing straight forward. When using Explore, keep your phone upright, at chest level, and pointing straight ahead." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用时，请保持手机指向正前方，否则可能影响识别准确度。当使用 探索 页面时，保持手机竖立并面向正前方。"
+          }
+        }
+      }
+    },
     "keyboard" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1452,16 +1449,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "最新特性"
-          }
-        }
-      }
-    },
-    "Let's start from here" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "从这里出发"
           }
         }
       }
@@ -1619,16 +1606,6 @@
         }
       }
     },
-    "Navigate effortlessly" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "轻松导航"
-          }
-        }
-      }
-    },
     "Navigation" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1649,22 +1626,12 @@
         }
       }
     },
-    "New to Beacon?" : {
+    "New to Orinav?" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "初次使用Beacon?"
-          }
-        }
-      }
-    },
-    "Next" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "下一页"
+            "value" : "初次使用 Orinav?"
           }
         }
       }
@@ -1776,11 +1743,51 @@
         }
       }
     },
+    "Orinav" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orinav"
+          }
+        }
+      }
+    },
+    "Orinav is a new navigation app designed for individuals with visual impairments. It provides intuitive navigation features to help you get around safely." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orinav 是面向视障人士的新型导航软件。Orinav 提供符合直觉的导航功能，帮助您安全行走。"
+          }
+        }
+      }
+    },
+    "Orinav is not a medical device. Orinav should not be used as a sole means of navigation and does not replace service animals, mobility aids, orientation and mobility training, or professional medical and safety advice. You remain responsible for your own safety." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orinav 不是医疗设备。Orinav 不应作为唯一的导航工具，且不能替换导盲犬、盲杖、定向移动训练或专业医疗及安全建议。您最终需要对自己的安全负责。"
+          }
+        }
+      }
+    },
+    "Orinav needs to restart to apply this change." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orinav 需要重启才能应用本更改。"
+          }
+        }
+      }
+    },
     "Others" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "其他"
           }
         }
@@ -1887,16 +1894,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "瓶装植物"
-          }
-        }
-      }
-    },
-    "Previous" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "上一页"
           }
         }
       }
@@ -2279,12 +2276,12 @@
         }
       }
     },
-    "Start a tutorial to learn about how easy Beacon is." : {
+    "Start a tutorial to learn about how easy Orinav is." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通过一个教程了解 Beacon 的简单操作"
+            "value" : "通过一个教程了解 Orinav 的简单操作"
           }
         }
       }
@@ -2315,16 +2312,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "起始地点"
-          }
-        }
-      }
-    },
-    "Stay informed" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "注意安全"
           }
         }
       }
@@ -2491,12 +2478,12 @@
         }
       }
     },
-    "To get started navigating, simply search for places or addresses. While navigating, you can shake your device to hear instructions. You can also raise your device for environment awareness, such as learning about obstacles and traffic lights." : {
+    "To get started navigating, simply search for places or addresses. While navigating, you will hear instructions to orient yourself to the road. Shake to repeat instructions." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "只需搜索地点或地址即可开始导航。在导航过程中，您可以摇动设备来听取指引。您也可以面向前方、抬起设备，获取环境信息，例如障碍物和红绿灯等情况。"
+            "value" : "只需搜索地点或地址即可开始导航。在导航过程中，Orinav 将指引您面向正确方向。摇一摇手机即可重听指引。"
           }
         }
       }
@@ -2764,12 +2751,12 @@
         }
       }
     },
-    "Welcome to Beacon" : {
+    "Welcome to Orinav" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欢迎使用 Beacon"
+            "value" : "欢迎使用 Orinav"
           }
         }
       }
@@ -2831,12 +2818,12 @@
         }
       }
     },
-    "You can always return to this introduction by tapping the tutorial card on the home page." : {
+    "You can return to this introduction at any time from the home page." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "您可以在主页重启本教程。"
+            "value" : "您可随时在主页重启本教程。"
           }
         }
       }

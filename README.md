@@ -1,8 +1,6 @@
-# Beacon
+# Orinav
 
-Story of self, story of us, story of now.
-
-Maybe... we can do something?
+Orinav: AI-Powered Navigation for Visual Impairments
 
 ## Development Setup
 

@@ -432,7 +432,7 @@
 					"-Xlinker",
 					"-no_warn_duplicate_libraries",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.beaconassist.BeaconNext;
+				PRODUCT_BUNDLE_IDENTIFIER = com.orinav.Orinav;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
@@ -502,7 +502,7 @@
 					"-Xlinker",
 					"-no_warn_duplicate_libraries",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.beaconassist.BeaconNext;
+				PRODUCT_BUNDLE_IDENTIFIER = com.orinav.Orinav;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";

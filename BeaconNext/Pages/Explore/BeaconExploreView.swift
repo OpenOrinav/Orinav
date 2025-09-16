@@ -92,6 +92,11 @@ struct BeaconExploreView: View {
             BeaconExploreView.inExplore = true
             SoundEffectsManager.shared.playExplore()
             
+            // Prevent screen dimming
+            if !fromNavigation { // But navigation will already do this
+                UIApplication.shared.isIdleTimerDisabled = true
+            }
+            
             // Automatically enable features based on navigation data
             if fromNavigation && settings.autoSwitching {
                 settings.enabledObstacleDetection = !(globalUIState.atIntersection ?? false)
@@ -100,6 +105,7 @@ struct BeaconExploreView: View {
                 settings.enabledObjRecog = false
             }
             
+            // Initialize features based on current settings
             if settings.enabledObstacleDetection {
                 features.append(ObstacleDetectorFeature(frameHandler: frameHandler))
             }
@@ -138,6 +144,9 @@ struct BeaconExploreView: View {
         .onDisappear {
             BeaconExploreView.inExplore = false
             SoundEffectsManager.shared.playExplore()
+            if !fromNavigation {
+                UIApplication.shared.isIdleTimerDisabled = false
+            }
         }
     }
     

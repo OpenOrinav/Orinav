@@ -482,18 +482,12 @@
         }
       }
     },
-    "By continuing, you indicate your agreement to Orinav's [Terms of Service](%@) and [Privacy Policy](%@)." : {
+    "By continuing, you indicate your agreement to Orinav's Terms of Service and Privacy Policy. Your location may be shared internationally with third-party map providers to provide navigation services. See full terms for details." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "By continuing, you indicate your agreement to Orinav's [Terms of Service](%1$@) and [Privacy Policy](%2$@)."
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "继续使用则代表您同意奥里导航的 [服务条款](%1$@) 和 [隐私条款](%2$@)。"
+            "value" : "继续则表明您同意奥里导航的服务条款与隐私条款。您的位置可能被跨境共享给第三方地图服务商来为您提供导航服务，详见条款。"
           }
         }
       }
@@ -851,6 +845,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未开启"
+          }
+        }
+      }
+    },
+    "Disagree and Exit" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不同意并退出"
           }
         }
       }
@@ -1343,12 +1347,12 @@
         }
       }
     },
-    "Keep your phone pointing straight forward. When using Explore, keep your phone upright, at chest level, and pointing straight ahead." : {
+    "Keep your phone pointing straight forward. When using Explore, keep your phone upright, at chest level, and pointing straight ahead. Hold the bottom half of your phone so that you won't obstruct the camera." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用时，请保持手机指向正前方，否则可能影响识别准确度。当使用 探索 页面时，保持手机竖立并面向正前方。"
+            "value" : "使用时，请保持手机指向正前方，否则可能影响识别准确度。当使用 探索 页面时，保持手机竖立并面向正前方。请握手机的下半部分，以免遮挡摄像头。"
           }
         }
       }
@@ -1722,6 +1726,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "办公室"
+          }
+        }
+      }
+    },
+    "Open terms..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开条款…"
           }
         }
       }

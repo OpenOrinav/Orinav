@@ -1,2 +1,5 @@
 "CFBundleDisplayName" = "奥里导航";
 "CFBundleName" = "奥里导航";
+"NSCameraUsageDescription" = "当使用 \"探索\" 模式时，奥里导航使用您的摄像头扫描障碍物、物体和红绿灯。";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "奥里导航在后台使用您的位置，持续播报您所在的位置，并后台导航。";
+"NSLocationWhenInUseUsageDescription" = "奥里导航使用您的位置提供导航功能。";

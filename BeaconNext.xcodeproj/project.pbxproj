@@ -390,9 +390,9 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Orinav;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Orinav uses your camera to scan for obstacles, objects, and traffic lights in Explore mode.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Orinav uses your location in the background to keep telling you where you are and to allow for background navigation.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Orinav uses your location to allow for turn-by-turn navigation.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "DEVS: See InfoPlist.strings";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "DEVS: See InfoPlist.strings";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "DEVS: See InfoPlist.strings";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -460,9 +460,9 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Orinav;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Orinav uses your camera to scan for obstacles, objects, and traffic lights in Explore mode.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Orinav uses your location in the background to keep telling you where you are and to allow for background navigation.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Orinav uses your location to allow for turn-by-turn navigation.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "DEVS: See InfoPlist.strings";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "DEVS: See InfoPlist.strings";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "DEVS: See InfoPlist.strings";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

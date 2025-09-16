@@ -5,7 +5,6 @@ import MapboxDirections
 import MapboxSearch
 import Combine
 
-// TODO: Not calling didReceiveNavigationStatus, so no accessible UI support
 // TODO: Not calling didUpdateIntersectionStatus, so no smart Explore switching
 class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewControllerDelegate {
     var delegate: (any BeaconNavigationProviderDelegate)?
@@ -77,6 +76,7 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
         with location: CLLocation,
         rawLocation: CLLocation
     ) {
+        self.delegate?.didReceiveNavigationStatus(MapboxNavigationStatusWrapper(progress))
         self.delegate?.didReceiveRoadAngle(location.course)
     }
     
@@ -208,6 +208,59 @@ class BeaconLocationPOIWrapper: BeaconPOI {
     
     var bCoordinate: CLLocationCoordinate2D {
         return location.bCoordinate
+    }
+}
+
+class MapboxNavigationStatusWrapper: BeaconNavigationStatus {
+    var bNextRoad: String?
+    var bCurrentRoad: String
+    var bDistanceToNextSegmentMeters: Int
+    var bTotalDistanceRemainingMeters: Int
+    var bTimeRemainingSeconds: Int
+    var bTurnType: BeaconTurnType
+    
+    init(_ progress: RouteProgress) {
+        let route = progress.navigationRoutes.mainRoute.route
+        bDistanceToNextSegmentMeters = Int(progress.currentLegProgress.currentStepProgress.distanceRemaining)
+        bTotalDistanceRemainingMeters = Int(progress.distanceRemaining)
+        bTimeRemainingSeconds = Int(progress.durationRemaining)
+        bCurrentRoad = progress.currentLegProgress.currentStep.names?.first ?? "?"
+        if progress.legIndex >= route.legs.count {
+            bNextRoad = nil
+        } else {
+            bNextRoad = progress.currentLegProgress.upcomingStep?.names?.first
+        }
+        switch progress.currentLegProgress.currentStep.maneuverType {
+        case .arrive:
+            bTurnType = .stop
+        case .continue:
+            bTurnType = .straight
+        case .depart:
+            bTurnType = .unnavigable
+        case .turn:
+            switch progress.currentLegProgress.currentStep.maneuverDirection {
+            case .left:
+                bTurnType = .left
+            case .right:
+                bTurnType = .right
+            case .slightLeft:
+                bTurnType = .slightLeft
+            case .slightRight:
+                bTurnType = .slightRight
+            case .straightAhead:
+                bTurnType = .straight
+            case .uTurn:
+                bTurnType = .uTurn
+            case .sharpLeft:
+                bTurnType = .sharpLeft
+            case .sharpRight:
+                bTurnType = .sharpRight
+            default:
+                bTurnType = .unnavigable
+            }
+        default:
+            bTurnType = .unnavigable
+        }
     }
 }
 

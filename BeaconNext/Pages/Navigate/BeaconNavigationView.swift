@@ -18,6 +18,10 @@ struct BeaconNavigationView: View {
                             Text("Arrive at your destination")
                                 .font(.title)
                                 .bold()
+                        } else if data.bTurnType == .unnavigable {
+                            Text(data.bTurnType.localizedName)
+                                .font(.title)
+                                .bold()
                         } else {
                             Text("\(Text(data.bTurnType.localizedName)) onto \(data.bNextRoad!)")
                                 .font(.title)

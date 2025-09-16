@@ -23,6 +23,8 @@ class SettingsManager: ObservableObject {
     @AppStorage("debugShowExploreCam")      var debugShowExploreCam: Bool = false
     @AppStorage("debugTraceGPS")            var debugTraceGPS: Bool = false
     @AppStorage("shownIntro")               var shownIntro: Bool = false
+
+    @AppStorage("MGLMapboxMetricsEnabled")  var mapboxTelemetry: Bool = false // Don't show this, who wants to fuss with that?
     
     private init() {}
 }

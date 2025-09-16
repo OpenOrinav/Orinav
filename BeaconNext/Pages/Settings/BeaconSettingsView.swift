@@ -3,7 +3,9 @@ import AVFoundation
 
 struct BeaconSettingsView: View {
     @ObservedObject private var settings = SettingsManager.shared
+
     @State private var showRestartAlert = false
+    @State private var showMapAttribution = false
     
     private var formattedSpeechRate: String {
         // Show like "0.5x" with one decimal (or more if you prefer)
@@ -49,6 +51,28 @@ struct BeaconSettingsView: View {
                     Toggle("Automatically Switch Features", isOn: $settings.autoSwitching)
                 }
             
+            Section(header: Text("Legal"), footer: Text("When turned on, Mapbox will collect anonymous location data to help improve their services.")
+                .font(.caption)
+                .foregroundStyle(.secondary)) {
+                Toggle("Mapbox Telemetry", isOn: $settings.mapboxTelemetry)
+            }
+            
+            Section {
+                Button("Map Attribution") {
+                    showMapAttribution = true
+                }
+                Button("Terms of Service") {
+                    if let url = URL(string: "https://orinav.com/terms") {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                Button("Privacy Policy") {
+                    if let url = URL(string: "https://orinav.com/privacy") {
+                        UIApplication.shared.open(url)
+                    }
+                }
+            }
+            
             #if DEBUG
             Section(header: Text("Debug")) {
                 Toggle("debugShowExploreCam", isOn: $settings.debugShowExploreCam)
@@ -60,6 +84,10 @@ struct BeaconSettingsView: View {
         .navigationBarTitleDisplayMode(.large)
         .onChange(of: settings.mapProvider) {
             showRestartAlert = true
+        }
+        .sheet(isPresented: $showMapAttribution) {
+            BeaconMapAttributionView(isPresented: $showMapAttribution)
+                .presentationDetents([.large])
         }
         .alert("Restart Required",
                isPresented: $showRestartAlert) {

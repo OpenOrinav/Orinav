@@ -859,6 +859,16 @@
         }
       }
     },
+    "Dismisses the legal sheet" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收起法律弹窗"
+          }
+        }
+      }
+    },
     "Dismisses the place sheet" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1457,6 +1467,16 @@
         }
       }
     },
+    "Legal" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "法律"
+          }
+        }
+      }
+    },
     "Loading routes" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1508,6 +1528,36 @@
         }
       }
     },
+    "Map Attribution" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "地图来源"
+          }
+        }
+      }
+    },
+    "Map data [© Mapbox](https://www.mapbox.com/about/maps), [© OpenStreetMap](http://www.openstreetmap.org/about/). [Improve this map](https://apps.mapbox.com/feedback/)." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "地图数据 [© Mapbox](https://www.mapbox.com/about/maps), [© OpenStreetMap](http://www.openstreetmap.org/about/). [改善本地图](https://apps.mapbox.com/feedback/)."
+          }
+        }
+      }
+    },
+    "Map data [© 腾讯地图](https://lbs.qq.com/). [Improve this map](https://map.wap.qq.com/app/help/detail1.html). GS粤(2023)1171号" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "地图数据 [© 腾讯地图](https://lbs.qq.com/). [改善本地图](https://map.wap.qq.com/app/help/detail1.html). GS粤(2023)1171号"
+          }
+        }
+      }
+    },
     "Map Provider" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1524,6 +1574,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mapbox (全球)"
+          }
+        }
+      }
+    },
+    "Mapbox Telemetry" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapbox 遥测"
           }
         }
       }
@@ -1908,6 +1968,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "瓶装植物"
+          }
+        }
+      }
+    },
+    "Privacy Policy" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐私条款"
           }
         }
       }
@@ -2455,6 +2525,16 @@
         }
       }
     },
+    "Terms of Service" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务条款"
+          }
+        }
+      }
+    },
     "tie" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2791,6 +2871,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "启用后，“探索”会根据您的移动和位置自动切换功能。"
+          }
+        }
+      }
+    },
+    "When turned on, Mapbox will collect anonymous location data to help improve their services." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用后，Mapbox 会收集匿名位置数据以改进其服务。"
           }
         }
       }

@@ -5,4 +5,6 @@ protocol BeaconLocationProvider {
     
     var currentLocation: BeaconLocation? { get }
     var currentHeading: CLLocationDirection? { get }
+    
+    func requestPermissions()
 }

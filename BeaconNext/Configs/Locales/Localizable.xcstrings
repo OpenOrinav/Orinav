@@ -482,18 +482,12 @@
         }
       }
     },
-    "By continuing, you indicate your agreement to Orinav's [Terms of Service](%@) and [Privacy Policy](%@)." : {
+    "By continuing, you indicate your agreement to Orinav's Terms of Service and Privacy Policy. Your location may be shared internationally with third-party map providers to provide navigation services. See full terms for details." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "By continuing, you indicate your agreement to Orinav's [Terms of Service](%1$@) and [Privacy Policy](%2$@)."
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "继续使用则代表您同意 Orinav 的 [服务条款](%1$@) 和 [隐私条款](%2$@)。"
+            "value" : "继续则表明您同意奥里导航的服务条款与隐私条款。您的位置可能被跨境共享给第三方地图服务商来为您提供导航服务，详见条款。"
           }
         }
       }
@@ -851,6 +845,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未开启"
+          }
+        }
+      }
+    },
+    "Disagree and Exit" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不同意并退出"
+          }
+        }
+      }
+    },
+    "Dismisses the legal sheet" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收起法律弹窗"
           }
         }
       }
@@ -1343,12 +1357,12 @@
         }
       }
     },
-    "Keep your phone pointing straight forward. When using Explore, keep your phone upright, at chest level, and pointing straight ahead." : {
+    "Keep your phone pointing straight forward. When using Explore, keep your phone upright, at chest level, and pointing straight ahead. Hold the bottom half of your phone so that you won't obstruct the camera." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用时，请保持手机指向正前方，否则可能影响识别准确度。当使用 探索 页面时，保持手机竖立并面向正前方。"
+            "value" : "使用时，请保持手机指向正前方，否则可能影响识别准确度。当使用 探索 页面时，保持手机竖立并面向正前方。请握手机的下半部分，以免遮挡摄像头。"
           }
         }
       }
@@ -1453,6 +1467,16 @@
         }
       }
     },
+    "Legal" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "法律"
+          }
+        }
+      }
+    },
     "Loading routes" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1504,6 +1528,36 @@
         }
       }
     },
+    "Map Attribution" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "地图来源"
+          }
+        }
+      }
+    },
+    "Map data [© Mapbox](https://www.mapbox.com/about/maps), [© OpenStreetMap](http://www.openstreetmap.org/about/). [Improve this map](https://apps.mapbox.com/feedback/)." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "地图数据 [© Mapbox](https://www.mapbox.com/about/maps), [© OpenStreetMap](http://www.openstreetmap.org/about/). [改善本地图](https://apps.mapbox.com/feedback/)."
+          }
+        }
+      }
+    },
+    "Map data [© 腾讯地图](https://lbs.qq.com/). [Improve this map](https://map.wap.qq.com/app/help/detail1.html). GS粤(2023)1171号" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "地图数据 [© 腾讯地图](https://lbs.qq.com/). [改善本地图](https://map.wap.qq.com/app/help/detail1.html). GS粤(2023)1171号"
+          }
+        }
+      }
+    },
     "Map Provider" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1520,6 +1574,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mapbox (全球)"
+          }
+        }
+      }
+    },
+    "Mapbox Telemetry" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapbox 遥测"
           }
         }
       }
@@ -1631,7 +1695,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "初次使用 Orinav?"
+            "value" : "初次使用奥里导航?"
           }
         }
       }
@@ -1726,6 +1790,16 @@
         }
       }
     },
+    "Open terms..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开条款…"
+          }
+        }
+      }
+    },
     "orange" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1748,7 +1822,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Orinav"
+            "value" : "奥里导航"
           }
         }
       }
@@ -1758,7 +1832,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Orinav 是面向视障人士的新型导航软件。Orinav 提供符合直觉的导航功能，帮助您安全行走。"
+            "value" : "奥里导航是面向视障人士的新型导航软件。奥里导航提供符合直觉的导航功能，帮助您安全行走。"
           }
         }
       }
@@ -1768,7 +1842,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Orinav 不是医疗设备。Orinav 不应作为唯一的导航工具，且不能替换导盲犬、盲杖、定向移动训练或专业医疗及安全建议。您最终需要对自己的安全负责。"
+            "value" : "奥里导航不是医疗设备。奥里导航不应作为唯一的导航工具，且不能替换导盲犬、盲杖、定向移动训练或专业医疗及安全建议。您最终需要对自己的安全负责。"
           }
         }
       }
@@ -1778,7 +1852,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Orinav 需要重启才能应用本更改。"
+            "value" : "奥里导航需要重启才能应用本更改。"
           }
         }
       }
@@ -1894,6 +1968,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "瓶装植物"
+          }
+        }
+      }
+    },
+    "Privacy Policy" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐私条款"
           }
         }
       }
@@ -2281,7 +2365,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通过一个教程了解 Orinav 的简单操作"
+            "value" : "通过一个教程了解奥里导航的简单操作"
           }
         }
       }
@@ -2441,6 +2525,16 @@
         }
       }
     },
+    "Terms of Service" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务条款"
+          }
+        }
+      }
+    },
     "tie" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2483,7 +2577,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "只需搜索地点或地址即可开始导航。在导航过程中，Orinav 将指引您面向正确方向。摇一摇手机即可重听指引。"
+            "value" : "只需搜索地点或地址即可开始导航。在导航过程中，奥里导航将指引您面向正确方向。摇一摇手机即可重听指引。"
           }
         }
       }
@@ -2756,7 +2850,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欢迎使用 Orinav"
+            "value" : "欢迎使用奥里导航"
           }
         }
       }
@@ -2777,6 +2871,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "启用后，“探索”会根据您的移动和位置自动切换功能。"
+          }
+        }
+      }
+    },
+    "When turned on, Mapbox will collect anonymous location data to help improve their services." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用后，Mapbox 会收集匿名位置数据以改进其服务。"
           }
         }
       }

@@ -22,8 +22,11 @@ class MapboxLocationProvider: NSObject, BeaconLocationProvider {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.headingFilter = 5
-        locationManager.requestWhenInUseAuthorization()
         startUpdating()
+    }
+    
+    func requestPermissions() {
+        locationManager.requestWhenInUseAuthorization()
     }
 
     func startUpdating() {

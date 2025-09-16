@@ -46,6 +46,7 @@ struct BeaconNavigationContainerView: View {
         }
         .onAppear {
             if let route = globalUIState.routeInNavigation {
+                UIApplication.shared.isIdleTimerDisabled = true
                 Task { @MainActor in
                     let view = await globalState.navigationProvider.startNavigation(with: route)
                     navigationView = view
@@ -54,11 +55,13 @@ struct BeaconNavigationContainerView: View {
         }
         .onChange(of: globalUIState.routeInNavigation?.bid) {
             if let route = globalUIState.routeInNavigation {
+                UIApplication.shared.isIdleTimerDisabled = true
                 Task { @MainActor in
                     let view = await globalState.navigationProvider.startNavigation(with: route)
                     navigationView = view
                 }
             } else {
+                UIApplication.shared.isIdleTimerDisabled = false
                 navigationView = nil
             }
         }

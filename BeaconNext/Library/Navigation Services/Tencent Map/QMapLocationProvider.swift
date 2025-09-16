@@ -30,16 +30,18 @@ class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider, 
         self.locationManager.pausesLocationUpdatesAutomatically = false
         self.locationManager.requestLevel = .name
         
-        let cl = CLLocationManager()
-        if cl.authorizationStatus == .notDetermined {
-            self.locationManager.requestWhenInUseAuthorization()
-        }
-        
         super.init()
         self.locationManager.delegate = self
         self.locationManager.headingFilter = 5
         self.locationManager.startUpdatingHeading()
         self.locationManager.startUpdatingLocation()
+    }
+    
+    func requestPermissions() {
+        let cl = CLLocationManager()
+        if cl.authorizationStatus == .notDetermined {
+            self.locationManager.requestWhenInUseAuthorization()
+        }
     }
     
     func tencentLBSLocationManager(

@@ -1,0 +1,5 @@
+"CFBundleDisplayName" = "Orinav";
+"CFBundleName" = "Orinav";
+"NSCameraUsageDescription" = "Orinav uses your camera to scan for obstacles, objects, and traffic lights in Explore mode.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "Orinav uses your location in the background to keep telling you where you are and to allow for background navigation.";
+"NSLocationWhenInUseUsageDescription" = "Orinav uses your location to allow for turn-by-turn navigation.";

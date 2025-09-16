@@ -72,6 +72,11 @@ class BeaconMappingCoordinator: ObservableObject {
     func providerReinit() {
         locationProvider.delegate = locationDelegate
         navigationProvider.delegate = navigationDelegate
+        
+        if SettingsManager.shared.shownIntro { // Can immediately request permission
+            locationProvider.requestPermissions()
+        }
+        
         cancellable = locationDelegate.objectWillChange
             .sink { [weak self] _ in
                 self?.objectWillChange.send()

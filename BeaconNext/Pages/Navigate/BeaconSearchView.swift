@@ -131,7 +131,7 @@ struct BeaconSearchView: View {
         Task {
             let results = await globalState.searchProvider.searchByPOI(
                 poi: text,
-                center: globalState.locationProvider.currentLocation?.bCoordinate
+                center: globalState.locationProvider.currentLocation
             )
             await MainActor.run {
                 searchResults = results

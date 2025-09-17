@@ -10,6 +10,10 @@ extension TencentLBSLocation: BeaconLocation {
     var bName: String? {
         name
     }
+    
+    var bCity: String? {
+        city
+    }
 }
 
 class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider, TencentLBSLocationManagerDelegate {
@@ -28,7 +32,7 @@ class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider, 
         self.locationManager = TencentLBSLocationManager()
         self.locationManager.apiKey = apiKey
         self.locationManager.pausesLocationUpdatesAutomatically = false
-        self.locationManager.requestLevel = .name
+        self.locationManager.requestLevel = .adminName
         
         super.init()
         self.locationManager.delegate = self
@@ -48,7 +52,7 @@ class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider, 
         _ manager: TencentLBSLocationManager,
         didUpdate location: TencentLBSLocation
     ) {
-        currentLocation = location // FIXME: For some reason I am entirely confused over, locations no longer update since Sep 10, 2025. I did not change the code. This also breaks search, which relies on a central location. It may be related to updating to iOS 26.
+        currentLocation = location
         currentHeading = location.direction
         if let delegate = delegate {
             delegate.didUpdateLocation(location)

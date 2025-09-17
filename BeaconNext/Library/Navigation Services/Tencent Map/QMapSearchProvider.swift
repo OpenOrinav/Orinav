@@ -13,7 +13,7 @@ class QMapSearchProvider: NSObject, BeaconSearchProvider, QMSSearchDelegate {
         self.searchManager.delegate = self
     }
     
-    func searchByPOI(poi: String, center: CLLocationCoordinate2D?) async -> [any BeaconPOI] {
+    func searchByPOI(poi: String, center: BeaconLocation?) async -> [any BeaconPOI] {
         return await withCheckedContinuation { cont in
             self.continuation = cont
             
@@ -21,7 +21,9 @@ class QMapSearchProvider: NSObject, BeaconSearchProvider, QMSSearchDelegate {
             option.keyword = poi
             option.added_fields = "category_code"
             if let center = center {
-                option.setBoundaryByNearbyWithCenter(center, radius: 1000, autoExtend: true)
+                option.boundary = "region(\(center.bCity ?? "北京"),1,\(center.bCoordinate.latitude),\(center.bCoordinate.longitude))"
+            } else {
+                option.boundary = "region(北京)" // Will automatically extend to other cities if not in Beijing
             }
             
             self.searchManager.searchWithPoiSearchOption(option)

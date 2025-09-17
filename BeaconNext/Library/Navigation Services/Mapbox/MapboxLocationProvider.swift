@@ -91,4 +91,8 @@ class MapboxWrappedBeaconLocation: BeaconLocation {
     var bName: String? {
         return mapboxPOI.name
     }
+    
+    var bCity: String? {
+        return "TODO" // First, I can't find a simple way to include the city. Then, this is only used in Tencent Map searching, so there's no real point in returning anything.
+    }
 }

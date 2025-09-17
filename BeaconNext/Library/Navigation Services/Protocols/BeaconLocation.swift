@@ -3,6 +3,7 @@ import CoreLocation
 protocol BeaconLocation {
     var bCoordinate: CLLocationCoordinate2D { get }
     var bName: String? { get }
+    var bCity: String? { get }
     
     func distance(to location: BeaconLocation) -> CLLocationDistance
 }

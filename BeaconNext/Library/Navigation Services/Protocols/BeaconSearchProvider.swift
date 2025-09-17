@@ -1,5 +1,5 @@
 import CoreLocation
 
 protocol BeaconSearchProvider {
-    func searchByPOI(poi: String, center: CLLocationCoordinate2D?) async -> [any BeaconPOI]
+    func searchByPOI(poi: String, center: BeaconLocation?) async -> [any BeaconPOI]
 }

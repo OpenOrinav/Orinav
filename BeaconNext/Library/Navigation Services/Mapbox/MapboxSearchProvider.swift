@@ -4,7 +4,7 @@ import MapboxSearch
 class MapboxSearchProvider: BeaconSearchProvider {
     let searcher = SearchEngine(apiType: .searchBox)
     
-    func searchByPOI(poi: String, center: CLLocationCoordinate2D?) async -> [any BeaconPOI] {
+    func searchByPOI(poi: String, center: BeaconLocation?) async -> [any BeaconPOI] {
         return await withCheckedContinuation { continuation in
             searcher.forward(query: poi, options: SearchOptions(limit: 10)) { result in
                 switch result {

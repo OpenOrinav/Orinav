@@ -1982,6 +1982,16 @@
         }
       }
     },
+    "Proceed to the nearest road" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往最近的道路"
+          }
+        }
+      }
+    },
     "Red" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2750,6 +2760,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "右转"
+          }
+        }
+      }
+    },
+    "Turn sharp left" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "急左转"
+          }
+        }
+      }
+    },
+    "Turn sharp right" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "急右转"
           }
         }
       }

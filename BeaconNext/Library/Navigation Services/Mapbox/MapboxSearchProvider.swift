@@ -6,7 +6,7 @@ class MapboxSearchProvider: BeaconSearchProvider {
     
     func searchByPOI(poi: String, center: BeaconLocation?) async -> [any BeaconPOI] {
         return await withCheckedContinuation { continuation in
-            searcher.forward(query: poi, options: SearchOptions(limit: 10)) { result in
+            searcher.forward(query: poi, options: SearchOptions(limit: 10, proximity: center?.bCoordinate)) { result in
                 switch result {
                 case .success(let suggestions):
                     let wrappedResults = suggestions.map { WrappedMapboxSearchResult(searchResult: $0) }

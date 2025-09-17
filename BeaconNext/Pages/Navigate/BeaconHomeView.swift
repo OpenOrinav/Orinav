@@ -138,6 +138,13 @@ struct BeaconHomeView: View {
                 .presentationDetents([.large])
                 .interactiveDismissDisabled(!SettingsManager.shared.shownIntro) // Compliance: Must agree to terms before continuing
         }
+        .sheet(isPresented: Binding(
+            get: { globalState.locationDelegate.authorizationStatus == .denied || globalState.locationDelegate.authorizationStatus == .restricted },
+            set: { _ in }
+        )) {
+            BeaconPermissionsView()
+                .interactiveDismissDisabled()
+        }
         .onAppear {
             if !SettingsManager.shared.shownIntro {
                 isShowingIntro = true

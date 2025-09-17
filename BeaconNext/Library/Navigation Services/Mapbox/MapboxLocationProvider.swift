@@ -45,6 +45,7 @@ class MapboxLocationProvider: NSObject, BeaconLocationProvider {
 // MARK: - CLLocationManagerDelegate
 extension MapboxLocationProvider: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        delegate?.didUpdateAuthorizationStatus(status)
         switch status {
         case .authorizedAlways, .authorizedWhenInUse:
             startUpdating()

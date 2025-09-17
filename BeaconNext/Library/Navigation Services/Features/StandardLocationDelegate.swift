@@ -5,6 +5,7 @@ import CoreMotion
 class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate, DeviceMotionDelegate {
     @Published var currentLocation: BeaconLocation?
     @Published var currentHeading: CLLocationDirection?
+    @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
     
     let globalUIState: BeaconGlobalUIState
     
@@ -29,6 +30,12 @@ class StandardLocationDelegate: ObservableObject, BeaconLocationProviderDelegate
             if SettingsManager.shared.sayDirection {
                 self.speakFacingDirection()
             }
+        }
+    }
+    
+    func didUpdateAuthorizationStatus(_ status: CLAuthorizationStatus) {
+        DispatchQueue.main.async {
+            self.authorizationStatus = status
         }
     }
     

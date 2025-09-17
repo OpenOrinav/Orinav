@@ -1178,6 +1178,16 @@
         }
       }
     },
+    "Go to Settings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往设置"
+          }
+        }
+      }
+    },
     "Government" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1827,6 +1837,16 @@
         }
       }
     },
+    "Orinav needs to access your location to provide navigation services. Please enable location permissions in Settings." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "奥里导航需要您的位置以提供导航服务。请在设置中启用位置权限。"
+          }
+        }
+      }
+    },
     "Orinav needs to restart to apply this change." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1887,6 +1907,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "停车收费器"
+          }
+        }
+      }
+    },
+    "Permissions Required" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要权限"
           }
         }
       }

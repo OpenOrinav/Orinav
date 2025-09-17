@@ -2,24 +2,13 @@ import QMapKit
 import TencentNavKit
 import CoreLocation
 
-extension TencentLBSLocation: BeaconLocation {
-    var bCoordinate: CLLocationCoordinate2D {
-        location.coordinate
-    }
-    
-    var bName: String? {
-        name
-    }
-    
-    var bCity: String? {
-        city
-    }
-}
-
-class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider, TencentLBSLocationManagerDelegate {
+class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider {
     var delegate: BeaconLocationProviderDelegate?
     var currentLocation: BeaconLocation?
     var currentHeading: CLLocationDirection?
+    var permissionStatus: CLAuthorizationStatus
+    
+    let cl = CLLocationManager()
     
     private var locationManager: TencentLBSLocationManager
     
@@ -33,8 +22,10 @@ class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider, 
         self.locationManager.apiKey = apiKey
         self.locationManager.pausesLocationUpdatesAutomatically = false
         self.locationManager.requestLevel = .adminName
+        self.permissionStatus = cl.authorizationStatus
         
         super.init()
+        cl.delegate = self
         self.locationManager.delegate = self
         self.locationManager.headingFilter = 5
         self.locationManager.startUpdatingHeading()
@@ -42,12 +33,19 @@ class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider, 
     }
     
     func requestPermissions() {
-        let cl = CLLocationManager()
         if cl.authorizationStatus == .notDetermined {
             self.locationManager.requestWhenInUseAuthorization()
         }
     }
-    
+}
+
+extension QMapLocationProvider: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        delegate?.didUpdateAuthorizationStatus(status)
+    }
+}
+
+extension QMapLocationProvider: TencentLBSLocationManagerDelegate {
     func tencentLBSLocationManager(
         _ manager: TencentLBSLocationManager,
         didUpdate location: TencentLBSLocation
@@ -65,5 +63,19 @@ class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider, 
         didFailWithError error: any Error
     ) {
         print(error)
+    }
+}
+
+extension TencentLBSLocation: BeaconLocation {
+    var bCoordinate: CLLocationCoordinate2D {
+        location.coordinate
+    }
+    
+    var bName: String? {
+        name
+    }
+    
+    var bCity: String? {
+        city
     }
 }

@@ -10,6 +10,8 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
     var delegate: (any BeaconNavigationProviderDelegate)?
     let mnp: MapboxNavigationProvider
     
+    private var cancellables = Set<AnyCancellable>()
+    
     var routes: NavigationRoutes?
     var controller: NavigationViewController?
     
@@ -21,6 +23,15 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
                 ttsConfig: .custom(speechSynthesizer: BeaconMapboxSpeechSynthesizer())
             )
         )
+        
+        mnp.navigation().routeProgress.sink { prog in
+            guard let progress = prog?.routeProgress else { return }
+            self.delegate?.didReceiveNavigationStatus(MapboxNavigationStatusWrapper(progress))
+        }.store(in: &cancellables)
+        
+        mnp.navigation().locationMatching.sink { location in
+            self.delegate?.didReceiveRoadAngle(location.enhancedLocation.course)
+        }.store(in: &cancellables)
     }
     
     func planRoutes(
@@ -69,17 +80,7 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
         self.clearState()
         self.delegate?.didEndNavigation()
     }
-    
-    func navigationViewController(
-        _ navigationViewController: NavigationViewController,
-        didUpdate progress: RouteProgress,
-        with location: CLLocation,
-        rawLocation: CLLocation
-    ) {
-        self.delegate?.didReceiveNavigationStatus(MapboxNavigationStatusWrapper(progress))
-        self.delegate?.didReceiveRoadAngle(location.course)
-    }
-    
+
     func clearState() {
         routes = nil
         mnp.mapboxNavigation.tripSession().setToIdle()
@@ -228,38 +229,43 @@ class MapboxNavigationStatusWrapper: BeaconNavigationStatus {
         if progress.legIndex >= route.legs.count {
             bNextRoad = nil
         } else {
-            bNextRoad = progress.currentLegProgress.upcomingStep?.names?.first
+            bNextRoad = progress.currentLegProgress.upcomingStep?.names?.first ?? progress.upcomingLeg?.steps.first?.names?.first
         }
-        switch progress.currentLegProgress.currentStep.maneuverType {
-        case .arrive:
-            bTurnType = .stop
-        case .continue:
-            bTurnType = .straight
-        case .depart:
-            bTurnType = .unnavigable
-        case .turn:
-            switch progress.currentLegProgress.currentStep.maneuverDirection {
-            case .left:
-                bTurnType = .left
-            case .right:
-                bTurnType = .right
-            case .slightLeft:
-                bTurnType = .slightLeft
-            case .slightRight:
-                bTurnType = .slightRight
-            case .straightAhead:
+        if progress.currentLegProgress.upcomingStep != nil || progress.upcomingLeg != nil {
+            let step = progress.currentLegProgress.upcomingStep ?? progress.upcomingLeg!.steps.first!
+            switch step.maneuverType {
+            case .arrive:
+                bTurnType = .stop
+            case .continue:
                 bTurnType = .straight
-            case .uTurn:
-                bTurnType = .uTurn
-            case .sharpLeft:
-                bTurnType = .sharpLeft
-            case .sharpRight:
-                bTurnType = .sharpRight
+            case .depart:
+                bTurnType = .unnavigable
+            case .turn:
+                switch step.maneuverDirection {
+                case .left:
+                    bTurnType = .left
+                case .right:
+                    bTurnType = .right
+                case .slightLeft:
+                    bTurnType = .slightLeft
+                case .slightRight:
+                    bTurnType = .slightRight
+                case .straightAhead:
+                    bTurnType = .straight
+                case .uTurn:
+                    bTurnType = .uTurn
+                case .sharpLeft:
+                    bTurnType = .sharpLeft
+                case .sharpRight:
+                    bTurnType = .sharpRight
+                default:
+                    bTurnType = .unnavigable
+                }
             default:
                 bTurnType = .unnavigable
             }
-        default:
-            bTurnType = .unnavigable
+        } else {
+            bTurnType = .stop
         }
     }
 }

@@ -136,6 +136,7 @@ struct BeaconHomeView: View {
         .sheet(isPresented: $isShowingIntro) {
             BeaconIntroView(isPresented: $isShowingIntro)
                 .presentationDetents([.large])
+                .interactiveDismissDisabled(!SettingsManager.shared.shownIntro) // Compliance: Must agree to terms before continuing
         }
         .onAppear {
             if !SettingsManager.shared.shownIntro {

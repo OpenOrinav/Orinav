@@ -75,8 +75,11 @@ struct BeaconSettingsView: View {
             
             #if DEBUG
             Section(header: Text("Debug")) {
-                Toggle("debugShowExploreCam", isOn: $settings.debugShowExploreCam)
-                Toggle("debugTraceGPS", isOn: $settings.debugTraceGPS)
+                Toggle("Show Explore Camera", isOn: $settings.debugShowExploreCam)
+                Toggle("Trace GPS", isOn: $settings.debugTraceGPS)
+                Button("Reset Intro") {
+                    settings.shownIntro = false
+                }
             }
             #endif
         }

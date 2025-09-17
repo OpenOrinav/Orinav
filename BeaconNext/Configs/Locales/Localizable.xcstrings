@@ -757,27 +757,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Debug"
-          }
-        }
-      }
-    },
-    "debugShowExploreCam" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "debugShowExploreCam"
-          }
-        }
-      }
-    },
-    "debugTraceGPS" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "debugTraceGPS"
+            "value" : "调试"
           }
         }
       }
@@ -2056,6 +2036,16 @@
         }
       }
     },
+    "Reset Intro" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置介绍"
+          }
+        }
+      }
+    },
     "Residential" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2194,6 +2184,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "购物"
+          }
+        }
+      }
+    },
+    "Show Explore Camera" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示探索摄像头"
           }
         }
       }
@@ -2639,6 +2639,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "牙刷"
+          }
+        }
+      }
+    },
+    "Trace GPS" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追踪 GPS"
           }
         }
       }

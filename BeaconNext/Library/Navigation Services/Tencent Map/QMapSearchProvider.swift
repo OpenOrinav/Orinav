@@ -2,7 +2,7 @@ import Foundation
 import CoreLocation
 import QMapKit
 
-class QMapSearchProvider: NSObject, BeaconSearchProvider, QMSSearchDelegate {
+class QMapSearchProvider: NSObject, BeaconSearchProvider {
     private let searchManager: QMSSearcher
     private var continuation: CheckedContinuation<[any BeaconPOI], Never>?
     
@@ -30,8 +30,12 @@ class QMapSearchProvider: NSObject, BeaconSearchProvider, QMSSearchDelegate {
         }
     }
     
-    // MARK: - QMSSearchDelegate
-    
+    func resetSearch() {
+        continuation = nil
+    }
+}
+
+extension QMapSearchProvider: QMSSearchDelegate {
     func search(
         with poiSearchOption: QMSPoiSearchOption,
         didReceive poiSearchResult: QMSPoiSearchResult
@@ -45,10 +49,6 @@ class QMapSearchProvider: NSObject, BeaconSearchProvider, QMSSearchDelegate {
         didFailWithError error: any Error
     ) {
         print(error)
-    }
-    
-    func resetSearch() {
-        continuation = nil
     }
 }
 

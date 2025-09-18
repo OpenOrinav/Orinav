@@ -1,7 +1,7 @@
 import SwiftUI
 import TencentNavKit
 
-class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDelegate, TNKWalkNavViewDelegate, TNKWalkNavDataSource {
+class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalkNavDataSource {
     let navManager: TNKWalkNavManager
     var realNavView: TNKWalkNavView?
     
@@ -63,6 +63,13 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
         realNavView = nil
     }
     
+    func startNavigation(with: any BeaconWalkRoute) async -> AnyView {
+        navManager.startNav(withRouteID: with.bid)
+        return AnyView(QMapNavigationView(navManager: self, navView: realNavView!))
+    }
+}
+
+extension QMapNavigationServiceProvider: TNKWalkNavDelegate {
     func walkNavManager(_ manager: TNKWalkNavManager, didUpdate location: TNKLocation) {
         delegate?.didReceiveRoadAngle(location.matchedCourse)
     }
@@ -75,18 +82,15 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
         return 1
     }
     
-    func startNavigation(with: any BeaconWalkRoute) async -> AnyView {
-        navManager.startNav(withRouteID: with.bid)
-        return AnyView(QMapNavigationView(navManager: self, navView: realNavView!))
+    func walkNavManager(_ manager: TNKWalkNavManager, update navigationData: TNKWalkNavigationData) {
+        delegate?.didReceiveNavigationStatus(navigationData)
     }
-    
+}
+
+extension QMapNavigationServiceProvider: TNKWalkNavViewDelegate {
     func navViewCloseButtonClicked(_ navView: TNKBaseNavView) {
         clearState()
         delegate?.didEndNavigation()
-    }
-
-    func walkNavManager(_ manager: TNKWalkNavManager, update navigationData: TNKWalkNavigationData) {
-        delegate?.didReceiveNavigationStatus(navigationData)
     }
 }
 

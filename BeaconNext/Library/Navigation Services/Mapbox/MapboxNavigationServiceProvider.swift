@@ -5,7 +5,7 @@ import MapboxDirections
 import MapboxSearch
 import Combine
 
-class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewControllerDelegate {
+class MapboxNavigationServiceProvider: BeaconNavigationProvider {
     var delegate: (any BeaconNavigationProviderDelegate)?
     let mnp: MapboxNavigationProvider
     
@@ -71,14 +71,6 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
             return []
         }
     }
-    
-    func navigationViewControllerDidDismiss(
-        _ navigationViewController: NavigationViewController,
-        byCanceling canceled: Bool
-    ) {
-        self.clearState()
-        self.delegate?.didEndNavigation()
-    }
 
     func clearState() {
         routes = nil
@@ -103,6 +95,16 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewC
         controller!.delegate = self
         controller!.modalPresentationStyle = .fullScreen
         return AnyView(MapboxNavigationContainerView(controller: controller!))
+    }
+}
+
+extension MapboxNavigationServiceProvider: NavigationViewControllerDelegate {
+    func navigationViewControllerDidDismiss(
+        _ navigationViewController: NavigationViewController,
+        byCanceling canceled: Bool
+    ) {
+        self.clearState()
+        self.delegate?.didEndNavigation()
     }
 }
 

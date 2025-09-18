@@ -1,7 +1,7 @@
 import Combine
 import UIKit
 
-class ObstacleDetectorFeature {
+class ObstacleDetectorFeature: ExploreFeature {
     var frameHandler: FrameHandler
     
     var delay: Double = 1.5
@@ -14,7 +14,7 @@ class ObstacleDetectorFeature {
     private var depthCancellable: AnyCancellable?
     private var hapticTask: Task<Void, Never>?
     
-    init(frameHandler: FrameHandler) {
+    required init(frameHandler: FrameHandler) {
         self.frameHandler = frameHandler
         heavyGen.prepare()
         mediumGen.prepare()

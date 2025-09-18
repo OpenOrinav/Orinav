@@ -7,7 +7,7 @@ struct BeaconExploreView: View {
     
     @StateObject private var frameHandler: FrameHandler = FrameHandler()
     
-    @State private var features: [Any] = []
+    @State private var feature: ExploreFeature?
     
     @ObservedObject private var settings = SettingsManager.shared
     @EnvironmentObject var globalUIState: BeaconGlobalUIState
@@ -34,29 +34,17 @@ struct BeaconExploreView: View {
                     (
                         icon: "wallet.pass.fill",
                         name: "Obstacles",
-                        binding: settings.$enabledObstacleDetection
+                        binding: createBinding("obstacles")
                     ),
                     (
                         icon: "light.beacon.min.fill",
                         name: "Traffic Lights",
-                        binding: Binding<Bool>(
-                            get: { settings.enabledTrafficLights },
-                            set: { newValue in
-                                settings.enabledTrafficLights = newValue
-                                if newValue { settings.enabledObjRecog = false }
-                            }
-                        )
+                        binding: createBinding("traffic-lights")
                     ),
                     (
                         icon: "lightbulb.fill",
                         name: "Identify Objects",
-                        binding: Binding<Bool>(
-                            get: { settings.enabledObjRecog },
-                            set: { newValue in
-                                settings.enabledObjRecog = newValue
-                                if newValue { settings.enabledTrafficLights = false }
-                            }
-                        )
+                        binding: createBinding("objects")
                     )
                 ]
                 
@@ -72,7 +60,7 @@ struct BeaconExploreView: View {
                     }
                 }
                 
-                if settings.enabledObstacleDetection {
+                if settings.exploreFeature == "obstacles" {
                     Slider(
                         value: Binding(
                             get: { settings.obstacleRegionSize },
@@ -99,47 +87,16 @@ struct BeaconExploreView: View {
             
             // Automatically enable features based on navigation data
             if fromNavigation && settings.autoSwitching {
-                settings.enabledObstacleDetection = !(globalUIState.atIntersection ?? false)
-                settings.enabledTrafficLights = globalUIState.atIntersection ?? false
-
-                settings.enabledObjRecog = false
+                if globalUIState.atIntersection ?? false {
+                    settings.exploreFeature = "traffic-lights"
+                }
             }
             
             // Initialize features based on current settings
-            if settings.enabledObstacleDetection {
-                features.append(ObstacleDetectorFeature(frameHandler: frameHandler))
-            }
-            if settings.enabledObjRecog {
-                features.append(ObjectRecognitionFeature(frameHandler: frameHandler) as Any)
-            }
-            if settings.enabledTrafficLights {
-                features.append(TrafficLightsFeature(frameHandler: frameHandler) as Any)
-            }
-            updateCamera()
+            updateFeatures()
         }
-        .onChange(of: settings.enabledObstacleDetection) {
-            if settings.enabledObstacleDetection {
-                features.append(ObstacleDetectorFeature(frameHandler: frameHandler))
-            } else {
-                features.removeAll { if $0 is ObstacleDetectorFeature { ($0 as! ObstacleDetectorFeature).disable(); return true }; return false }
-            }
-            updateCamera()
-        }
-        .onChange(of: settings.enabledObjRecog) {
-            if settings.enabledObjRecog {
-                features.append(ObjectRecognitionFeature(frameHandler: frameHandler) as Any)
-            } else {
-                features.removeAll { if $0 is ObjectRecognitionFeature { ($0 as! ObjectRecognitionFeature).disable(); return true }; return false }
-            }
-            updateCamera()
-        }
-        .onChange(of: settings.enabledTrafficLights) {
-            if settings.enabledTrafficLights {
-                features.append(TrafficLightsFeature(frameHandler: frameHandler) as Any)
-            } else {
-                features.removeAll { if $0 is TrafficLightsFeature { ($0 as! TrafficLightsFeature).disable(); return true }; return false }
-            }
-            updateCamera()
+        .onChange(of: settings.exploreFeature) {
+            updateFeatures()
         }
         .onDisappear {
             BeaconExploreView.inExplore = false
@@ -150,12 +107,39 @@ struct BeaconExploreView: View {
         }
     }
     
-    func updateCamera() {
-        let requireCamera = settings.enabledObstacleDetection || settings.enabledTrafficLights || settings.enabledObjRecog
-        if requireCamera && !frameHandler.running {
-            frameHandler.requestPermissionAndStart()
-        } else {
-            frameHandler.stop()
+    func updateFeatures() {
+        if let feature = feature {
+            feature.disable()
         }
+        
+        switch settings.exploreFeature {
+        case "obstacles":
+            feature = ObstacleDetectorFeature(frameHandler: frameHandler)
+        case "traffic-lights":
+            feature = TrafficLightsFeature(frameHandler: frameHandler)
+        case "objects":
+            feature = ObjectRecognitionFeature(frameHandler: frameHandler)
+        default:
+            break
+        }
+        
+        if settings.exploreFeature.isEmpty {
+            frameHandler.stop()
+        } else if !frameHandler.running {
+            frameHandler.requestPermissionAndStart()
+        }
+    }
+    
+    func createBinding(_ name: String) -> Binding<Bool> {
+        return Binding<Bool>(
+            get: { settings.exploreFeature == name },
+            set: { newValue in
+                if newValue {
+                    settings.exploreFeature = name
+                } else {
+                    settings.exploreFeature = ""
+                }
+            }
+        )
     }
 }

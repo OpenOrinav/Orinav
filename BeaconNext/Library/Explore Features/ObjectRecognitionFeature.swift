@@ -1,13 +1,13 @@
 import Vision
 
-class ObjectRecognitionFeature {
+class ObjectRecognitionFeature: ExploreFeature {
     var frameHandler: FrameHandler
     private let visionModel: VNCoreMLModel
     
     private var detectionTask: Task<Void, Never>?
     private var previousObjects: [String] = []
     
-    init?(frameHandler: FrameHandler) {
+    required init?(frameHandler: FrameHandler) {
         self.frameHandler = frameHandler
         guard let model = try? VNCoreMLModel(for: yolo11n().model) else {
             return nil

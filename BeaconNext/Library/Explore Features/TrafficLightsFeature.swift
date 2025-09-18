@@ -12,7 +12,7 @@ struct TrafficLight {
     var countdown: Int?
 }
 
-class TrafficLightsFeature {
+class TrafficLightsFeature: ExploreFeature {
     var frameHandler: FrameHandler
     
     let confidenceThreshold: Float = 0.75
@@ -28,7 +28,7 @@ class TrafficLightsFeature {
     
     private var trafficLights: [TrafficLight] = []
     
-    init?(frameHandler: FrameHandler) {
+    required init?(frameHandler: FrameHandler) {
         self.frameHandler = frameHandler
         
         // Load pre-compiled models

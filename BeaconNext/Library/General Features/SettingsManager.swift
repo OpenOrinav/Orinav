@@ -17,9 +17,7 @@ class SettingsManager: ObservableObject {
     @AppStorage("speechRate")               var speechRate: Double = Double(AVSpeechUtteranceDefaultSpeechRate)
     @AppStorage("obstacleRegionSize")       var obstacleRegionSize: Double = 30
     @AppStorage("autoSwitching")            var autoSwitching: Bool = true
-    @AppStorage("enabledObjRecog")          var enabledObjRecog: Bool = false
-    @AppStorage("enabledObstacleDetection") var enabledObstacleDetection: Bool = true
-    @AppStorage("enabledTrafficLights")     var enabledTrafficLights: Bool = false
+    @AppStorage("exploreFeature")           var exploreFeature: String = ""
     @AppStorage("debugShowExploreCam")      var debugShowExploreCam: Bool = false
     @AppStorage("debugTraceGPS")            var debugTraceGPS: Bool = false
     @AppStorage("shownIntro")               var shownIntro: Bool = false

@@ -34,17 +34,17 @@ struct BeaconExploreView: View {
                     (
                         icon: "wallet.pass.fill",
                         name: "Obstacles",
-                        binding: createBinding("obstacles")
+                        binding: createBinding(.obstacles)
                     ),
                     (
                         icon: "light.beacon.min.fill",
                         name: "Traffic Lights",
-                        binding: createBinding("traffic-lights")
+                        binding: createBinding(.trafficLights)
                     ),
                     (
                         icon: "lightbulb.fill",
                         name: "Identify Objects",
-                        binding: createBinding("objects")
+                        binding: createBinding(.objects)
                     )
                 ]
                 
@@ -60,7 +60,7 @@ struct BeaconExploreView: View {
                     }
                 }
                 
-                if settings.exploreFeature == "obstacles" {
+                if settings.exploreFeature == .obstacles {
                     Slider(
                         value: Binding(
                             get: { settings.obstacleRegionSize },
@@ -88,7 +88,7 @@ struct BeaconExploreView: View {
             // Automatically enable features based on navigation data
             if fromNavigation && settings.autoSwitching {
                 if globalUIState.atIntersection ?? false {
-                    settings.exploreFeature = "traffic-lights"
+                    settings.exploreFeature = .trafficLights
                 }
             }
             
@@ -113,31 +113,35 @@ struct BeaconExploreView: View {
         }
         
         switch settings.exploreFeature {
-        case "obstacles":
+        case .obstacles:
             feature = ObstacleDetectorFeature(frameHandler: frameHandler)
-        case "traffic-lights":
+        case .trafficLights:
             feature = TrafficLightsFeature(frameHandler: frameHandler)
-        case "objects":
+        case .objects:
             feature = ObjectRecognitionFeature(frameHandler: frameHandler)
         default:
             break
         }
         
-        if settings.exploreFeature.isEmpty {
+        if settings.exploreFeature != .none {
+            BeaconTTSService.shared.speak(String(localized: "\(String(localized: settings.exploreFeature.localizedName)) enabled"), type: .explore)
+        }
+        
+        if settings.exploreFeature == .none {
             frameHandler.stop()
         } else if !frameHandler.running {
             frameHandler.requestPermissionAndStart()
         }
     }
     
-    func createBinding(_ name: String) -> Binding<Bool> {
+    func createBinding(_ name: ExploreFeatureOption) -> Binding<Bool> {
         return Binding<Bool>(
             get: { settings.exploreFeature == name },
             set: { newValue in
                 if newValue {
                     settings.exploreFeature = name
                 } else {
-                    settings.exploreFeature = ""
+                    settings.exploreFeature = .none
                 }
             }
         )

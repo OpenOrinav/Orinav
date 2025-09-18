@@ -10,6 +10,11 @@ class SettingsManager: ObservableObject {
         get { MapProvider(rawValue: mapProviderRaw) ?? .location }
         set { mapProviderRaw = newValue.rawValue }
     }
+    @AppStorage("exploreFeature") private var exploreFeatureRaw: String = ExploreFeatureOption.none.rawValue
+    var exploreFeature: ExploreFeatureOption {
+        get { ExploreFeatureOption(rawValue: exploreFeatureRaw) ?? .none }
+        set { exploreFeatureRaw = newValue.rawValue }
+    }
     
     @AppStorage("accessibleMap")            var accessibleMap: Bool = true
     @AppStorage("sayLocation")              var sayLocation: Bool = true
@@ -17,7 +22,6 @@ class SettingsManager: ObservableObject {
     @AppStorage("speechRate")               var speechRate: Double = Double(AVSpeechUtteranceDefaultSpeechRate)
     @AppStorage("obstacleRegionSize")       var obstacleRegionSize: Double = 30
     @AppStorage("autoSwitching")            var autoSwitching: Bool = true
-    @AppStorage("exploreFeature")           var exploreFeature: String = ""
     @AppStorage("debugShowExploreCam")      var debugShowExploreCam: Bool = false
     @AppStorage("debugTraceGPS")            var debugTraceGPS: Bool = false
     @AppStorage("shownIntro")               var shownIntro: Bool = false
@@ -37,6 +41,22 @@ public enum MapProvider: String, CaseIterable {
         case .location: return "Automatic"
         case .tencent: return "Tencent Map (China only)"
         case .mapbox: return "Mapbox (Global)"
+        }
+    }
+}
+
+public enum ExploreFeatureOption: String, CaseIterable {
+    case none = "None"
+    case obstacles = "Obstacles"
+    case trafficLights = "Traffic Lights"
+    case objects = "Identify Objects"
+    
+    var localizedName: LocalizedStringResource {
+        switch self {
+        case .none: return "None"
+        case .obstacles: return "Obstacles"
+        case .trafficLights: return "Traffic Lights"
+        case .objects: return "Identify Objects"
         }
     }
 }

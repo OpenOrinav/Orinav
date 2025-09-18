@@ -31,6 +31,16 @@
         }
       }
     },
+    "%@ enabled" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 已启用"
+          }
+        }
+      }
+    },
     "%@ onto %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1706,6 +1716,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未找到路线"
+          }
+        }
+      }
+    },
+    "None" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无"
           }
         }
       }

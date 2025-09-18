@@ -94,6 +94,7 @@ class MapboxNavigationServiceProvider: BeaconNavigationProvider {
         )
         controller!.delegate = self
         controller!.modalPresentationStyle = .fullScreen
+        delegate?.didStartNavigation()
         return AnyView(MapboxNavigationContainerView(controller: controller!))
     }
 }

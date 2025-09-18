@@ -65,6 +65,7 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
     
     func startNavigation(with: any BeaconWalkRoute) async -> AnyView {
         navManager.startNav(withRouteID: with.bid)
+        delegate?.didStartNavigation()
         return AnyView(QMapNavigationView(navManager: self, navView: realNavView!))
     }
 }

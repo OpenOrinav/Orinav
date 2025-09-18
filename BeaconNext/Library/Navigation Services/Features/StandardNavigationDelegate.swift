@@ -7,6 +7,9 @@ class StandardNavigationDelegate: ObservableObject {
     let globalUIState: BeaconGlobalUIState
     let locationDelegate: StandardLocationDelegate
     
+    var navigationStartAt = Date()
+    let NO_SPEECH_IN_FIRST = 7.0   // seconds after starting navigation
+    
     // INTERSECTION PROCESSING
     // State
     var atIntersection = false
@@ -36,6 +39,11 @@ extension StandardNavigationDelegate: DeviceMotionDelegate {
 }
 
 extension StandardNavigationDelegate: BeaconNavigationProviderDelegate {
+    // = Record time of starting navigation
+    func didStartNavigation() {
+        navigationStartAt = Date()
+    }
+    
     // = End navigation state when UI end button is activated
     func didEndNavigation() {
         // Reset state
@@ -54,8 +62,10 @@ extension StandardNavigationDelegate: BeaconNavigationProviderDelegate {
             self.correctHeading = angle
         }
         guard let heading = locationDelegate.currentHeading else { return }
-        AngleDeviationFeature.shared.speak(from: angle, currentHeading: heading)
-        AngleDeviationFeature.shared.playHaptics(from: angle, currentHeading: heading)
+        if Date().timeIntervalSince(navigationStartAt) < NO_SPEECH_IN_FIRST {
+            AngleDeviationFeature.shared.speak(from: angle, currentHeading: heading)
+            AngleDeviationFeature.shared.playHaptics(from: angle, currentHeading: heading)
+        }
     }
     
     // = Publish navigation data
@@ -64,8 +74,11 @@ extension StandardNavigationDelegate: BeaconNavigationProviderDelegate {
         DispatchQueue.main.async {
             self.globalUIState.navigationStatus = status
         }
-        ApproachingNextStepFeature.shared.notify(status)
-        
+        // Don't speak in the first few seconds to avoid overriding initial prompts
+        if Date().timeIntervalSince(navigationStartAt) < NO_SPEECH_IN_FIRST {
+            ApproachingNextStepFeature.shared.notify(status)
+        }
+    
         // == Are we at an intersection?
         let d = Double(status.bDistanceToNextSegmentMeters)
         let isTurn = status.bTurnType != .straight && status.bTurnType != .stop && status.bTurnType != .unnavigable

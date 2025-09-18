@@ -5,7 +5,6 @@ import MapboxDirections
 import MapboxSearch
 import Combine
 
-// TODO: Not calling didUpdateIntersectionStatus, so no smart Explore switching
 class MapboxNavigationServiceProvider: BeaconNavigationProvider, NavigationViewControllerDelegate {
     var delegate: (any BeaconNavigationProviderDelegate)?
     let mnp: MapboxNavigationProvider

@@ -84,61 +84,9 @@ class QMapNavigationServiceProvider: NSObject, BeaconNavigationProvider, TNKWalk
         clearState()
         delegate?.didEndNavigation()
     }
-    
-    // Process navigation data updates
-    
-    // INTERSECTION PROCESSING
-    // State
-    var atIntersection = false
-    var minDistanceDuringIntersection: Double? = nil
-    var lastIntersectionUpdateAt = Date()
-    
-    // Tunables (meters)
-    let ENTER_THRESH: Double = 12.0   // when approaching a non-straight step
-    let EXIT_DELTA: Double = 10.0     // leave after distance increases ≥ this from the min
-    let EXIT_FAR: Double = 25.0       // or if type flips straight and we're clearly away
-    
-    
+
     func walkNavManager(_ manager: TNKWalkNavManager, update navigationData: TNKWalkNavigationData) {
         delegate?.didReceiveNavigationStatus(navigationData)
-        
-        // == Are we at an intersection?
-        let d = Double(navigationData.nextDistanceLeft)
-        let isTurn = navigationData.intersectionType != 1 // is not 1 (straight)
-        
-        if !atIntersection {
-            // ENTER: close to the upcoming turn
-            if isTurn && d <= ENTER_THRESH {
-                atIntersection = true
-                minDistanceDuringIntersection = d
-                lastIntersectionUpdateAt = Date()
-                delegate?.didUpdateIntersectionStatus(true)
-            }
-        } else {
-            // While AT: track the closest approach
-            if let m = minDistanceDuringIntersection {
-                minDistanceDuringIntersection = min(m, d)
-            } else {
-                minDistanceDuringIntersection = d
-            }
-            
-            let minD = minDistanceDuringIntersection ?? d
-            
-            // EXIT condition A: we've moved away from the closest point by ≥ EXIT_DELTA
-            let movedAway = (d - minD) >= EXIT_DELTA
-            
-            // EXIT condition B: provider flipped to straight AND we're clearly beyond the junction
-            let typeMovedOn = (!isTurn && d >= EXIT_FAR)
-            
-            // Timeout to avoid sticky states in weird GPS snaps
-            let timedOut = Date().timeIntervalSince(lastIntersectionUpdateAt) > 30
-            
-            if movedAway || typeMovedOn || timedOut {
-                atIntersection = false
-                minDistanceDuringIntersection = nil
-                delegate?.didUpdateIntersectionStatus(false)
-            }
-        }
     }
 }
 

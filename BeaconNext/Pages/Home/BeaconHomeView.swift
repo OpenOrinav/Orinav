@@ -102,8 +102,7 @@ struct BeaconHomeView: View {
                                 title: "What's New in Orinav",
                                 text: "Version \(changelog.version) · \(Date(timeIntervalSince1970: TimeInterval(changelog.timestamp)).formatted(date: .abbreviated, time: .omitted))",
                                 color: .accentColor
-                            )
-                            .onTapGesture {
+                            ) {
                                 isShowingChangelog = true
                             }
                         }

@@ -7,6 +7,7 @@ struct BeaconHomeView: View {
     
     @State private var isShowingSearch = false
     @State private var isShowingIntro = false
+    @State private var isShowingChangelog = false
     
     @ObservedObject var favoritesManager = FavoritesManager.shared
     
@@ -86,8 +87,6 @@ struct BeaconHomeView: View {
                     }
                 }
 
-
-                // MARK: Beacon Promotion?
                 VStack(alignment: .leading, spacing: 16) {
                     VStack(alignment: .leading, spacing: 0) {
                         Text("Welcome to Orinav")
@@ -98,14 +97,20 @@ struct BeaconHomeView: View {
                             .foregroundColor(.secondary)
                     }
                     VStack(alignment: .leading, spacing: 16) {
-                        PromotionCardView(
-                            title: "Latest Features",
-                            text: "Android support, road orientation, and more!",
-                            color: .accentColor
-                        )
+                        if let changelog = globalUIState.changelog {
+                            PromotionCardView(
+                                title: "What's New in Orinav",
+                                text: "Version \(changelog.version) · \(Date(timeIntervalSince1970: TimeInterval(changelog.timestamp)).formatted(date: .abbreviated, time: .omitted))",
+                                color: .accentColor
+                            )
+                            .onTapGesture {
+                                isShowingChangelog = true
+                            }
+                        }
+                        
                         PromotionCardView(
                             title: "New to Orinav?",
-                            text: "Start a tutorial to learn about how easy Orinav is.",
+                            text: "Start a tutorial to learn the basics",
                             color: .pink
                         ) {
                             isShowingIntro = true
@@ -133,11 +138,20 @@ struct BeaconHomeView: View {
             BeaconNavigationContainerView()
                 .ignoresSafeArea(edges: .all)
         }
+        
+        // Present intro
         .sheet(isPresented: $isShowingIntro) {
             BeaconIntroView(isPresented: $isShowingIntro)
                 .presentationDetents([.large])
                 .interactiveDismissDisabled(!SettingsManager.shared.shownIntro) // Compliance: Must agree to terms before continuing
         }
+        
+        // Present changelog
+        .sheet(isPresented: $isShowingChangelog) {
+            BeaconChangelogView(isPresented: $isShowingChangelog, changelog: globalUIState.changelog!)
+        }
+        
+        // Present permissions popup
         .sheet(isPresented: Binding(
             get: { globalState.locationDelegate.authorizationStatus == .denied || globalState.locationDelegate.authorizationStatus == .restricted },
             set: { _ in }
@@ -145,11 +159,31 @@ struct BeaconHomeView: View {
             BeaconPermissionsView()
                 .interactiveDismissDisabled()
         }
+        
+        // Show intro if necessary
         .onAppear {
             if !SettingsManager.shared.shownIntro {
                 isShowingIntro = true
             }
         }
+        
+        // Show changelog if necessary
+        .onChange(of: globalUIState.changelog) {
+            guard let changelog = globalUIState.changelog else { return }
+            if !SettingsManager.shared.shownIntro {
+                // Skip changelog on initial installation
+                SettingsManager.shared.lastShownChangelog = changelog.timestamp
+                return
+            }
+            
+            if SettingsManager.shared.lastShownChangelog != changelog.timestamp {
+                // Show if changelog has been updated
+                isShowingChangelog = true
+                SettingsManager.shared.lastShownChangelog = changelog.timestamp
+            }
+        }
+        
+        // Titles
         .navigationTitle("Orinav")
         .navigationBarTitleDisplayMode(.large)
     }

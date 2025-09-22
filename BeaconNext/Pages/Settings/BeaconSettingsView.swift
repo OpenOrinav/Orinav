@@ -77,8 +77,9 @@ struct BeaconSettingsView: View {
             Section(header: Text("Debug")) {
                 Toggle("Show Explore Camera", isOn: $settings.debugShowExploreCam)
                 Toggle("Trace GPS", isOn: $settings.debugTraceGPS)
-                Button("Reset Intro") {
+                Button("Reset Intro and Changelog") {
                     settings.shownIntro = false
+                    settings.lastShownChangelog = 0
                 }
             }
             #endif

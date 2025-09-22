@@ -150,16 +150,6 @@
         }
       }
     },
-    "Android support, road orientation, and more!" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "安卓适配、道路方向、以及更多功能!"
-          }
-        }
-      }
-    },
     "apple" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -647,6 +637,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "关闭"
+          }
+        }
+      }
+    },
+    "Continue" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继续"
           }
         }
       }
@@ -1457,16 +1457,6 @@
         }
       }
     },
-    "Latest Features" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最新特性"
-          }
-        }
-      }
-    },
     "Legal" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2086,12 +2076,12 @@
         }
       }
     },
-    "Reset Intro" : {
+    "Reset Intro and Changelog" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重置介绍"
+            "value" : "重置介绍和更新"
           }
         }
       }
@@ -2420,12 +2410,12 @@
         }
       }
     },
-    "Start a tutorial to learn about how easy Orinav is." : {
+    "Start a tutorial to learn the basics" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通过一个教程了解奥里导航的简单操作"
+            "value" : "通过教程了解奥里导航的基础操作"
           }
         }
       }
@@ -2925,6 +2915,22 @@
         }
       }
     },
+    "Version %@ · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Version %1$@ · %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ 版本 · %2$@"
+          }
+        }
+      }
+    },
     "Walk" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2951,6 +2957,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "西"
+          }
+        }
+      }
+    },
+    "What's New in Orinav" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "奥里导航新功能"
           }
         }
       }

@@ -4,6 +4,7 @@ import UIKit
 import CoreHaptics
 
 final class AngleDeviationFeature {
+    private var lastSpeakTime = Date.distantPast
     static let correctHeadingLimit: Double = 20
     
     private var engine: CHHapticEngine?
@@ -26,6 +27,11 @@ final class AngleDeviationFeature {
     
     func speak(from correctHeading: CLLocationDirection, currentHeading: CLLocationDirection) {
         let signedDiff = (currentHeading - correctHeading + 540).truncatingRemainder(dividingBy: 360) - 180
+        let now = Date()
+        if now.timeIntervalSince(lastSpeakTime) < 0.5 {
+            return
+        }
+        lastSpeakTime = now
         
         if abs(signedDiff) >= AngleDeviationFeature.correctHeadingLimit {
             let currentDirection = AngleDeviationFeature.oClockRepresentation(from: signedDiff)

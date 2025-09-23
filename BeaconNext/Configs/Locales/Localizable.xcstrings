@@ -1751,7 +1751,14 @@
       }
     },
     "Now" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "现在"
+          }
+        }
+      }
     },
     "Now, %@" : {
       "localizations" : {

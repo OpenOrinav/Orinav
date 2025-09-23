@@ -69,6 +69,15 @@ extension QMapLocationProvider: TencentLBSLocationManagerDelegate {
     
     func tencentLBSLocationManager(
         _ manager: TencentLBSLocationManager,
+        didUpdate newHeading: CLHeading
+    ) {
+        if let delegate = delegate {
+            delegate.didUpdateHeading(newHeading.trueHeading >= 0 ? newHeading.trueHeading : newHeading.magneticHeading)
+        }
+    }
+    
+    func tencentLBSLocationManager(
+        _ manager: TencentLBSLocationManager,
         didFailWithError error: any Error
     ) {
         print(error)

@@ -23,6 +23,8 @@ class StandardNavigationDelegate: ObservableObject {
     let EXIT_FAR: Double = 25.0       // or if type flips straight and we're clearly away
     // END INTERSECTION PROCESSING
     
+    var backgroundObserver: NSObjectProtocol?
+    
     init(globalUIState: BeaconGlobalUIState, locationProvider: BeaconLocationProvider, locationDelegate: StandardLocationDelegate) {
         self.globalUIState = globalUIState
         self.locationProvider = locationProvider
@@ -49,7 +51,7 @@ extension StandardNavigationDelegate: BeaconNavigationProviderDelegate {
         locationProvider.setPauseLocation(false)
         
         // Add reminder for background navigation
-        NotificationCenter.default.addObserver(
+        backgroundObserver = NotificationCenter.default.addObserver(
             forName: UIApplication.didEnterBackgroundNotification,
             object: nil,
             queue: .main
@@ -69,7 +71,10 @@ extension StandardNavigationDelegate: BeaconNavigationProviderDelegate {
         locationProvider.setPauseLocation(true)
         
         // Remove background reminder
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        if let observer = backgroundObserver {
+            NotificationCenter.default.removeObserver(observer)
+            backgroundObserver = nil
+        }
         
         DispatchQueue.main.async {
             self.globalUIState.currentPage = nil

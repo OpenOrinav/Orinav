@@ -21,12 +21,22 @@ class MapboxLocationProvider: NSObject, BeaconLocationProvider {
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.allowsBackgroundLocationUpdates = true
+        locationManager.showsBackgroundLocationIndicator = true
         locationManager.headingFilter = 5
         startUpdating()
     }
     
     func requestPermissions() {
         locationManager.requestWhenInUseAuthorization()
+    }
+    
+    func requestAlwaysPermissions() {
+        locationManager.requestAlwaysAuthorization()
+    }
+    
+    func setPauseLocation(_ pause: Bool) {
+        locationManager.pausesLocationUpdatesAutomatically = pause
     }
 
     func startUpdating() {

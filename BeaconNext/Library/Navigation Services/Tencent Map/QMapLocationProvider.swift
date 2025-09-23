@@ -28,6 +28,7 @@ class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider {
         cl.delegate = self
         self.locationManager.delegate = self
         self.locationManager.headingFilter = 5
+        self.locationManager.allowsBackgroundLocationUpdates = true
         self.locationManager.startUpdatingHeading()
         self.locationManager.startUpdatingLocation()
     }
@@ -36,6 +37,14 @@ class QMapLocationProvider: NSObject, ObservableObject, BeaconLocationProvider {
         if cl.authorizationStatus == .notDetermined {
             self.locationManager.requestWhenInUseAuthorization()
         }
+    }
+    
+    func requestAlwaysPermissions() {
+        self.locationManager.requestAlwaysAuthorization()
+    }
+    
+    func setPauseLocation(_ pause: Bool) {
+        self.locationManager.pausesLocationUpdatesAutomatically = pause
     }
 }
 

@@ -7,4 +7,6 @@ protocol BeaconLocationProvider {
     var currentHeading: CLLocationDirection? { get }
     
     func requestPermissions()
+    func requestAlwaysPermissions()
+    func setPauseLocation(_ pause: Bool)
 }

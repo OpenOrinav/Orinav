@@ -5,6 +5,7 @@ class StandardNavigationDelegate: ObservableObject {
     @Published var correctHeading: CLLocationDirection?
     
     let globalUIState: BeaconGlobalUIState
+    let locationProvider: BeaconLocationProvider
     let locationDelegate: StandardLocationDelegate
     
     var navigationStartAt = Date()
@@ -22,8 +23,9 @@ class StandardNavigationDelegate: ObservableObject {
     let EXIT_FAR: Double = 25.0       // or if type flips straight and we're clearly away
     // END INTERSECTION PROCESSING
     
-    init(globalUIState: BeaconGlobalUIState, locationDelegate: StandardLocationDelegate) {
+    init(globalUIState: BeaconGlobalUIState, locationProvider: BeaconLocationProvider, locationDelegate: StandardLocationDelegate) {
         self.globalUIState = globalUIState
+        self.locationProvider = locationProvider
         self.locationDelegate = locationDelegate
     }
 }
@@ -39,9 +41,12 @@ extension StandardNavigationDelegate: DeviceMotionDelegate {
 }
 
 extension StandardNavigationDelegate: BeaconNavigationProviderDelegate {
-    // = Record time of starting navigation
     func didStartNavigation() {
+        // = Record time of starting navigation
         navigationStartAt = Date()
+        
+        // = Always receive location
+        locationProvider.setPauseLocation(false)
     }
     
     // = End navigation state when UI end button is activated
@@ -49,6 +54,7 @@ extension StandardNavigationDelegate: BeaconNavigationProviderDelegate {
         // Reset state
         AngleDeviationFeature.shared.reset()
         ApproachingNextStepFeature.shared.reset()
+        locationProvider.setPauseLocation(true)
         
         DispatchQueue.main.async {
             self.globalUIState.currentPage = nil

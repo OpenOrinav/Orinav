@@ -10,9 +10,15 @@ struct BeaconNavigationView: View {
             VStack(alignment: .leading, spacing: 24) {
                 VStack(alignment: .leading, spacing: 8) {
                     Group {
-                        Text("In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters)))")
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
+                        if data.bDistanceToNextSegmentMeters < 5 {
+                            Text("Now")
+                                .font(.headline)
+                                .foregroundStyle(.secondary)
+                        } else {
+                            Text("In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters)))")
+                                .font(.headline)
+                                .foregroundStyle(.secondary)
+                        }
                         
                         if data.bTurnType == .stop || data.bNextRoad == nil {
                             Text("Arrive at your destination")

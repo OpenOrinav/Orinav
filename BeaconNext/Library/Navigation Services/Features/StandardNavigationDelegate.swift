@@ -42,11 +42,23 @@ extension StandardNavigationDelegate: DeviceMotionDelegate {
 
 extension StandardNavigationDelegate: BeaconNavigationProviderDelegate {
     func didStartNavigation() {
-        // = Record time of starting navigation
+        // Record time of starting navigation
         navigationStartAt = Date()
         
-        // = Always receive location
+        // Always receive location
         locationProvider.setPauseLocation(false)
+        
+        // Add reminder for background navigation
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            Task { @MainActor in
+                BeaconTTSService.shared.speak(String(localized: "Orinav is navigating in the background."), type: .navigation)
+            }
+        }
+
     }
     
     // = End navigation state when UI end button is activated
@@ -55,6 +67,9 @@ extension StandardNavigationDelegate: BeaconNavigationProviderDelegate {
         AngleDeviationFeature.shared.reset()
         ApproachingNextStepFeature.shared.reset()
         locationProvider.setPauseLocation(true)
+        
+        // Remove background reminder
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
         
         DispatchQueue.main.async {
             self.globalUIState.currentPage = nil

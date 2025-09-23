@@ -8,6 +8,7 @@ struct BeaconNavigationContainerView: View {
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     
     @State private var isInExploreMode = false
+    @State private var lastRaiseState = false
     @State private var navigationView: AnyView?
     
     @Environment(\.presentationMode) private var presentationMode
@@ -24,7 +25,11 @@ struct BeaconNavigationContainerView: View {
                     }
                     .onReceive(DeviceMotionManager.shared.$isPhoneRaised) { raised in
                         withAnimation {
-                            isInExploreMode = raised
+                            if raised && UIApplication.shared.applicationState == .background && !lastRaiseState {
+                                BeaconTTSService.shared.speak(String(localized: "Explore unavailable in background."), type: .explore)
+                            }
+                            lastRaiseState = raised
+                            isInExploreMode = raised && UIApplication.shared.applicationState == .active
                         }
                     }
                     .presentationBackground {
@@ -39,7 +44,11 @@ struct BeaconNavigationContainerView: View {
                     }
                     .onReceive(DeviceMotionManager.shared.$isPhoneRaised) { raised in
                         withAnimation {
-                            isInExploreMode = raised
+                            if raised && UIApplication.shared.applicationState == .background && !lastRaiseState {
+                                BeaconTTSService.shared.speak(String(localized: "Explore unavailable in background."), type: .explore)
+                            }
+                            lastRaiseState = raised
+                            isInExploreMode = raised && UIApplication.shared.applicationState == .active
                         }
                     }
             }

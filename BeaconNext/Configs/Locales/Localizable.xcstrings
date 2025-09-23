@@ -140,16 +140,6 @@
         }
       }
     },
-    "Almost there. In %@, %@" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "快到了。%1$@ 后，%2$@"
-          }
-        }
-      }
-    },
     "apple" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1070,6 +1060,16 @@
         }
       }
     },
+    "Explore unavailable in background." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "探索不能在后台使用。"
+          }
+        }
+      }
+    },
     "Favorites" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1750,6 +1750,9 @@
         }
       }
     },
+    "Now" : {
+
+    },
     "Now, %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1833,6 +1836,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "奥里导航是面向视障人士的新型导航软件。奥里导航提供符合直觉的导航功能，帮助您安全行走。"
+          }
+        }
+      }
+    },
+    "Orinav is navigating in the background." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "奥里导航正在后台导航。"
           }
         }
       }

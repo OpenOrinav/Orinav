@@ -11,7 +11,6 @@ struct BeaconNextApp: App {
         let ui = BeaconGlobalUIState()
         _globalUIState = StateObject(wrappedValue: ui)
         _globalState = StateObject(wrappedValue: BeaconMappingCoordinator(globalUIState: ui))
-        AudioSessionManager.shared.configureAtLaunch()
     }
     
     var body: some Scene {

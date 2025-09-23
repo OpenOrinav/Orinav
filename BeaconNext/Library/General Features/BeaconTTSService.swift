@@ -38,9 +38,7 @@ final class BeaconTTSService: NSObject, AVSpeechSynthesizerDelegate {
         guard type.rawValue >= currentPriority.rawValue else { return }
         interruptSpeaking()
         currentPriority = type
-        
-        AudioSessionManager.shared.ensureActive()
-        
+                
         // Play a sound for navigationImportant
         if type == .navigationImportant {
             SoundEffectsManager.shared.playSuccess2()
@@ -62,7 +60,6 @@ final class BeaconTTSService: NSObject, AVSpeechSynthesizerDelegate {
     nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
         DispatchQueue.main.async {
             self.currentPriority = .currentHeading
-            AudioSessionManager.shared.politelyDeactivate()
         }
     }
 }

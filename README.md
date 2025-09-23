@@ -1,6 +1,4 @@
-<span style="display: block; text-align: center">
-![Orinav Icon](Assets/orinav.png)
-</span>
+<img src="Assets/orinav.png" width="256" alt="Orinav Icon">
 
 Welcome to Orinav!
 

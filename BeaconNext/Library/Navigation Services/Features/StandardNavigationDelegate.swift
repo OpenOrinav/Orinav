@@ -81,7 +81,7 @@ extension StandardNavigationDelegate: BeaconNavigationProviderDelegate {
             self.globalUIState.navigationStatus = status
         }
         // Don't speak in the first few seconds to avoid overriding initial prompts
-        if Date().timeIntervalSince(navigationStartAt) < NO_SPEECH_IN_FIRST {
+        if Date().timeIntervalSince(navigationStartAt) >= NO_SPEECH_IN_FIRST {
             ApproachingNextStepFeature.shared.notify(status)
         }
     

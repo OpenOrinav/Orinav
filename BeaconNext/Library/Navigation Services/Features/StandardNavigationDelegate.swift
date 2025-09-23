@@ -62,10 +62,10 @@ extension StandardNavigationDelegate: BeaconNavigationProviderDelegate {
             self.correctHeading = angle
         }
         guard let heading = locationDelegate.currentHeading else { return }
-        if Date().timeIntervalSince(navigationStartAt) < NO_SPEECH_IN_FIRST {
+        if Date().timeIntervalSince(navigationStartAt) >= NO_SPEECH_IN_FIRST {
             AngleDeviationFeature.shared.speak(from: angle, currentHeading: heading)
-            AngleDeviationFeature.shared.playHaptics(from: angle, currentHeading: heading)
         }
+        AngleDeviationFeature.shared.playHaptics(from: angle, currentHeading: heading)
     }
     
     // = Publish navigation data

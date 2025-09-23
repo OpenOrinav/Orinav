@@ -33,7 +33,6 @@
 		B87D34502DD609A200A1318D /* Exceptions for "BeaconNext" folder in "BeaconNext" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Configs/Secrets.xcconfig,
 				Info.plist,
 			);
 			target = B8E196742DD580A100C2D235 /* BeaconNext */;

@@ -21,13 +21,14 @@ final class ShakeInformFeature {
             Task { @MainActor in
                 BeaconTTSService.shared.speak(String(localized: data.bTurnType.localizedName), type: .navigationImportant)
             }
-        } else if data.bTotalDistanceRemainingMeters < 100 {
-            Task { @MainActor in
-                BeaconTTSService.shared.speak(String(localized: "Almost there. In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters))), \(message)"), type: .navigationImportant)
-            }
         } else {
             Task { @MainActor in
-                BeaconTTSService.shared.speak(String(localized: "In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters))), \(message)"), type: .navigationImportant)
+                BeaconTTSService.shared
+                    .speak(
+                        data.bDistanceToNextSegmentMeters <= 5 ? String(localized: "Now, \(message)")
+                        : String(localized: "In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters))), \(message)"),
+                        type: .navigationImportant
+                    )
             }
         }
     }

@@ -16,7 +16,7 @@ final class ApproachingNextStepFeature {
         lastSpokenDistance = data.bDistanceToNextSegmentMeters
         
         let turnName = String(localized: data.bTurnType.localizedName)
-        if data.bDistanceToNextSegmentMeters <= 2 {
+        if data.bDistanceToNextSegmentMeters <= 5 {
             Task { @MainActor in
                 BeaconTTSService.shared.speak(String(localized: "Now, \(turnName)"), type: .navigationImportant)
             }

@@ -1690,6 +1690,16 @@
         }
       }
     },
+    "No details available." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本更新无详情。"
+          }
+        }
+      }
+    },
     "No favorites yet" : {
       "localizations" : {
         "zh-Hans" : {

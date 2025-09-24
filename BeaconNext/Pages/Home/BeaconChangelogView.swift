@@ -3,7 +3,7 @@ import SwiftUI
 struct ChangelogData: Codable, Equatable {
     var version: String
     var timestamp: Int
-    var content: String
+    var content: [String: String]
 }
 
 struct BeaconChangelogView: View {
@@ -22,7 +22,7 @@ struct BeaconChangelogView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 
-                Text(changelog.content)
+                Text(changelog.content[Bundle.main.preferredLocalizations.first!] ?? changelog.content["en"] ?? String(localized: "No details available."))
                 
                 
                 Button("Continue") {

@@ -1877,6 +1877,16 @@
         }
       }
     },
+    "Orinav is running in the background." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "奥里导航正在后台运行。"
+          }
+        }
+      }
+    },
     "Orinav needs to access your location to provide navigation services. Please enable location permissions in Settings." : {
       "localizations" : {
         "zh-Hans" : {

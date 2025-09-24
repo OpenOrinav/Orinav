@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 class BeaconGlobalUIState: ObservableObject {
     @Published var currentPage: BeaconPage? = nil // The sub-page within the home page
@@ -21,6 +22,7 @@ class BeaconGlobalUIState: ObservableObject {
     
     init() {
         fetchChangelog()
+        setupBackgroundNotification()
     }
     
     func fetchChangelog() {
@@ -41,6 +43,22 @@ class BeaconGlobalUIState: ObservableObject {
                 print("Failed to decode changelog: \(error.localizedDescription)")
             }
         }.resume()
+    }
+    
+    func setupBackgroundNotification() {
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            Task { @MainActor in
+                if self.routeInNavigation == nil {
+                    BeaconTTSService.shared.speak(String(localized: "Orinav is running in the background."), type: .navigation)
+                } else {
+                    BeaconTTSService.shared.speak(String(localized: "Orinav is navigating in the background."), type: .navigation)
+                }
+            }
+        }
     }
 }
 

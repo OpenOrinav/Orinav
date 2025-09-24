@@ -100,7 +100,7 @@ struct BeaconExploreView: View {
         }
         .onDisappear {
             BeaconExploreView.inExplore = false
-            SoundEffectsManager.shared.playExplore()
+            SoundEffectsManager.shared.playExploreOff()
             if !fromNavigation {
                 UIApplication.shared.isIdleTimerDisabled = false
             }

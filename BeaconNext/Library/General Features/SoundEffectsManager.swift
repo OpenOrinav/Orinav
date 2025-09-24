@@ -7,6 +7,7 @@ class SoundEffectsManager {
     private var successSound: AVAudioPlayer?
     private var success2Sound: AVAudioPlayer?
     private var exploreSound: AVAudioPlayer?
+    private var exploreOffSound: AVAudioPlayer?
     private var tapLowSound: AVAudioPlayer?
     private var tapMidSound: AVAudioPlayer?
     private var tapHighSound: AVAudioPlayer?
@@ -26,9 +27,14 @@ class SoundEffectsManager {
             success2Sound?.prepareToPlay()
         }
         
-        if let exploreUrl = Bundle.main.url(forResource: "explore", withExtension: "mp3") {
+        if let exploreUrl = Bundle.main.url(forResource: "explore-on", withExtension: "mp3") {
             exploreSound = try? AVAudioPlayer(contentsOf: exploreUrl)
             exploreSound?.prepareToPlay()
+        }
+        
+        if let exploreOffUrl = Bundle.main.url(forResource: "explore-off", withExtension: "mp3") {
+            exploreOffSound = try? AVAudioPlayer(contentsOf: exploreOffUrl)
+            exploreOffSound?.prepareToPlay()
         }
         
         if let tapLowUrl = Bundle.main.url(forResource: "tap-low", withExtension: "mp3") {
@@ -84,6 +90,10 @@ class SoundEffectsManager {
     
     func playExplore() {
         exploreSound?.play()
+    }
+    
+    func playExploreOff() {
+        exploreOffSound?.play()
     }
     
     func playTapLow() {

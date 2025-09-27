@@ -4,9 +4,13 @@ final class ApproachingNextStepFeature {
     private init() {}
     
     var lastSpokenDistance: Int = -100
+    private var hasSpokenNowForThisStep = false
+    private var lastTenMeterSpokenDistance: Int = -1
     
     func reset() {
         lastSpokenDistance = -100
+        hasSpokenNowForThisStep = false
+        lastTenMeterSpokenDistance = -1
     }
     
     func notify(_ data: BeaconNavigationStatus) {
@@ -15,16 +19,27 @@ final class ApproachingNextStepFeature {
         }
         lastSpokenDistance = data.bDistanceToNextSegmentMeters
         
+        if lastTenMeterSpokenDistance == -1 {
+            lastTenMeterSpokenDistance = data.bDistanceToNextSegmentMeters
+        } else if data.bDistanceToNextSegmentMeters >= lastTenMeterSpokenDistance {
+            lastTenMeterSpokenDistance = data.bDistanceToNextSegmentMeters
+        }
+        
+        if data.bDistanceToNextSegmentMeters > 5 {
+            hasSpokenNowForThisStep = false
+        }
+        
         let turnName = String(localized: data.bTurnType.localizedName)
         if data.bDistanceToNextSegmentMeters <= 5 {
-            Task { @MainActor in
-                BeaconTTSService.shared.speak(String(localized: "Now, \(turnName)"), type: .navigationImportant)
+            // Only speak "Now" once
+            if !hasSpokenNowForThisStep {
+                hasSpokenNowForThisStep = true
+                Task { @MainActor in
+                    BeaconTTSService.shared.speak(String(localized: "Now, \(turnName)"), type: .navigationImportant)
+                }
             }
-        } else if data.bDistanceToNextSegmentMeters <= 20 && data.bDistanceToNextSegmentMeters % 5 == 0 {
-            Task { @MainActor in
-                BeaconTTSService.shared.speak(String(localized: "In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters))), \(turnName)"), type: .navigation)
-            }
-        } else if data.bDistanceToNextSegmentMeters % 10 == 0 {
+        } else if (lastTenMeterSpokenDistance - data.bDistanceToNextSegmentMeters) >= 10 {
+            lastTenMeterSpokenDistance = data.bDistanceToNextSegmentMeters
             Task { @MainActor in
                 BeaconTTSService.shared.speak(String(localized: "In \(BeaconUIUtils.formattedDistance(Double(data.bDistanceToNextSegmentMeters))), \(turnName)"), type: .navigationAuxilary)
             }
